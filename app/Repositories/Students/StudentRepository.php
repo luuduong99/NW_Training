@@ -36,4 +36,26 @@ class StudentRepository extends BaseRepository
     {
         return parent::delete($id);
     }
+
+    public function toOld($dateTo)
+    {
+        return Student::where('birthday', '>', $dateTo)
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
+    }
+
+    public function fromToOld($dateFrom, $dataTo)
+    {
+        return Student::where('birthday', '<', $dateFrom)
+            ->where('birthday', '>', $dataTo)
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
+    }
+
+    public function fromOld($dataFrom)
+    {
+        return Student::where('birthday', '<', $dataFrom)
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
+    }
 }

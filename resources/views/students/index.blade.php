@@ -1,14 +1,31 @@
 @extends('layouts.master')
 @section('content')
 
-<div style="width: 100%; display: flex;justify-content: space-between">
-    <div class="col-sm-4" style="padding: 0">
+<div style="width: 100%; display: flex;">
+    <div class="col-sm-2" style="padding: 0">
         <a href="{{ route('edu.students.create_student') }}" class="btn btn-success mb-2"><i class="mdi mdi-plus-circle mr-2"></i>
             Add User
         </a>
     </div>
-    <div class="col-sm-4" style="padding: 0">
-        <li class="dropdown" style="margin-top: 22px;">
+    <div class="col-sm-6">
+        <div class="form-row">
+            <div class="form-group row col-sm-6">
+                <label for="fromOld" class="col-sm-4 col-form-label">Old From</label>
+                <div class="col-sm-8">
+                    <input type="number" name="fromOld" class="form-control" id="fromOld">
+                </div>
+            </div>
+            <div class="form-group row col-sm-5">
+                <label for="toOld" class="col-sm-4 col-form-label">Old To</label>
+                <div class="col-sm-8">
+                    <input type="number" name="toOld" class="form-control" id="toOld">
+                </div>
+            </div>
+            <i class="mdi mdi-magnify search-icon" type="button" onclick="location.href = '{{ url()->current() }}?fromOld=' + document.getElementById('fromOld').value + '&toOld=' + document.getElementById('toOld').value;" style="font-size: 23px;">
+            </i>
+            <!-- <input class="form-group row col-sm-1 mdi mdi-magnify search-icon" style="font-size: 16px;" type="button" class="btn btn-primary" onclick="location.href = '{{ url()->current() }}?fromOld=' + document.getElementById('fromOld').value + '&toOld=' + document.getElementById('toOld').value;" /> -->
+        </div>
+        <!-- <li class="dropdown" style="margin-top: 22px;">
             <a class=" dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
                 Lọc theo tuổi
             </a>
@@ -17,8 +34,9 @@
                 <a class="dropdown-item" href="{{ url()->current() }}?fromOld=21&toOld=40">21 - 40</a>
                 <a class="dropdown-item" href="{{ url()->current() }}?fromOld=40">Trên 40</a>
             </div>
-        </li>
+        </li> -->
     </div>
+
 
 </div>
 <table class="table table-striped table-centered mb-0">

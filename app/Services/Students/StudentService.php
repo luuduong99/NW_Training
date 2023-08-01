@@ -4,11 +4,14 @@ namespace App\Services\Students;
 
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
+use App\Models\Role;
 use App\Repositories\Students\StudentRepository;
 use App\Repositories\Users\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+
 
 class StudentService
 {
@@ -20,11 +23,28 @@ class StudentService
         $this->userRepository = $userRepository;
     }
 
-    public function getAllStudent()
+    public function getAllStudent(Request $request)
     {
-        $students = $this->studentRepository->getAllStudent();
+        $dateFrom = Carbon::now()->subYears($request->fromOld)->startOfDay();
+        $dateTo = Carbon::now()->subYears($request->toOld)->endOfDay();
 
-        return view('students.index', ['students' => $students]);
+        if (!$request->fromOld && $request->toOld) {
+            $students = $this->studentRepository->toOld($dateTo);
+            return view('students.index', ['students' => $students]);
+        } elseif ($request->fromOld && $request->toOld) {
+            $students = $this->studentRepository->fromToOld($dateFrom, $dateTo);
+            return view('students.index', ['students' => $students]);
+        } elseif ($request->fromOld && !$request->toOld) {
+            $students = $this->studentRepository->fromOld($dateFrom);
+            return view('students.index', ['students' => $students]);
+        } else {
+            $students = $this->studentRepository->getAllStudent();
+            return view('students.index', ['students' => $students]);
+        }
+
+        // $students = $this->studentRepository->getAllStudent();
+
+        // return view('students.index', ['students' => $students]);
     }
 
     public function createStudent()
@@ -60,22 +80,27 @@ class StudentService
             ];
 
             if ($result = $this->userRepository->createUser($user)) {
-                $student = [
+                Role::create([
+                    'user_id' => $result->id,
+                    'role' => $data['role'],
+                ]);
+                $this->studentRepository->createStudent([
                     'user_id' => $result->id,
                     'avatar' => $data['avatar'],
                     'phone' => $data['phone'],
                     'address' => $data['address'],
                     'gender' => $data['gender'],
                     'birthday' => $data['birthday']
-                ];
-                $this->studentRepository->createStudent($student);
-            }
+                ]);
 
+                dispatch(new \App\Jobs\SendMail($data));
+            }
             DB::commit();
 
-            return redirect()->route('edu.students.list_students');
+            return redirect()->route('edu.students.list_students')->with('add_student', 'Successfully added student');
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th);
         }
     }
 
@@ -91,6 +116,7 @@ class StudentService
         DB::beginTransaction();
         try {
             $data = $request->all();
+
             $student = $this->studentRepository->find($id);
 
             if ($request->hasFile('avatar')) {
@@ -118,20 +144,22 @@ class StudentService
             ];
 
             if ($this->userRepository->updateUser($student->user_id, $user)) {
-                $attr = [
+                Role::create([
+                    'user_id' => $student->user_id,
+                    'role' => $data['role'],
+                ]);
+
+                $this->studentRepository->updateStudent($id, [
                     'avatar' => $data['avatar'],
                     'phone' => $data['phone'],
                     'address' => $data['address'],
                     'gender' => $data['gender'],
                     'birthday' => $data['birthday']
-                ];
-
-                $this->studentRepository->updateStudent($id, $attr);
+                ]);
             }
-
             DB::commit();
 
-            return redirect()->route('edu.students.list_students');
+            return redirect()->route('edu.students.list_students')->with('update_student', 'Successfully update student');
         } catch (\Throwable $th) {
             DB::rollBack();
         }
@@ -149,11 +177,12 @@ class StudentService
 
         if ($student->user) {
             $this->userRepository->deleteUser($student->user->id);
+            Role::where('user_id', $student->user->id)->delete();
         }
 
         $this->studentRepository->deleteStudent($id);
 
-        return redirect()->route('edu.students.list_students');
+        return redirect()->route('edu.students.list_students')->with('delete_student', 'Successfully delete student');
     }
 
     public function profile($id)

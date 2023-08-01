@@ -15,7 +15,7 @@ class CreateSubjectsTable extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255)->unique();
+            $table->string('name', 255);
             $table->longText('description')->nullable();
             $table->unsignedBigInteger('faculty_id')->nullable();
             // $table->enum('status', [0, 1])->comment('0 is Active, 1 is Deactive');

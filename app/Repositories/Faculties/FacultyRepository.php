@@ -12,6 +12,11 @@ class FacultyRepository extends BaseRepository
         return Faculty::class;
     }
 
+    public function faculties()
+    {
+        return $this->all();
+    }
+
     public function getAllFaculties()
     {
         return $this->getAll();

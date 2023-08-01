@@ -21,9 +21,9 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return $this->studentService->getAllStudent();
+        return $this->studentService->getAllStudent($request);
     }
 
     /**

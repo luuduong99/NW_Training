@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +21,12 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('signIn', [LoginController::class, 'signIn'])->name('signIn');
 
 Route::group([
     'prefix' => 'edu',
     'as' => 'edu.',
+    'middleware' => ['auth.login', 'auth.admin']
 ], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
@@ -54,7 +57,22 @@ Route::group([
             Route::get('edit_student/{id}', [StudentController::class, 'edit'])->name('edit_student');
             Route::put('update_student/{id}', [StudentController::class, 'update'])->name('update_student');
             Route::delete('delete_student/{id}', [StudentController::class, 'destroy'])->name('delete_student');
-            Route::get('profile_student/{id}', [StudentController::class, 'show'])->name('profile_student');
+            Route::get('profile_student/{id}', [StudentController::class, 'show'])->name('profile_student')->withoutMiddleware('auth.admin');
+        }
+    );
+
+    Route::group(
+        [
+            'prefix' => 'subjects',
+            'as' => 'subjects.',
+        ],
+        function () {
+            Route::get('list_subjects', [SubjectController::class, 'index'])->name('list_subjects')->withoutMiddleware('auth.admin');
+            Route::get('create_subject', [SubjectController::class, 'create'])->name('create_subject');
+            Route::post('store_subject', [SubjectController::class, 'store'])->name('store_subject');
+            Route::get('edit_subject/{id}', [SubjectController::class, 'edit'])->name('edit_subject');
+            Route::put('update_subject/{id}', [SubjectController::class, 'update'])->name('update_subject');
+            Route::delete('delete_subject/{id}', [SubjectController::class, 'destroy'])->name('delete_subject');
         }
     );
 });

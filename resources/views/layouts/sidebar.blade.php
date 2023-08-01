@@ -24,7 +24,7 @@
                             <!--- Sidemenu -->
                             <ul class="metismenu side-nav mm-show">
                                 <li class="side-nav-item">
-                                    <a href="" class="side-nav-link">
+                                    <a href="{{ route('edu.home') }}" class="side-nav-link">
                                         <i class="mdi mdi-home mdi-24px"></i>
                                         <span> Home </span>
                                     </a>
@@ -45,9 +45,9 @@
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="" class="side-nav-link">
+                                    <a href="{{ route('edu.subjects.list_subjects') }}" class="side-nav-link">
                                         <i class="mdi mdi-battery-high mdi-24px"></i>
-                                        <span> Course </span>
+                                        <span> Subjects </span>
                                     </a>
                                 </li>
 

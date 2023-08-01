@@ -34,7 +34,7 @@
                 </span>
                 <span>
                     <span class="account-user-name">{{ Auth::user()->name }}</span>
-                    <span class="account-position"></span>
+                    <span class="account-position">Role: {{ Auth::user()->role->role }}</span>
                 </span>
             </a>
 

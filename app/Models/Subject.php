@@ -15,4 +15,9 @@ class Subject extends Model
     protected $fillable = [
         'name', 'description', 'faculty_id',
     ];
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class);
+    }
 }

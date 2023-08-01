@@ -45,14 +45,14 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        $sucess = "{{ Session::has('add_department') }}";
-        $update = "{{ Session::has('update_department') }}";
-        $delete = "{{ Session::has('delete_department') }}";
+        $sucess = "{{ Session::has('add_faculty') }}";
+        $update = "{{ Session::has('update_faculty') }}";
+        $delete = "{{ Session::has('delete_faculty') }}";
 
         if ($sucess) {
             $.toast({
-                heading: 'Add department',
-                text: '<h6>{{ Session::get("add_department") }}</h6>',
+                heading: 'Add faculty',
+                text: '<h6>{{ Session::get("add_faculty") }}</h6>',
                 showHideTransition: 'slide',
                 icon: 'success',
                 position: 'top-right',
@@ -61,8 +61,8 @@
 
         if ($update) {
             $.toast({
-                heading: 'Update department',
-                text: '<h6>{{ Session::get("update_department") }}</h6>',
+                heading: 'Update faculty',
+                text: '<h6>{{ Session::get("update_faculty") }}</h6>',
                 showHideTransition: 'slide',
                 icon: 'info',
                 position: 'top-right',
@@ -71,8 +71,8 @@
 
         if ($delete) {
             $.toast({
-                heading: 'Delete department',
-                text: '<h6>{{ Session::get("delete_department") }}</h6>',
+                heading: 'Delete faculty',
+                text: '<h6>{{ Session::get("delete_faculty") }}</h6>',
                 showHideTransition: 'slide',
                 icon: 'error',
                 position: 'top-right',

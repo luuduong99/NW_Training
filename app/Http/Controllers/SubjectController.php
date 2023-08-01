@@ -2,10 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\subjects\CreateSubjectRequest;
+use App\Http\Requests\Subjects\UpdateSubjectRequest;
+use App\Services\Subjects\SubjectService;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
+    protected $subjectService;
+
+    public function __construct(SubjectService $subjectService)
+    {
+        $this->subjectService = $subjectService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +23,7 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        //
+        return $this->subjectService->listSubjects();
     }
 
     /**
@@ -23,7 +33,7 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        //
+        return $this->subjectService->createSubject();
     }
 
     /**
@@ -32,9 +42,9 @@ class SubjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateSubjectRequest $request)
     {
-        //
+        return $this->subjectService->storeSubject($request);
     }
 
     /**
@@ -56,7 +66,7 @@ class SubjectController extends Controller
      */
     public function edit($id)
     {
-        //
+        return $this->subjectService->editSubject($id);
     }
 
     /**
@@ -66,9 +76,9 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateSubjectRequest $request, $id)
     {
-        //
+        return $this->subjectService->updateSubject($id, $request);
     }
 
     /**
@@ -79,6 +89,6 @@ class SubjectController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->subjectService->deleteSubject($id);
     }
 }
