@@ -96,9 +96,10 @@
 
     @stack('scripts')
     <!-- bundle -->
-    <!-- <script>
+
+    <script>
         $(document).ready(function() {
-            var userName = "{{Session::has('check_admin')}}";
+            var userName = "{{ Session::has('check_admin')}}";
             if (userName > 0) {
                 $.toast({
                     heading: 'Error',
@@ -109,7 +110,7 @@
                 })
             }
         });
-    </script> -->
+    </script>
     <script src="{{ asset('js/vendor.min.js') }}"></script>
     <script src="{{ asset('js/app.min.js') }}"></script>
 

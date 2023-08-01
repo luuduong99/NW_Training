@@ -55,6 +55,13 @@
             @enderror
         </div>
     </div>
+    <div class="form-group col-md-4">
+        <label for="role" class="col-form-label">Role</label>
+        <select id="role" name="role" class="form-control">
+            <option value="student" value="1">Student</option>
+            <option value="admin">Admin</option>
+        </select>
+    </div>
 
     <div class="form-group">
         <label for="example-fileinput">Choose Avatar</label>
