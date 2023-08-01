@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-<form action="" method="post" enctype="multipart/form-data">
+<form action="{{ route('edu.students.update_student', $student->id) }}" method="post" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="form-group">
@@ -53,15 +53,6 @@
             @error('birthday')
             <span class="text-danger">{{ $message }}</span>
             @enderror
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
-            <label for="inputRole" class="col-form-label">Role</label>
-            <select id="inputRole" name="is_admin" class="form-control">
-                <option {{ $student->role == '1' ? 'selected' : ''  }} value="1">Student</option>
-                <option {{ $student->role == '0' ? 'selected' : ''  }} value="0">Admin</option>
-            </select>
         </div>
     </div>
 

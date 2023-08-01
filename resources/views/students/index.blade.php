@@ -47,7 +47,7 @@
                 <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}" alt="{{ $student->user->email }}" class="mr-2 rounded-circle" />
                 @endif
             </td>
-            <td><a title="" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;" href="">{{ $student->user->name }}</a></td>
+            <td><a title="" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;" href="{{ route('edu.students.profile_student', $student->id) }}">{{ $student->user->name }}</a></td>
             <td title="" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->user->email }}</td>
             <td>{{ $student->phone }}</td>
             <td>{{ $student->address }}</td>
@@ -57,7 +57,7 @@
             <td title="{{ $student->created_at }}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->created_at }}</td>
             <td title="{{ $student->updated_at }}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
             <td class="table-action">
-                <form action="" method="POST">
+                <form action="{{ route('edu.students.delete_student', $student->id) }}" method="POST">
                     @method('delete')
                     @csrf
                     <a class="btn btn-primary" style="width: 70px;" href="{{ route('edu.students.edit_student', $student->id) }}">Edit</a>

@@ -2,20 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Students\CreateStudentRequest;
-use App\Http\Requests\Students\UpdateStudentRequest;
-use App\Services\Students\StudentService;
 use Illuminate\Http\Request;
 
-class StudentController extends Controller
+class SubjectController extends Controller
 {
-    protected $studentService;
-
-    public function __construct(StudentService $studentService)
-    {
-        $this->studentService = $studentService;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +13,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return $this->studentService->getAllStudent();
+        //
     }
 
     /**
@@ -33,7 +23,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return $this->studentService->createStudent();
+        //
     }
 
     /**
@@ -42,9 +32,9 @@ class StudentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateStudentRequest $request)
+    public function store(Request $request)
     {
-        return $this->studentService->storeStudent($request);
+        //
     }
 
     /**
@@ -55,7 +45,7 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        return $this->studentService->profile($id);
+        //
     }
 
     /**
@@ -66,7 +56,7 @@ class StudentController extends Controller
      */
     public function edit($id)
     {
-        return $this->studentService->editStudent($id);
+        //
     }
 
     /**
@@ -76,9 +66,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateStudentRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        return $this->studentService->updateStudent($id, $request);
+        //
     }
 
     /**
@@ -87,8 +77,8 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, Request $request)
+    public function destroy($id)
     {
-        return $this->studentService->deleteStudent($id, $request);
+        //
     }
 }

@@ -27,16 +27,17 @@ Route::group([
 ], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    Route::group([
-        'prefix' => 'faculties',
-        'as' => 'faculties.',
-    ],
+    Route::group(
+        [
+            'prefix' => 'faculties',
+            'as' => 'faculties.',
+        ],
         function () {
             Route::get('list_faculties', [FacultyController::class, 'index'])->name('list_faculties');
             Route::get('create_faculty', [FacultyController::class, 'create'])->name('create_faculty');
             Route::post('store_faculty', [FacultyController::class, 'store'])->name('store_faculty');
             Route::get('edit_faculty/{id}', [FacultyController::class, 'edit'])->name('edit_faculty');
-            Route::put('update_faculty/{id}', [FacultyController::class,'update'])->name('update_faculty');
+            Route::put('update_faculty/{id}', [FacultyController::class, 'update'])->name('update_faculty');
             Route::delete('delete_faculty/{id}', [FacultyController::class, 'destroy'])->name('delete_faculty');
         }
     );
@@ -51,6 +52,9 @@ Route::group([
             Route::get('create_student', [StudentController::class, 'create'])->name('create_student');
             Route::post('store_student', [StudentController::class, 'store'])->name('store_student');
             Route::get('edit_student/{id}', [StudentController::class, 'edit'])->name('edit_student');
+            Route::put('update_student/{id}', [StudentController::class, 'update'])->name('update_student');
+            Route::delete('delete_student/{id}', [StudentController::class, 'destroy'])->name('delete_student');
+            Route::get('profile_student/{id}', [StudentController::class, 'show'])->name('profile_student');
         }
     );
 });
