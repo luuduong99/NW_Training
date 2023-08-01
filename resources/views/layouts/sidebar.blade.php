@@ -31,16 +31,16 @@
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="" class="side-nav-link">
+                                    <a href="{{ route('edu.students.list_students') }}" class="side-nav-link">
                                         <i class="mdi mdi-account-details-outline mdi-24px"></i>
                                         <span> Students </span>
                                     </a>
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="" class="side-nav-link">
+                                    <a href="{{ route('edu.faculties.list_faculties') }}" class="side-nav-link">
                                         <i class="mdi mdi-clipboard-file-outline mdi-24px"></i>
-                                        <span> Department </span>
+                                        <span> Faculties </span>
                                     </a>
                                 </li>
 

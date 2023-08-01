@@ -13,6 +13,27 @@ class Student extends Model
     protected $table = 'students';
 
     protected $fillable = [
-        'user_id','avatar', 'phone', 'address', 'gender',
+        'user_id','avatar', 'phone', 'address', 'gender', 'birthday'
     ];
+
+    public function getAgeAttribute()
+    {
+        return date_diff(date_create($this->birthday), date_create('now'))->y;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getGendAttribute()
+    {
+        if ($this->gender == 0) {
+            return 'other';
+        } elseif ($this->gender == 1) {
+            return 'male';
+        } else {
+            return 'female';
+        } 
+    }
 }
