@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Students\CreateStudentRequest;
+use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Services\Students\StudentService;
 use Illuminate\Http\Request;
 
@@ -54,7 +55,7 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->studentService->profile($id);
     }
 
     /**
@@ -75,9 +76,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateStudentRequest $request, $id)
     {
-        //
+        return $this->studentService->updateStudent($id, $request);
     }
 
     /**
@@ -86,8 +87,8 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
+        return $this->studentService->deleteStudent($id, $request);
     }
 }
