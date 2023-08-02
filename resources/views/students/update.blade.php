@@ -1,5 +1,10 @@
 @extends('layouts.master')
 @section('content')
+<form action="{{ route('edu.students.delete_student', $student->id) }}" method="POST" style="margin-bottom: 10px;">
+    @method('delete')
+    @csrf
+    <input class="btn btn-danger" type="submit" style="float: right;" onclick=" return window.confirm('Are you sure?');" value="Delete Student" />
+</form>
 <form action="{{ route('edu.students.update_student', $student->id) }}" method="post" enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -55,12 +60,23 @@
             @enderror
         </div>
     </div>
-    <div class="form-group col-md-4">
-        <label for="role" class="col-form-label">Role</label>
-        <select id="role" name="role" class="form-control">
-            <option value="student" value="1">Student</option>
-            <option value="admin">Admin</option>
-        </select>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="role" class="col-form-label">Role</label>
+            <select id="role" name="role" class="form-control">
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="faculty" class="col-form-label">Faculty</label>
+            <select id="faculty" name="faculty_id" class="form-control">
+                @foreach($faculties as $faculty)
+                    <option {{ $student->faculty_id == $faculty->id ? 'selected' : ''  }} value="{{ $faculty->id }}">{{ $faculty->name  }}</option>
+                @endforeach
+            </select>
+        </div>
     </div>
 
     <div class="form-group">

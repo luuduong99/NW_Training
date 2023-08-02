@@ -36,4 +36,9 @@ class SubjectRepository extends BaseRepository
     {
         return parent::delete($id);
     }
+
+    public function getSubjectOfFaculty($faculty_id)
+    {
+        return Subject::where('faculty_id', $faculty_id)->paginate(5);
+    }
 }

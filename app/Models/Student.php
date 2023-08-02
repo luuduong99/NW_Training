@@ -13,7 +13,7 @@ class Student extends Model
     protected $table = 'students';
 
     protected $fillable = [
-        'user_id','avatar', 'phone', 'address', 'gender', 'birthday'
+        'user_id','avatar', 'phone', 'address', 'gender', 'birthday', 'faculty_id'
     ];
 
     public function getAgeAttribute()
@@ -26,6 +26,11 @@ class Student extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class);
+    }
+
     public function getGendAttribute()
     {
         if ($this->gender == 0) {
@@ -34,6 +39,10 @@ class Student extends Model
             return 'male';
         } else {
             return 'female';
-        } 
+        }
+    }
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'student_subject');
     }
 }
