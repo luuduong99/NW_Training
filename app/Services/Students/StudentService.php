@@ -4,10 +4,17 @@ namespace App\Services\Students;
 
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
+use App\Models\Faculty;
 use App\Models\Role;
+use App\Models\StudentSubject;
+use App\Models\Subject;
+use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Students\StudentRepository;
+use App\Repositories\StudentSubject\StudentSubjectRepository;
+use App\Repositories\Subjects\SubjectRepository;
 use App\Repositories\Users\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -15,41 +22,50 @@ use Carbon\Carbon;
 
 class StudentService
 {
-    protected $studentRepository, $userRepository;
+    protected $studentRepository, $userRepository, $facultyRepository, $studentSubjectRepository, $subjectRepository;
 
-    public function __construct(StudentRepository $studentRepository, UserRepository $userRepository)
+    public function __construct(StudentRepository        $studentRepository, UserRepository $userRepository,
+                                FacultyRepository        $facultyRepository,
+                                StudentSubjectRepository $studentSubjectRepository,
+                                SubjectRepository        $subjectRepository)
     {
         $this->studentRepository = $studentRepository;
         $this->userRepository = $userRepository;
+        $this->facultyRepository = $facultyRepository;
+        $this->studentSubjectRepository = $studentSubjectRepository;
+        $this->subjectRepository = $subjectRepository;
     }
 
     public function getAllStudent(Request $request)
     {
         $dateFrom = Carbon::now()->subYears($request->fromOld)->startOfDay();
         $dateTo = Carbon::now()->subYears($request->toOld)->endOfDay();
+        $faculties = Faculty::all();
 
         if (!$request->fromOld && $request->toOld) {
             $students = $this->studentRepository->toOld($dateTo);
-            return view('students.index', ['students' => $students]);
+
+            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
         } elseif ($request->fromOld && $request->toOld) {
             $students = $this->studentRepository->fromToOld($dateFrom, $dateTo);
-            return view('students.index', ['students' => $students]);
+
+            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
         } elseif ($request->fromOld && !$request->toOld) {
             $students = $this->studentRepository->fromOld($dateFrom);
-            return view('students.index', ['students' => $students]);
+
+            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
         } else {
             $students = $this->studentRepository->getAllStudent();
-            return view('students.index', ['students' => $students]);
+
+            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
         }
-
-        // $students = $this->studentRepository->getAllStudent();
-
-        // return view('students.index', ['students' => $students]);
     }
 
     public function createStudent()
     {
-        return view('students.create');
+        $faculties = $this->facultyRepository->getAllFaculties();
+
+        return view('students.create', ['faculties' => $faculties]);
     }
 
 
@@ -90,14 +106,16 @@ class StudentService
                     'phone' => $data['phone'],
                     'address' => $data['address'],
                     'gender' => $data['gender'],
-                    'birthday' => $data['birthday']
+                    'birthday' => $data['birthday'],
+                    'faculty_id' => $data['faculty_id']
                 ]);
 
                 dispatch(new \App\Jobs\SendMail($data));
             }
             DB::commit();
 
-            return redirect()->route('edu.students.list_students')->with('add_student', 'Successfully added student');
+            return redirect()->route('edu.students.list_students')->with('add_student',
+                'Successfully added student');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -107,8 +125,9 @@ class StudentService
     public function editStudent($id)
     {
         $student = $this->studentRepository->find($id);
+        $faculties = $this->facultyRepository->getAllFaculties();
 
-        return view('students.update', ['student' => $student]);
+        return view('students.update', ['student' => $student, 'faculties' => $faculties]);
     }
 
     public function updateStudent($id, UpdateStudentRequest $request)
@@ -121,7 +140,8 @@ class StudentService
 
             if ($request->hasFile('avatar')) {
                 if (
-                    isset($student->avatar) && file_exists('images/students/' . $student->avatar) && $student->avatar != ""
+                    isset($student->avatar) && file_exists('images/students/' . $student->avatar) &&
+                    $student->avatar != ""
                 ) {
                     unlink('images/students/' . $student->avatar);
                 }
@@ -154,12 +174,14 @@ class StudentService
                     'phone' => $data['phone'],
                     'address' => $data['address'],
                     'gender' => $data['gender'],
-                    'birthday' => $data['birthday']
+                    'birthday' => $data['birthday'],
+                    'faculty_id' => $data['faculty_id']
                 ]);
             }
             DB::commit();
 
-            return redirect()->route('edu.students.list_students')->with('update_student', 'Successfully update student');
+            return redirect()->route('edu.students.list_students')->with('update_student',
+                'Successfully update student');
         } catch (\Throwable $th) {
             DB::rollBack();
         }
@@ -170,7 +192,8 @@ class StudentService
         $student = $this->studentRepository->find($id);
 
         if (
-            isset($student->avatar) && file_exists('images/students/' . $student->avatar) && $student->avatar != ""
+            isset($student->avatar) && file_exists('images/students/' . $student->avatar)
+            && $student->avatar != ""
         ) {
             unlink('images/students/' . $student->avatar);
         }
@@ -182,7 +205,8 @@ class StudentService
 
         $this->studentRepository->deleteStudent($id);
 
-        return redirect()->route('edu.students.list_students')->with('delete_student', 'Successfully delete student');
+        return redirect()->route('edu.students.list_students')->with('delete_student',
+            'Successfully delete student');
     }
 
     public function profile($id)
@@ -190,5 +214,43 @@ class StudentService
         $student = $this->studentRepository->find($id);
 
         return view('students.profile', ['student' => $student]);
+    }
+
+    public function registerMultipleSubject(Request $request)
+    {
+        $subjects = $request->subject_id;
+        $student_id = Auth::user()->student->id;
+        $faculty_id = Auth::user()->student->faculty_id;
+
+        foreach ($subjects as $subject) {
+            $this->studentSubjectRepository->createStudentSubject([
+                'student_id' => $student_id,
+                'faculty_id' => $faculty_id,
+                'subject_id' => $subject
+
+            ]);
+        }
+
+        return redirect()->route('edu.subjects.list_subjects');
+    }
+
+    public function notification(Request $request, $id)
+    {
+//        dd($request->all());
+        $attr = [];
+        $student = $this->studentRepository->findStudentId($id);
+        $data = $student->subjects->pluck('id')->toArray();
+        $subjects = Subject::where('faculty_id', $student->faculty_id)->get();
+
+        foreach ($subjects as $subject) {
+            if (!in_array($subject->id, $data)) {
+                array_push($attr, $subject->name);
+            }
+        }
+        dd($attr);
+//        dd($subjects);
+//        count($student->subjects->pluck('id')->toArray())
+//        count($faculty->subjects->pluck('id')->toArray()))
+//        dd(count($student->subjects->pluck('id')->toArray()));
     }
 }

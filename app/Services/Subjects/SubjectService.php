@@ -4,9 +4,11 @@ namespace App\Services\Subjects;
 
 use App\Http\Requests\subjects\CreateSubjectRequest;
 use App\Http\Requests\Subjects\UpdateSubjectRequest;
+use App\Models\StudentSubject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Subjects\SubjectRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SubjectService
 {
@@ -19,10 +21,24 @@ class SubjectService
         $this->facultyRepository = $facultyRepository;
     }
 
-    public function listSubjects(Request $request)
+    public function listSubjects()
     {
-        $subjects = $this->subjectRepository->getAllSubject();
-        return view('subjects.index', ['subjects' => $subjects]);
+
+        if (Auth::user()->role->role == 'student') {
+            $subjects = $this->subjectRepository->getSubjectOfFaculty(Auth::user()->student->faculty_id);
+            $results = Auth::user()->student->subjects->pluck('id')->toArray();
+
+            return view('subjects.index', ['subjects' => $subjects, 'results' => $results]);
+        } else {
+            $subjects = $this->subjectRepository->getAllSubject();
+            $data = StudentSubject::all();
+            $array = [];
+            foreach ($data as $result) {
+                array_push($array, $result->subject_id);
+            }
+
+            return view('subjects.index', ['subjects' => $subjects, 'array' => $array]);
+        }
     }
 
     public function createSubject()
@@ -36,7 +52,7 @@ class SubjectService
         $subject = $request->all();
 
         $this->subjectRepository->createSubject($subject);
-        
+
         return redirect()->route('edu.subjects.list_subjects')->with('add_subject', 'Successfully add subject');
     }
 
