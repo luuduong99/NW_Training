@@ -110,7 +110,7 @@ class StudentService
                     'faculty_id' => $data['faculty_id']
                 ]);
 
-                dispatch(new \App\Jobs\SendMail($data));
+                dispatch(new \App\Jobs\SendMailRegister($data));
             }
             DB::commit();
 
@@ -234,9 +234,8 @@ class StudentService
         return redirect()->route('edu.subjects.list_subjects');
     }
 
-    public function notification(Request $request, $id)
+    public function notification($id)
     {
-//        dd($request->all());
         $attr = [];
         $student = $this->studentRepository->findStudentId($id);
         $data = $student->subjects->pluck('id')->toArray();
@@ -247,10 +246,16 @@ class StudentService
                 array_push($attr, $subject->name);
             }
         }
-        dd($attr);
-//        dd($subjects);
-//        count($student->subjects->pluck('id')->toArray())
-//        count($faculty->subjects->pluck('id')->toArray()))
-//        dd(count($student->subjects->pluck('id')->toArray()));
+
+        $mail = dispatch(new \App\Jobs\SendMailNotificationSubject($student->user->email, $attr));
+
+        if ($mail) {
+
+            return redirect()->back()->with('send_mail_success', 'successful notification sent');
+        } else {
+
+            return redirect()->back()->with('send_mail_false', 'Send notification failed');
+        }
+
     }
 }

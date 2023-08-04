@@ -97,8 +97,8 @@ class StudentController extends Controller
         return $this->studentService->registerMultipleSubject($request);
     }
 
-    public function sendNotification(Request $request, $id)
+    public function sendNotification($id)
     {
-        return $this->studentService->notification($request, $id);
+        return $this->studentService->notification($id);
     }
 }

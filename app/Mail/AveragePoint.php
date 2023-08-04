@@ -7,11 +7,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class TestMail extends Mailable
+class AveragePoint extends Mailable
 {
+
+    protected $student;
     use Queueable, SerializesModels;
 
-    public $student;
     /**
      * Create a new message instance.
      *
@@ -30,6 +31,6 @@ class TestMail extends Mailable
     public function build()
     {
         $student = $this->student;
-        return $this->view('mails.myTestMail', compact('student'));
+        return $this->view('mails.average_point', compact('student'));
     }
 }

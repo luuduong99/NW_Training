@@ -42,7 +42,8 @@
             <th>Gender</th>
             <th>Age</th>
             <th>Faculty</th>
-            <th>Number Of Subjects</th>
+            <th>Subjects</th>
+            <th>Average</th>
             <th>Created_at</th>
             <th>Updated_at</th>
             <th>Action</th>
@@ -81,6 +82,7 @@
                         {{ count($student->subjects->pluck('id')->toArray()) }}
                     </a>
                 </td>
+                <td></td>
                 <td title="{{ $student->created_at }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->created_at }}</td>
                 <td title="{{ $student->updated_at }}"
@@ -123,6 +125,8 @@
                 $sucess = "{{ Session::has('add_student') }}";
                 $update = "{{ Session::has('update_student') }}";
                 $delete = "{{ Session::has('delete_student') }}";
+                $sendMailSuccess = "{{ Session::has('send_mail_success') }}";
+                $sendMailFalse = "{{ Session::has('send_mail_false') }}";
 
                 if ($sucess) {
                     $.toast({
@@ -150,6 +154,26 @@
                         text: '<h6>{{ Session::get("delete_student") }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'error',
+                        position: 'top-right',
+                    })
+                }
+
+                if ($sendMailSuccess) {
+                    $.toast({
+                        heading: 'Send success',
+                        text: '<h6>{{ Session::get("send_mail_success") }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        position: 'top-right',
+                    })
+                }
+
+                if ($sendMailFalse) {
+                    $.toast({
+                        heading: 'Send false',
+                        text: '<h6>{{ Session::get("send_mail_false") }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'warring',
                         position: 'top-right',
                     })
                 }
