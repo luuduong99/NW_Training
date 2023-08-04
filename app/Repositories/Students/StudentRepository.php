@@ -12,6 +12,11 @@ class StudentRepository extends BaseRepository
         return Student::class;
     }
 
+    public function studnets()
+    {
+        return $this->all();
+    }
+
     public function getAllStudent()
     {
         return $this->getAll();

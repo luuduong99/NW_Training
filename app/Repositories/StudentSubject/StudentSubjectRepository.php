@@ -35,7 +35,7 @@ class StudentSubjectRepository extends BaseRepository
 
     public function showPointStudent($id)
     {
-        return StudentSubject::where('student_id', $id)->get();
+        return StudentSubject::where('student_id', $id)->paginate(5);
     }
 }
 
