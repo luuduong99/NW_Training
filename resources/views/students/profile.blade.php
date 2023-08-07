@@ -7,10 +7,10 @@
                 <div class="page-title-right">
                     <div class="row">
                         <div class="col-6">
-                            <a class="btn btn-primary" href="{{ route('edu.students.edit_student', $student->id) }}">Edit</a>
+                            <a class="btn btn-primary" href="{{ route('edu.students.edit', $student->id) }}">Edit</a>
                         </div>
                         <div class="col-6">
-                            <form action="{{ route('edu.students.delete_student', $student->id) }}" method="POST">
+                            <form action="{{ route('edu.students.delete', $student->id) }}" method="POST">
                                 @method('delete')
                                 @csrf
                                 <input class="btn btn-danger" type="submit" style="float: right;" onclick="return window.confirm('Are you sure?');" value="Delete" />

@@ -3,7 +3,7 @@
 
 <div style="width: 100%; display: flex;justify-content: space-between">
     <div class="col-sm-4" style="padding: 0">
-        <a href="{{ route('edu.faculties.create_faculty') }}" class="btn btn-success mb-2"><i class="mdi mdi-plus-circle mr-2"></i>
+        <a href="{{ route('edu.faculties.create') }}" class="btn btn-success mb-2"><i class="mdi mdi-plus-circle mr-2"></i>
             Add Faculty
         </a>
     </div>
@@ -30,7 +30,7 @@
                 <form action="{{ route('edu.faculties.delete_faculty', $faculty->id) }}" method="POST">
                     @method('delete')
                     @csrf
-                    <a class="btn btn-primary" style="width:70px;" href="{{ route('edu.faculties.edit_faculty', $faculty->id) }}">Edit</a>
+                    <a class="btn btn-primary" style="width:70px;" href="{{ route('edu.faculties.edit', $faculty->id) }}">Edit</a>
                     <input style="width:70px;" class="btn btn-danger" type="submit" onclick=" return window.confirm('Are you sure?');" value="Delete" />
                 </form>
             </td>

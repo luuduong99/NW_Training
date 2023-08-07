@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-<form action="{{ route('edu.faculties.store_faculty') }}" method="post" enctype="multipart/form-data" id="ajax-form">
+<form action="{{ route('edu.faculties.store') }}" method="post" enctype="multipart/form-data" id="ajax-form">
     @csrf
     <div class="form-group">
         <label for="name" class="col-form-label">Faculty Name</label>

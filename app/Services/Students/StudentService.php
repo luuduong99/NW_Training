@@ -4,20 +4,23 @@ namespace App\Services\Students;
 
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
+use App\Imports\PointImport;
+use App\Imports\Test;
 use App\Models\Faculty;
 use App\Models\Role;
-use App\Models\StudentSubject;
+use App\Models\Student;
 use App\Models\Subject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Students\StudentRepository;
 use App\Repositories\StudentSubject\StudentSubjectRepository;
 use App\Repositories\Subjects\SubjectRepository;
 use App\Repositories\Users\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class StudentService
@@ -40,25 +43,57 @@ class StudentService
     {
         $dateFrom = Carbon::now()->subYears($request->fromOld)->startOfDay();
         $dateTo = Carbon::now()->subYears($request->toOld)->endOfDay();
+        $pointFrom = $request->fromPoint;
+        $pointTo = $request->toPoint;
+
         $faculties = Faculty::all();
 
-        if (!$request->fromOld && $request->toOld) {
-            $students = $this->studentRepository->toOld($dateTo);
+        $students = Student::when($request->toOld, function ($query) use ($dateTo) {
+                return $query->where('birthday', '>', $dateTo);
+            })
+            ->when($request->fromOld, function ($query) use ($dateFrom) {
+                return $query->where('birthday', '<', $dateFrom);
+            })
+            ->when($pointTo, function ($query) use ($pointTo) {
+                return $query->where('average_point', '<', $pointTo);
+            })
+            ->when($pointFrom, function ($query) use ($pointFrom) {
+                return $query->where('average_point', '>', $pointFrom);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
 
             return view('students.index', ['students' => $students, 'faculties' => $faculties]);
-        } elseif ($request->fromOld && $request->toOld) {
-            $students = $this->studentRepository->fromToOld($dateFrom, $dateTo);
+//        if (!$request->fromOld && $request->toOld) {
+//            $students = $this->studentRepository->toOld($dateTo);
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        } elseif ($request->fromOld && $request->toOld) {
+//            $students = $this->studentRepository->fromToOld($dateFrom, $dateTo);
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        } elseif ($request->fromOld && !$request->toOld) {
+//            $students = $this->studentRepository->fromOld($dateFrom);
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        } else if (!$request->fromPoint && $request->pointTo) {
+//            $students = $this->studentRepository->toPoint($pointTo);
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        } elseif ($request->fromPoint && $request->pointTo) {
+//            $students = $this->studentRepository->fromToPoint($pointFrom, $pointTo);
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        } elseif ($request->fromPoint && !$request->pointTo) {
+//            $students = $this->studentRepository->fromPoint($pointFrom);
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        } else {
+//            $students = $this->studentRepository->getAllStudent();
+//
+//            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
+//        }
 
-            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
-        } elseif ($request->fromOld && !$request->toOld) {
-            $students = $this->studentRepository->fromOld($dateFrom);
-
-            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
-        } else {
-            $students = $this->studentRepository->getAllStudent();
-
-            return view('students.index', ['students' => $students, 'faculties' => $faculties]);
-        }
     }
 
     public function createStudent()
@@ -114,7 +149,7 @@ class StudentService
             }
             DB::commit();
 
-            return redirect()->route('edu.students.list_students')->with('add_student',
+            return redirect()->route('edu.students.list')->with('add_student',
                 'Successfully added student');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -180,7 +215,7 @@ class StudentService
             }
             DB::commit();
 
-            return redirect()->route('edu.students.list_students')->with('update_student',
+            return redirect()->route('edu.students.list')->with('update_student',
                 'Successfully update student');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -205,7 +240,7 @@ class StudentService
 
         $this->studentRepository->deleteStudent($id);
 
-        return redirect()->route('edu.students.list_students')->with('delete_student',
+        return redirect()->route('edu.students.list')->with('delete_student',
             'Successfully delete student');
     }
 
@@ -257,5 +292,19 @@ class StudentService
             return redirect()->back()->with('send_mail_false', 'Send notification failed');
         }
 
+    }
+
+    public function importPoints(Request $request)
+    {
+        try {
+            $file = $request->file('excel_file');
+
+            Excel::import(new PointImport(), $file);
+
+            return redirect()->route('edu.students.list');
+
+        } catch (\Throwable $e) {
+            dd($e);
+        }
     }
 }

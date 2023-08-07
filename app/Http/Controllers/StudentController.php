@@ -101,4 +101,9 @@ class StudentController extends Controller
     {
         return $this->studentService->notification($id);
     }
+
+    public function import(Request $request)
+    {
+        return $this->studentService->importPoints($request);
+    }
 }

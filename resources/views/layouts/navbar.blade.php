@@ -28,7 +28,7 @@
             </div>
         </li>
         <li class="dropdown notification-list">
-            <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" href="{{ route('edu.students.profile_student', Auth::user()->id) }}">
+            <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" href="{{ route('edu.students.profile', Auth::user()->id) }}">
                 <span class="account-user-avatar">
                     <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}" alt="user-image" class="rounded-circle">
                 </span>
