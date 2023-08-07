@@ -32,4 +32,9 @@ class PointController extends Controller
     {
         return $this->pointService->addPointStudent($request);
     }
+
+    public function multipleAddPoint(Request $request, $id)
+    {
+        $this->pointService->multipleAddPointStudent($request, $id);
+    }
 }

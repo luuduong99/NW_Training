@@ -3,7 +3,7 @@
 
     <div style="width: 100%; display: flex;">
         <div class="col-sm-2" style="padding: 0">
-            <a href="{{ route('edu.students.create_student') }}" class="btn btn-success mb-2"><i
+            <a href="{{ route('edu.students.create') }}" class="btn btn-success mb-2"><i
                     class="mdi mdi-plus-circle mr-2"></i>
                 Add User
             </a>
@@ -23,10 +23,59 @@
                     </div>
                 </div>
                 <i class="mdi mdi-magnify search-icon" type="button"
-                   onclick="location.href = '{{ url()->current() }}?fromOld=' + document.getElementById('fromOld').value + '&toOld=' + document.getElementById('toOld').value;"
+                   onclick="location.href = '{{ url()->current() }}?fromOld='
+                   + document.getElementById('fromOld').value
+                   + '&toOld=' + document.getElementById('toOld').value;"
                    style="font-size: 23px;">
                 </i>
             </div>
+        </div>
+        <div class="col-sm-2" style="padding: 0">
+
+        </div>
+        <div class="col-sm-2" style="padding: 0">
+            <div>
+                <button type="button" class="btn btn-info mb-2" data-toggle="modal" data-target="#modalCSV">
+                    Import CSV
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+    <div style="width: 100%; display: flex;">
+        <div class="col-sm-2" style="padding: 0">
+
+        </div>
+        <div class="col-sm-6">
+            <div class="form-row">
+                <div class="form-group row col-sm-6">
+                    <label for="fromOld" class="col-sm-4 col-form-label">Point From</label>
+                    <div class="col-sm-8">
+                        <input type="number" step="0.01" min="0" max="10" name="fromPoint"
+                               class="form-control" id="fromPoint">
+                    </div>
+                </div>
+                <div class="form-group row col-sm-5">
+                    <label for="toOld" class="col-sm-4 col-form-label">Point To</label>
+                    <div class="col-sm-8">
+                        <input type="number" step="0.01" min="0" max="10" name="toPoint"
+                               class="form-control" id="toPoint">
+                    </div>
+                </div>
+                <i class="mdi mdi-magnify search-icon" type="button"
+                   onclick="location.href = '{{ url()->current() }}?fromPoint='
+                   + document.getElementById('fromPoint').value
+                   + '&toPoint=' + document.getElementById('toPoint').value;"
+                   style="font-size: 23px;">
+                </i>
+            </div>
+        </div>
+        <div class="col-sm-2" style="padding: 0">
+
+        </div>
+        <div class="col-sm-2" style="padding: 0">
+
         </div>
 
 
@@ -63,7 +112,7 @@
                 </td>
                 <td><a title="{{ $student->user->name }}"
                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;"
-                       href="{{ route('edu.students.profile_student', $student->id) }}">{{ $student->user->name }}</a>
+                       href="{{ route('edu.students.profile', $student->id) }}">{{ $student->user->name }}</a>
                 </td>
                 <td title="{{ $student->user->email }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
@@ -82,17 +131,17 @@
                         {{ count($student->subjects->pluck('id')->toArray()) }}
                     </a>
                 </td>
-                <td></td>
+                <td>{{ $student->average_point  }}</td>
                 <td title="{{ $student->created_at }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->created_at }}</td>
                 <td title="{{ $student->updated_at }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
                 <td class="table-action">
-                    <form action="{{ route('edu.students.delete_student', $student->id) }}" method="POST">
+                    <form action="{{ route('edu.students.delete', $student->id) }}" method="POST">
                         @method('delete')
                         @csrf
                         <a class="btn btn-primary" style="width: 70px;"
-                           href="{{ route('edu.students.edit_student', $student->id) }}">Edit</a>
+                           href="{{ route('edu.students.edit', $student->id) }}">Edit</a>
                         <input class="btn btn-danger" style="width: 70px;" type="submit"
                                onclick="return window.confirm('Are you sure?');" value="Delete"/>
                     </form>
@@ -117,6 +166,33 @@
     </table>
     <div>
         {{ $students->links() }}
+    </div>
+
+    <div id="modalCSV" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Import CSV</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body form-horizontal">
+                    <form action="{{ route('edu.students.import')  }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="example-fileinput">File</label>
+                            <input type="file" name="excel_file">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-success" value="Import">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     @push('scripts')

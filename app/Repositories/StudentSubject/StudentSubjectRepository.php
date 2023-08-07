@@ -37,5 +37,10 @@ class StudentSubjectRepository extends BaseRepository
     {
         return StudentSubject::where('student_id', $id)->paginate(5);
     }
+
+    public function getSubjectPointNullOfStudent($id)
+    {
+        return StudentSubject::where('student_id', $id)->whereNull('point')->get();
+    }
 }
 

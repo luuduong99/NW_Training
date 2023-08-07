@@ -29,7 +29,7 @@ Route::group([
     'as' => 'edu.',
     'middleware' => ['auth.login', 'auth.admin']
 ], function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('home', [HomeController::class, 'index'])->name('home');
 
     Route::group(
         [
@@ -37,13 +37,13 @@ Route::group([
             'as' => 'faculties.',
         ],
         function () {
-            Route::get('list_faculties', [FacultyController::class, 'index'])->name('list_faculties');
-            Route::get('create_faculty', [FacultyController::class, 'create'])->name('create_faculty');
-            Route::post('store_faculty', [FacultyController::class, 'store'])->name('store_faculty');
-            Route::get('edit_faculty/{id}', [FacultyController::class, 'edit'])->name('edit_faculty');
-            Route::put('update_faculty/{id}', [FacultyController::class, 'update'])->name('update_faculty');
-            Route::delete('delete_faculty/{id}', [FacultyController::class, 'destroy'])
-                ->name('delete_faculty');
+            Route::get('list', [FacultyController::class, 'index'])->name('list');
+            Route::get('create', [FacultyController::class, 'create'])->name('create');
+            Route::post('store', [FacultyController::class, 'store'])->name('store');
+            Route::get('edit/{id}', [FacultyController::class, 'edit'])->name('edit');
+            Route::put('update/{id}', [FacultyController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [FacultyController::class, 'destroy'])
+                ->name('delete');
         }
     );
 
@@ -53,18 +53,20 @@ Route::group([
             'as' => 'students.',
         ],
         function () {
-            Route::get('list_students', [StudentController::class, 'index'])->name('list_students');
-            Route::get('create_student', [StudentController::class, 'create'])->name('create_student');
-            Route::post('store_student', [StudentController::class, 'store'])->name('store_student');
-            Route::get('edit_student/{id}', [StudentController::class, 'edit'])->name('edit_student');
-            Route::put('update_student/{id}', [StudentController::class, 'update'])->name('update_student');
-            Route::delete('delete_student/{id}', [StudentController::class, 'destroy'])
-                ->name('delete_student');
-            Route::get('profile_student/{id}', [StudentController::class, 'show'])->name('profile_student')
+            Route::get('list', [StudentController::class, 'index'])->name('list');
+            Route::get('create', [StudentController::class, 'create'])->name('create');
+            Route::post('store', [StudentController::class, 'store'])->name('store');
+            Route::get('edit/{id}', [StudentController::class, 'edit'])->name('edit');
+            Route::put('update/{id}', [StudentController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [StudentController::class, 'destroy'])
+                ->name('delete');
+            Route::get('profile/{id}', [StudentController::class, 'show'])->name('profile')
                 ->withoutMiddleware('auth.admin');
             Route::post('register_multiple_subject', [StudentController::class, 'registerMultipleSubject'])
                 ->name('register_multiple_subject')->withoutMiddleware('auth.admin');
-            Route::post('notification/{id}', [StudentController::class, 'sendNotification'])->name('notification');
+            Route::post('notification/{id}', [StudentController::class, 'sendNotification'])
+                ->name('notification');
+            Route::post('import', [StudentController::class, 'import'])->name('import');
         }
     );
 
@@ -97,6 +99,8 @@ Route::group([
             Route::post('add_point', [PointController::class, 'point'])->name('add_point');
             Route::post('add_point_student/{id}', [PointController::class, 'pointStudent'])
                 ->name('add_point_student');
+            Route::post('multiple_add_point/{id}', [PointController::class, 'multipleAddPoint'])
+                ->name('multiple_add_point');
         }
     );
 });

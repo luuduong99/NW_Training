@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    <form action="{{ route('edu.students.store_student') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('edu.students.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <label for="inputName" class="col-form-label">Student Name</label>

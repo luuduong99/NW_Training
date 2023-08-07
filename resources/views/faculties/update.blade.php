@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('content')
-<form action="{{ route('edu.faculties.delete_faculty', $faculty->id) }}" method="POST" style="margin-bottom: 10px;">
+<form action="{{ route('edu.faculties.delete', $faculty->id) }}" method="POST" style="margin-bottom: 10px;">
     @method('delete')
     @csrf
     <input class="btn btn-danger" type="submit" style="float: right;" onclick=" return window.confirm('Are you sure?');" value="Delete Department" />
 </form>
-<form action="{{ route('edu.faculties.update_faculty', $faculty->id) }}" method="post" enctype="multipart/form-data">
+<form action="{{ route('edu.faculties.update', $faculty->id) }}" method="post" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="form-group">

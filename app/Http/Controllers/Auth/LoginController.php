@@ -51,7 +51,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
             if(isset(Auth::user()->student->id))
             {
-                return redirect()->route('edu.students.profile_student', Auth::user()->student->id);
+                return redirect()->route('edu.students.profile', Auth::user()->student->id);
             }
             return redirect()->route('edu.home');
         }

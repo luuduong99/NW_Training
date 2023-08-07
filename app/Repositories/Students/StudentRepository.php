@@ -12,11 +12,6 @@ class StudentRepository extends BaseRepository
         return Student::class;
     }
 
-    public function studnets()
-    {
-        return $this->all();
-    }
-
     public function getAllStudent()
     {
         return $this->getAll();
@@ -60,6 +55,28 @@ class StudentRepository extends BaseRepository
     public function fromOld($dataFrom)
     {
         return Student::where('birthday', '<', $dataFrom)
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
+    }
+
+    public function toPoint($pointTo)
+    {
+        return Student::where('average_point', '<', $pointTo)
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
+    }
+
+    public function fromToPoint($pointTo, $pointFrom)
+    {
+        return Student::where('average_point', '<', $pointTo)
+            ->where('average_point', '>', $pointFrom)
+            ->orderBy('id', 'desc')
+            ->paginate(5)->withQueryString();
+    }
+
+    public function fromPoint($pointFrom)
+    {
+        return Student::where('average_point', '>', $pointFrom)
             ->orderBy('id', 'desc')
             ->paginate(5)->withQueryString();
     }

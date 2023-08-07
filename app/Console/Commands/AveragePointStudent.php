@@ -58,7 +58,7 @@ class AveragePointStudent extends Command
      */
     public function handle()
     {
-        $students = $this->studentRepository->studnets();
+        $students = $this->studentRepository->all();
         foreach ($students as $student) {
             $subjects = Subject::where('faculty_id', $student->faculty_id)->get();
             $points = StudentSubject::where('student_id', $student->id)->whereNotNull('point')->get();
