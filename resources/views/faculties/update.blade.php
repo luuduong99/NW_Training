@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-<form action="{{ route('edu.faculties.delete', $faculty->id) }}" method="POST" style="margin-bottom: 10px;">
+<form action="{{ route('edu.faculties.destroy', $faculty->id) }}" method="POST" style="margin-bottom: 10px;">
     @method('delete')
     @csrf
     <input class="btn btn-danger" type="submit" style="float: right;" onclick=" return window.confirm('Are you sure?');" value="Delete Department" />

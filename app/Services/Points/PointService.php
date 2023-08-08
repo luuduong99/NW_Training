@@ -7,6 +7,7 @@ use App\Repositories\Students\StudentRepository;
 use App\Repositories\StudentSubject\StudentSubjectRepository;
 use App\Repositories\Subjects\SubjectRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PointService
 {
@@ -20,29 +21,36 @@ class PointService
         $this->subjectRepository = $subjectRepository;
     }
 
-    public function listPoints()
+    public function listPointAllStudent()
     {
 
-        $data = $this->studentSubjectRepository->getAllPoint();
-        $students = $this->studentRepository->all();
+        $data = $this->studentSubjectRepository->pagination();
+        $students = $this->studentRepository->getAll();
 
         return view('points.index', ['data' => $data, 'students' => $students]);
     }
 
     public function addPoint(Request $request)
     {
-        $data = $request->all();
-        $this->studentSubjectRepository->pointStudent($data);
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $this->studentSubjectRepository->addSinglePoint($data);
+            DB::commit();
 
-        return redirect()->route('edu.points.list_point_all');
+            return redirect()->route('edu.points.list');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
     }
 
 
-    public function showPoint($id)
+    public function listPointOneStudent($id)
     {
-        $data = $this->studentSubjectRepository->showPointStudent($id);
-        $subjects = $this->studentSubjectRepository->getSubjectPointNullOfStudent($id);
-        $student = $this->studentRepository->findStudentId($id);
+        $student = $this->studentRepository->find($id);
+        $data = $student->subjects()->paginate(5);
+        $subjects = $student->subjects()->wherePivot('point', null)->get();
 
         return view('points.point', ['data' => $data, 'student' => $student, 'id' => $id,
             'subjects' => $subjects]);
@@ -50,23 +58,31 @@ class PointService
 
     public function addPointStudent(Request $request)
     {
-        $data = $request->all();
-        $this->studentSubjectRepository->pointStudent($data);
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $this->studentSubjectRepository->addSinglePoint($data);
+            DB::commit();
 
-        return redirect()->back();
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
     }
 
     public function multipleAddPointStudent(Request $request, $id)
     {
-        foreach ($request->subject as $key => $value) {
-            $result = StudentSubject::where('student_id', $id)
-                ->where('subject_id', $value)
-                ->first();
-            if ($result) {
-                $result->update([
-                    'point' => $request->point[$key],
-                ]);
-            }
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $this->studentSubjectRepository->multipleAddPointOneStudent($id, $data);
+            DB::commit();
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
         }
     }
 }

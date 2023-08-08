@@ -23,16 +23,17 @@
                     {{ $student->user->name }}
                 </td>
                 <td>
-                    @foreach ( $student->subjects as $subject)
-                        @if($result->subject_id == $subject->id && $result->student_id == $student->id)
-                            {{ $subject->name }}
-                        @endif
-                    @endforeach
+                    {{ $result->name  }}
+                    {{--                    @foreach ( $student->subjects as $subject)--}}
+                    {{--                        @if($result->subject_id == $subject->id && $result->student_id == $student->id)--}}
+                    {{--                            {{ $subject->name }}--}}
+                    {{--                        @endif--}}
+                    {{--                    @endforeach--}}
                 </td>
                 <td>{{ $result->faculty_id  }}</td>
                 <td>
-                    @if($result->point)
-                        {{ $result->point  }}
+                    @if($result->pivot->point)
+                        {{ $result->pivot->point  }}
                     @else
                         <span>Chưa có kết quả</span>
                     @endif
@@ -41,8 +42,8 @@
                     @if(!$result->point && Auth::user()->role->role == 'admin')
                         <form action="{{ route('edu.points.add_point_student', $id) }}" method="post">
                             @csrf
-                            <input type="hidden" name="student_id" value="{{$result->student_id}}">
-                            <input type="hidden" name="subject_id" value="{{$result->subject_id}}">
+                            <input type="hidden" name="student_id" value="{{$student->id}}">
+                            <input type="hidden" name="subject_id" value="{{$result->id}}">
                             <input type="hidden" name="faculty_id" value="{{$result->faculty_id}}">
                             <input type="number" step="0.01" required min="0" max="10" name="point">
                             <input type="submit" class="btn btn-primary" value="Add Point">
@@ -50,10 +51,10 @@
                     @elseif($result->point && Auth::user()->role->role == 'admin')
                         <form action="{{ route('edu.points.add_point_student', $id) }}" method="post">
                             @csrf
-                            <input type="hidden" name="student_id" value="{{$result->student_id}}">
-                            <input type="hidden" name="subject_id" value="{{$result->subject_id}}">
+                            <input type="hidden" name="student_id" value="{{$student->id}}">
+                            <input type="hidden" name="subject_id" value="{{$result->id}}">
                             <input type="hidden" name="faculty_id" value="{{$result->faculty_id}}">
-                            <input type="number" step="0.01" required min="0" max="10" name="point">
+                            <input type="hidden" step="0.01" required min="0" max="10" name="point">
                             <input type="submit" class="btn btn-primary" value="Update Point">
                         </form>
                     @endif
@@ -96,11 +97,7 @@
                                     <select id="subject" name="subject[]" class="form-control subject">
                                         <option value="">Choose Subject</option>
                                         @foreach ($subjects as $subject)
-                                            @foreach($student->subjects as $value)
-                                                @if( $value->id == $subject->subject_id)
-                                                    <option value="{{ $value->id  }}">{{ $value->name  }}</option>
-                                                @endif
-                                            @endforeach
+                                            <option value="{{ $subject->id }}">{{ $subject->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -141,15 +138,11 @@
                         <div class="form-group col-md-6">
                             <label for="subject" class="col-form-label">Subject</label>` + `
                             <select id="subject" name="subject[]" class="form-control subject">
-                            <option value="">Choose Subject</option>` +
-                    `@foreach ($subjects as $subject)` +
-                    `@foreach($student->subjects as $value)` +
-                    `@if( $value->id == $subject->subject_id)` +
-                    `<option value="{{ $value->id  }}">{{ $value->name  }}</option>` +
-                    ` @endif` +
-                    `@endforeach` +
-                    ` @endforeach`
-                    + `</select>
+                                <option value="">Choose Subject</option>` +
+                                `@foreach ($subjects as $subject)` +
+                                `<option value="{{ $subject->id }}">{{ $subject->name }}</option>` +
+                                ` @endforeach`
+                            + `</select>
                                  </div>
                             <div class="form-group col-md-4">
                                 <label for="point" class="col-form-label">Point</label>

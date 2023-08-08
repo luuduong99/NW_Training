@@ -15,12 +15,12 @@ class PointController extends Controller
    }
     public function index()
     {
-       return $this->pointService->listPoints();
+       return $this->pointService->listPointAllStudent();
     }
 
     public function studentPoints($id)
     {
-        return $this->pointService->showPoint($id);
+        return $this->pointService->listPointOneStudent($id);
     }
 
     public function point(Request $request)

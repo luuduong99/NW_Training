@@ -12,19 +12,9 @@ class StudentSubjectRepository extends BaseRepository
         return StudentSubject::class;
     }
 
-    public function getAllPoint()
+    public function addSinglePoint($attribute = [])
     {
-        return $this->getAll();
-    }
-
-    public function createStudentSubject($attributes = [])
-    {
-        return $this->create($attributes);
-    }
-
-    public function pointStudent($attribute = [])
-    {
-        $data = StudentSubject::where('student_id', $attribute['student_id'])
+        $data = $this->getAll()->where('student_id', $attribute['student_id'])
             ->where('subject_id', $attribute['subject_id'])
             ->where('faculty_id', $attribute['faculty_id'])
             ->first();
@@ -33,14 +23,18 @@ class StudentSubjectRepository extends BaseRepository
         }
     }
 
-    public function showPointStudent($id)
+    public function multipleAddPointOneStudent($id, $attribute = [])
     {
-        return StudentSubject::where('student_id', $id)->paginate(5);
-    }
-
-    public function getSubjectPointNullOfStudent($id)
-    {
-        return StudentSubject::where('student_id', $id)->whereNull('point')->get();
+        foreach ($attribute['subject'] as $key => $value) {
+            $result = $this->getAll()->where('student_id', $id)
+                ->where('subject_id', $value)
+                ->first();
+            if ($result) {
+                $result->update([
+                    'point' => $attribute['point'][$key],
+                ]);
+            }
+        }
     }
 }
 

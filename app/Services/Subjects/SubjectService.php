@@ -6,32 +6,34 @@ use App\Http\Requests\subjects\CreateSubjectRequest;
 use App\Http\Requests\Subjects\UpdateSubjectRequest;
 use App\Models\StudentSubject;
 use App\Repositories\Faculties\FacultyRepository;
+use App\Repositories\StudentSubject\StudentSubjectRepository;
 use App\Repositories\Subjects\SubjectRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SubjectService
 {
-    protected $subjectRepository;
-    protected $facultyRepository;
+    protected $subjectRepository, $facultyRepository, $studentSubjectRepository;
 
-    public function __construct(SubjectRepository $subjectRepository, FacultyRepository $facultyRepository)
+    public function __construct(SubjectRepository        $subjectRepository, FacultyRepository $facultyRepository,
+                                StudentSubjectRepository $studentSubjectRepository)
     {
         $this->subjectRepository = $subjectRepository;
         $this->facultyRepository = $facultyRepository;
+        $this->studentSubjectRepository = $studentSubjectRepository;
     }
 
     public function listSubjects()
     {
-
         if (Auth::user()->role->role == 'student') {
-            $subjects = $this->subjectRepository->getSubjectOfFaculty(Auth::user()->student->faculty_id);
+            $subjects = Auth::user()->student->faculty->subjects()->paginate(5);
             $results = Auth::user()->student->subjects->pluck('id')->toArray();
 
             return view('subjects.index', ['subjects' => $subjects, 'results' => $results]);
         } else {
-            $subjects = $this->subjectRepository->getAllSubject();
-            $data = StudentSubject::all();
+            $subjects = $this->subjectRepository->pagination();
+            $data = $this->studentSubjectRepository->getAll();
             $array = [];
             foreach ($data as $result) {
                 array_push($array, $result->subject_id);
@@ -43,40 +45,59 @@ class SubjectService
 
     public function createSubject()
     {
-        $faculties = $this->facultyRepository->all();
+        $faculties = $this->facultyRepository->getAll();
         return view('subjects.create', ['faculties' => $faculties]);
     }
 
     public function storeSubject(CreateSubjectRequest $request)
     {
-        $subject = $request->all();
+        DB::beginTransaction();
+        try {
+            $subject = $request->all();
+            $this->subjectRepository->create($subject);
+            DB::commit();
 
-        $this->subjectRepository->createSubject($subject);
-
-        return redirect()->route('edu.subjects.list_subjects')->with('add_subject', 'Successfully add subject');
+            return redirect()->route('edu.subjects.index')->with('add_subject', 'Successfully add subject');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
     }
 
     public function editSubject($id)
     {
         $subject = $this->subjectRepository->find($id);
-        $faculties = $this->facultyRepository->all();
+        $faculties = $this->facultyRepository->getAll();
 
         return view('subjects.update', ['subject' => $subject, 'faculties' => $faculties]);
     }
 
     public function updateSubject($id, UpdateSubjectRequest $request)
     {
-        $subject = $request->all();
+        DB::beginTransaction();
+        try {
+            $subject = $request->all();
+            $this->subjectRepository->update($id, $subject);
+            DB::commit();
 
-        $this->subjectRepository->updateSubject($id, $subject);
-
-        return redirect()->route('edu.subjects.list_subjects')->with('update_subject', 'Successfully update subject');
+            return redirect()->route('edu.subjects.index')->with('update_subject', 'Successfully update subject');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
     }
 
     public function deleteSubject($id)
     {
-        $this->subjectRepository->deleteSubject($id);
+        DB::beginTransaction();
+        try {
+            $this->subjectRepository->delete($id);
+            DB::commit();
 
-        return redirect()->route('edu.subjects.list_subjects')->with('delete_subject', 'Successfully delete subject');
+            return redirect()->route('edu.subjects.index')->with('delete_subject', 'Successfully delete subject');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
     }
 }

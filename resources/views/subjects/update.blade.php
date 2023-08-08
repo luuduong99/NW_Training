@@ -1,12 +1,12 @@
 @extends('layouts.master')
 @section('content')
-    <form action="{{ route('edu.subjects.delete_subject', $subject->id) }}" method="POST" style="margin-bottom: 10px;">
+    <form action="{{ route('edu.subjects.destroy', $subject->id) }}" method="POST" style="margin-bottom: 10px;">
         @method('delete')
         @csrf
         <input class="btn btn-danger" type="submit" style="float: right;"
                onclick=" return window.confirm('Are you sure?');" value="Delete Subject"/>
     </form>
-    <form action="{{ route('edu.subjects.update_subject', $subject->id) }}" method="post" enctype="multipart/form-data"
+    <form action="{{ route('edu.subjects.update', $subject->id) }}" method="post" enctype="multipart/form-data"
           id="ajax-form">
         @method('put')
         @csrf
