@@ -11,34 +11,4 @@ class FacultyRepository extends BaseRepository
     {
         return Faculty::class;
     }
-
-    public function faculties()
-    {
-        return $this->all();
-    }
-
-    public function getAllFaculties()
-    {
-        return $this->getAll();
-    }
-
-    public function findFacultyId($id)
-    {
-        return $this->find($id);
-    }
-
-    public function createFaculty($attributes = [])
-    {
-        return $this->create($attributes);
-    }
-
-    public function updateFaculty($id, $attributes = [])
-    {
-        return parent::update($id, $attributes);
-    }
-
-    public function deleteFaculty($id)
-    {
-        return parent::delete($id);
-    }
 }

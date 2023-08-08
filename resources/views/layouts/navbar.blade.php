@@ -13,17 +13,21 @@
         <li class="dropdown" style="margin-top: 22px;">
             <a class=" dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
                 @if (Session::get('website_language') == 'en')
-                <span><img src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;" alt="">English</span>
+                    <span><img src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;"
+                               alt="">English</span>
                 @else
-                <span>
+                    <span>
                     <img src="{{ asset('images/flags/vn.png') }}" style="width: 20px; margin-right: 5px;" alt="">
                     Việt Nam
                 </span>
                 @endif
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href=""><img src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;" alt="">English</a>
-                <a class="dropdown-item" href=""><img src="{{ asset('images/flags/vn.png') }}" style="width: 20px; margin-right: 5px;" alt="">Việt
+                <a class="dropdown-item" href="{{ route('edu.change_language', ['en']) }}"><img
+                        src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;"
+                        alt="">English</a>
+                <a class="dropdown-item" href="{{ route('edu.change_language', ['vi']) }}"><img
+                        src="{{ asset('images/flags/vn.png') }}" style="width: 20px; margin-right: 5px;" alt="">Việt
                     Nam</a>
             </div>
         </li>
@@ -34,7 +38,7 @@
                 </span>
                 <span>
                     <span class="account-user-name">{{ Auth::user()->name }}</span>
-                    <span class="account-position">Role: {{ Auth::user()->role->role }}</span>
+                    <span class="account-position">{{ __('Role') }}: {{ Auth::user()->role->role }}</span>
                 </span>
             </a>
 

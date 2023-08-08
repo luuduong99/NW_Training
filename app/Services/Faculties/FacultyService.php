@@ -21,7 +21,7 @@ class FacultyService
 
     public function listFaculties()
     {
-        $faculties = $this->facultyRepository->getAll();
+        $faculties = $this->facultyRepository->pagination();
 
         return view('faculties.index', ['faculties' => $faculties]);
     }
@@ -41,7 +41,7 @@ class FacultyService
 
             DB::commit();
 
-            return redirect()->route('edu.faculties.list')->with('add_faculty', 'Successfully add faculty');
+            return redirect()->route('edu.faculties.index')->with('add_faculty', 'Successfully add faculty');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -50,7 +50,7 @@ class FacultyService
 
     public function editFaculty($id)
     {
-        $faculty = $this->facultyRepository->findFacultyId($id);
+        $faculty = $this->facultyRepository->find($id);
         return view('faculties/update', ['faculty' => $faculty]);
     }
 
@@ -62,15 +62,24 @@ class FacultyService
             $this->facultyRepository->update($id, $data);
             DB::commit();
 
-            return redirect()->route('edu.faculties.list')->with('update_faculty', 'Successfully update faculty');
+            return redirect()->route('edu.faculties.index')->with('update_faculty', 'Successfully update faculty');
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th);
         }
     }
 
     public function deleteFaculty($id)
     {
-        $this->facultyRepository->deleteFaculty($id);
-        return redirect()->route('edu.faculties.list')->with('delete_faculty', 'Successfully delete faculty');
+        DB::beginTransaction();
+        try {
+            $this->facultyRepository->delete($id);
+            DB::commit();
+
+            return redirect()->route('edu.faculties.index')->with('delete_faculty', 'Successfully delete faculty');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
     }
 }

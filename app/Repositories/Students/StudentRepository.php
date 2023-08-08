@@ -12,71 +12,20 @@ class StudentRepository extends BaseRepository
         return Student::class;
     }
 
-    public function getAllStudent()
+    public function filter($attribute = [])
     {
-        return $this->getAll();
-    }
-
-    public function findStudentId($id)
-    {
-        return $this->find($id);
-    }
-
-    public function createStudent($attributes = [])
-    {
-        return $this->create($attributes);
-    }
-
-    public function updateStudent($id, $attributes = [])
-    {
-        return parent::update($id, $attributes);
-    }
-
-    public function deleteStudent($id)
-    {
-        return parent::delete($id);
-    }
-
-    public function toOld($dateTo)
-    {
-        return Student::where('birthday', '>', $dateTo)
-            ->orderBy('id', 'desc')
-            ->paginate(5)->withQueryString();
-    }
-
-    public function fromToOld($dateFrom, $dataTo)
-    {
-        return Student::where('birthday', '<', $dateFrom)
-            ->where('birthday', '>', $dataTo)
-            ->orderBy('id', 'desc')
-            ->paginate(5)->withQueryString();
-    }
-
-    public function fromOld($dataFrom)
-    {
-        return Student::where('birthday', '<', $dataFrom)
-            ->orderBy('id', 'desc')
-            ->paginate(5)->withQueryString();
-    }
-
-    public function toPoint($pointTo)
-    {
-        return Student::where('average_point', '<', $pointTo)
-            ->orderBy('id', 'desc')
-            ->paginate(5)->withQueryString();
-    }
-
-    public function fromToPoint($pointTo, $pointFrom)
-    {
-        return Student::where('average_point', '<', $pointTo)
-            ->where('average_point', '>', $pointFrom)
-            ->orderBy('id', 'desc')
-            ->paginate(5)->withQueryString();
-    }
-
-    public function fromPoint($pointFrom)
-    {
-        return Student::where('average_point', '>', $pointFrom)
+        return Student::when($attribute['toAge'], function ($query) use ($attribute) {
+            return $query->where('birthday', '>', $attribute['dateTo']);
+        })
+            ->when($attribute['fromAge'], function ($query) use ($attribute) {
+                return $query->where('birthday', '<', $attribute['dateFrom']);
+            })
+            ->when($attribute['pointTo'], function ($query) use ($attribute) {
+                return $query->where('average_point', '<', $attribute['pointTo']);
+            })
+            ->when($attribute['pointFrom'], function ($query) use ($attribute) {
+                return $query->where('average_point', '>', $attribute['pointFrom']);
+            })
             ->orderBy('id', 'desc')
             ->paginate(5)->withQueryString();
     }

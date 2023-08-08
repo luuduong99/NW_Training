@@ -22,14 +22,14 @@ abstract class BaseRepository implements RepositoryInterface
         );
     }
 
-    public function all()
+    public function getAll()
     {
         return $this->model->get();
     }
 
-    public function getAll()
+    public function pagination()
     {
-        return $this->model->paginate(5);
+        return $this->model->orderBy('id', 'desc')->paginate(5);
     }
 
     public function find($id)

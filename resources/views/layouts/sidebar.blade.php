@@ -26,42 +26,42 @@
                                 <li class="side-nav-item">
                                     <a href="{{ route('edu.home') }}" class="side-nav-link">
                                         <i class="mdi mdi-home mdi-24px"></i>
-                                        <span> Home </span>
+                                        <span> {{ __('Home') }} </span>
                                     </a>
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="{{ route('edu.students.list') }}" class="side-nav-link">
+                                    <a href="{{ route('edu.students.index') }}" class="side-nav-link">
                                         <i class="mdi mdi-account-details-outline mdi-24px"></i>
-                                        <span> Students </span>
+                                        <span> {{ __('Students') }} </span>
                                     </a>
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="{{ route('edu.faculties.list') }}" class="side-nav-link">
+                                    <a href="{{ route('edu.faculties.index') }}" class="side-nav-link">
                                         <i class="mdi mdi-clipboard-file-outline mdi-24px"></i>
-                                        <span> Faculties </span>
+                                        <span> {{ __('Faculties') }} </span>
                                     </a>
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="{{ route('edu.subjects.list_subjects') }}" class="side-nav-link">
+                                    <a href="{{ route('edu.subjects.index') }}" class="side-nav-link">
                                         <i class="mdi mdi-battery-high mdi-24px"></i>
-                                        <span> Subjects </span>
+                                        <span> {{ __('Subjects') }} </span>
                                     </a>
                                 </li>
 
                                 <li class="side-nav-item">
-                                    <a href="{{ route('edu.points.list_point_all')  }}" class="side-nav-link">
+                                    <a href="{{ route('edu.points.list')  }}" class="side-nav-link">
                                         <i class="mdi mdi-battery-high mdi-24px"></i>
-                                        <span> Points </span>
+                                        <span> {{ __('Points') }} </span>
                                     </a>
                                 </li>
 
                                 <li class="side-nav-item">
                                     <a class="side-nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" id="nav_sidebar">
                                         <i class="mdi mdi-logout mdi-24px"></i>
-                                        <span> Logout </span>
+                                        <span> {{ __('Logout') }} </span>
 
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                             @csrf

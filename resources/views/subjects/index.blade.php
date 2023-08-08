@@ -2,7 +2,7 @@
 @section('content')
     <div style="width: 100%; display: flex;justify-content: space-between">
         <div class="col-sm-4" style="padding: 0">
-            <a href="{{ route('edu.subjects.create_subject') }}" class="btn btn-success mb-2"><i
+            <a href="{{ route('edu.subjects.create') }}" class="btn btn-success mb-2"><i
                     class="mdi mdi-plus-circle mr-2"></i>
                 Add Subject
             </a>
@@ -23,61 +23,94 @@
         </tr>
         </thead>
         <tbody>
-            <form action="{{ route('edu.students.register_multiple_subject')  }}" method="post"
-                  id="multiple_submit">
-                @csrf
-                @if (Auth::user()->role->role == 'student')
-                    <input style="float: right" class="btn btn-primary" type="submit"
-                           value="Register Multiple Subject"/>
-                @endif
-                @foreach ($subjects as $subject)
-                    <tr>
-                        @if (Auth::user()->role->role == 'student')
-                            <td>
-                                <input for="multiple_submit" name="subject_id[]"
-                                       {{ in_array($subject->id, $results) ? 'checked disabled' : '' }}
-                                       type="checkbox" value="{{ $subject->id }}">
-                            </td>
-                        @endif
-                        <td><a href="">{{ $subject->name }}</a>
+        <form action="{{ route('edu.students.register_multiple_subject')  }}" method="post"
+              id="multiple_submit">
+            @csrf
+            @if (Auth::user()->role->role == 'student')
+                <input style="float: right" class="btn btn-primary" type="submit"
+                       value="Register Multiple Subject"/>
+            @endif
+            @foreach ($subjects as $subject)
+                <tr>
+                    @if (Auth::user()->role->role == 'student')
+                        <td>
+                            <input name="subject_id[]"
+                                   {{ in_array($subject->id, $results) ? 'checked disabled' : '' }}
+                                   type="checkbox" value="{{ $subject->id }}">
                         </td>
-                        <td>{{ $subject->description }}</td>
-                        <td>{{ $subject->faculty->name }}</td>
-                        <td>{{ $subject->created_at }}</td>
-                        <td>{{ $subject->updated_at }}</td>
-                        <td class="table-action">
-                            @if(Auth::user()->role->role == 'admin')
-                                <form action="{{ route('edu.subjects.delete_subject', $subject->id) }}" method="POST">
-                                    @method('delete')
-                                    @csrf
-                                    <a class="btn btn-primary" style="width:70px;"
-                                       href="{{ route('edu.subjects.edit_subject', $subject->id) }}">Edit</a>
-                                    @if(!in_array($subject->id, $array))
-                                        <input style="width:70px;" class="btn btn-danger" type="submit"
-                                               onclick=" return window.confirm('Are you sure?');" value="Delete"/>
-                                    @else
-                                        <span style="width:70px;" class="btn btn-danger"
-                                              onclick=" return window.alert('It is not possible to delete a subject ' +
-                                               'that has already been registered');" >Delete</span>
-                                    @endif
-
-                                </form>
+                    @endif
+                    <td><a href="">{{ $subject->name }}</a>
+                    </td>
+                    <td>{{ $subject->description }}</td>
+                    <td>{{ $subject->faculty->name }}</td>
+                    <td>{{ $subject->created_at }}</td>
+                    <td>{{ $subject->updated_at }}</td>
+                    <td class="table-action">
+                        @if(Auth::user()->role->role == 'admin')
+                            <a class="btn btn-primary" style="width:70px;"
+                               href="{{ route('edu.subjects.edit', $subject->id) }}">Edit</a>
+                            @if(!in_array($subject->id, $array))
+                                <button style="width:70px;" value="{{ $subject->id }}"
+                                        class="btn btn-danger delete-link">Xóa
+                                </button>
                             @else
-                                @if (in_array($subject->id, $results))
-                                    <span>Đã đăng kí</span>
-                                @else
-                                    <span>Chưa đăng kí</span>
-                                @endif
+                                <span style="width:70px;" class="btn btn-danger"
+                                      onclick=" return window.alert('It is not possible to delete a subject'
+                                      +'that has already been registered');">Delete</span>
                             @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </form>
+                        @else
+                            @if (in_array($subject->id, $results))
+                                <span>Đã đăng kí</span>
+                            @else
+                                <span>Chưa đăng kí</span>
+                            @endif
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </form>
         </tbody>
     </table>
     <div style="padding-top: 10px;">
         {{ $subjects->links() }}
     </div>
+    <script>
+        $(document).ready(function () {
+            $(".delete-link").click(function (e) {
+                e.preventDefault();
+
+                var subjectId = $(this).val();
+                var newAction = "{{ route('edu.subjects.destroy', ':id') }}";
+                var action = newAction.replace(':id', subjectId);
+                $("#delete-form").attr("action", action);
+                var confirmDelete = confirm('Are you sure?');
+
+                if (confirmDelete) {
+                    $("#delete-form").submit();
+                }
+            });
+        });
+    </script>
+    <form action="{{ route('edu.subjects.destroy', $subject->id) }}" method="POST" id="delete-form">
+        @method('delete')
+        @csrf
+    </form>
+
+    {{--    <form action="{{ route('edu.subjects.delete', $subject->id) }}" method="POST">--}}
+    {{--        @method('delete')--}}
+    {{--        @csrf--}}
+    {{--        <a class="btn btn-primary" style="width:70px;"--}}
+    {{--           href="{{ route('edu.subjects.edit', $subject->id) }}">Edit</a>--}}
+    {{--        @if(!in_array($subject->id, $array))--}}
+    {{--            <input style="width:70px;" class="btn btn-danger" type="submit"--}}
+    {{--                   onclick=" return window.confirm('Are you sure?');" value="Delete"/>--}}
+    {{--        @else--}}
+    {{--            <span style="width:70px;" class="btn btn-danger"--}}
+    {{--                  onclick=" return window.alert('It is not possible to delete a subject ' +--}}
+    {{--                                                       'that has already been registered');">Delete</span>--}}
+    {{--        @endif--}}
+
+    {{--    </form>--}}
 
 
     <script>

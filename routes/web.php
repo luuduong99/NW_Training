@@ -27,39 +27,25 @@ Route::post('signIn', [LoginController::class, 'signIn'])->name('signIn');
 Route::group([
     'prefix' => 'edu',
     'as' => 'edu.',
-    'middleware' => ['auth.login', 'auth.admin']
+    'middleware' => ['auth.login', 'auth.admin', 'locale']
 ], function () {
+    //-----------------------------------
+    //----Home----------------
     Route::get('home', [HomeController::class, 'index'])->name('home');
-
-    Route::group(
-        [
-            'prefix' => 'faculties',
-            'as' => 'faculties.',
-        ],
-        function () {
-            Route::get('list', [FacultyController::class, 'index'])->name('list');
-            Route::get('create', [FacultyController::class, 'create'])->name('create');
-            Route::post('store', [FacultyController::class, 'store'])->name('store');
-            Route::get('edit/{id}', [FacultyController::class, 'edit'])->name('edit');
-            Route::put('update/{id}', [FacultyController::class, 'update'])->name('update');
-            Route::delete('delete/{id}', [FacultyController::class, 'destroy'])
-                ->name('delete');
-        }
-    );
-
+    Route::get('change_language/{language}', [HomeController::class, 'language'])->name('change_language')
+        ->withoutMiddleware('auth.admin');
+    //-----------------------------------
+    //----Route Faculties----------------
+    Route::resource('faculties', FacultyController::class);
+    //-----------------------------------
+    //----Route Students-----------------
+    Route::resource('students', StudentController::class)->except(['']);
     Route::group(
         [
             'prefix' => 'students',
             'as' => 'students.',
         ],
         function () {
-            Route::get('list', [StudentController::class, 'index'])->name('list');
-            Route::get('create', [StudentController::class, 'create'])->name('create');
-            Route::post('store', [StudentController::class, 'store'])->name('store');
-            Route::get('edit/{id}', [StudentController::class, 'edit'])->name('edit');
-            Route::put('update/{id}', [StudentController::class, 'update'])->name('update');
-            Route::delete('delete/{id}', [StudentController::class, 'destroy'])
-                ->name('delete');
             Route::get('profile/{id}', [StudentController::class, 'show'])->name('profile')
                 ->withoutMiddleware('auth.admin');
             Route::post('register_multiple_subject', [StudentController::class, 'registerMultipleSubject'])
@@ -69,33 +55,30 @@ Route::group([
             Route::post('import', [StudentController::class, 'import'])->name('import');
         }
     );
-
+    //-----------------------------------
+    //----Route Subjects-----------------
+    Route::resource('subjects', SubjectController::class)->except(['index']);
     Route::group(
         [
             'prefix' => 'subjects',
             'as' => 'subjects.',
         ],
         function () {
-            Route::get('list_subjects', [SubjectController::class, 'index'])->name('list_subjects')
+            Route::get('', [SubjectController::class, 'index'])->name('index')
                 ->withoutMiddleware('auth.admin');
-            Route::get('create_subject', [SubjectController::class, 'create'])->name('create_subject');
-            Route::post('store_subject', [SubjectController::class, 'store'])->name('store_subject');
-            Route::get('edit_subject/{id}', [SubjectController::class, 'edit'])->name('edit_subject');
-            Route::put('update_subject/{id}', [SubjectController::class, 'update'])->name('update_subject');
-            Route::delete('delete_subject/{id}', [SubjectController::class, 'destroy'])
-                ->name('delete_subject');
         }
     );
-
+    //-----------------------------------
+    //----Route Points-----------------
     Route::group(
         [
             'prefix' => 'points',
             'as' => 'points.',
         ],
         function () {
-            Route::get('list_points_all', [PointController::class, 'index'])->name('list_point_all');
-            Route::get('list_point_students/{id}', [PointController::class, 'studentPoints'])
-                ->name('list_point_students');
+            Route::get('list', [PointController::class, 'index'])->name('list');
+            Route::get('list_point_student/{id}', [PointController::class, 'studentPoints'])
+                ->name('list_point_student');
             Route::post('add_point', [PointController::class, 'point'])->name('add_point');
             Route::post('add_point_student/{id}', [PointController::class, 'pointStudent'])
                 ->name('add_point_student');

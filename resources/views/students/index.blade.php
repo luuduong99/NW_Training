@@ -5,27 +5,27 @@
         <div class="col-sm-2" style="padding: 0">
             <a href="{{ route('edu.students.create') }}" class="btn btn-success mb-2"><i
                     class="mdi mdi-plus-circle mr-2"></i>
-                Add User
+                {{  __('Add Student') }}
             </a>
         </div>
         <div class="col-sm-6">
             <div class="form-row">
                 <div class="form-group row col-sm-6">
-                    <label for="fromOld" class="col-sm-4 col-form-label">Old From</label>
+                    <label for="fromAge" class="col-sm-4 col-form-label">{{ __('Age From') }}</label>
                     <div class="col-sm-8">
-                        <input type="number" name="fromOld" class="form-control" id="fromOld">
+                        <input type="number" name="fromAge" class="form-control" id="fromAge">
                     </div>
                 </div>
                 <div class="form-group row col-sm-5">
-                    <label for="toOld" class="col-sm-4 col-form-label">Old To</label>
+                    <label for="toAge" class="col-sm-4 col-form-label">{{ __('Age To') }}</label>
                     <div class="col-sm-8">
-                        <input type="number" name="toOld" class="form-control" id="toOld">
+                        <input type="number" name="toAge" class="form-control" id="toAge">
                     </div>
                 </div>
                 <i class="mdi mdi-magnify search-icon" type="button"
-                   onclick="location.href = '{{ url()->current() }}?fromOld='
-                   + document.getElementById('fromOld').value
-                   + '&toOld=' + document.getElementById('toOld').value;"
+                   onclick="location.href = '{{ url()->current() }}?fromAge='
+                   + document.getElementById('fromAge').value
+                   + '&toAge=' + document.getElementById('toAge').value;"
                    style="font-size: 23px;">
                 </i>
             </div>
@@ -36,7 +36,7 @@
         <div class="col-sm-2" style="padding: 0">
             <div>
                 <button type="button" class="btn btn-info mb-2" data-toggle="modal" data-target="#modalCSV">
-                    Import CSV
+                    {{  __('Import Data') }}
                 </button>
             </div>
         </div>
@@ -50,14 +50,14 @@
         <div class="col-sm-6">
             <div class="form-row">
                 <div class="form-group row col-sm-6">
-                    <label for="fromOld" class="col-sm-4 col-form-label">Point From</label>
+                    <label for="fromOld" class="col-sm-4 col-form-label">{{ __('Point From') }}</label>
                     <div class="col-sm-8">
                         <input type="number" step="0.01" min="0" max="10" name="fromPoint"
                                class="form-control" id="fromPoint">
                     </div>
                 </div>
                 <div class="form-group row col-sm-5">
-                    <label for="toOld" class="col-sm-4 col-form-label">Point To</label>
+                    <label for="toOld" class="col-sm-4 col-form-label">{{ __('Point To') }}</label>
                     <div class="col-sm-8">
                         <input type="number" step="0.01" min="0" max="10" name="toPoint"
                                class="form-control" id="toPoint">
@@ -83,19 +83,19 @@
     <table class="table table-striped table-centered mb-0">
         <thead>
         <tr>
-            <th>Avatar</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Gender</th>
-            <th>Age</th>
-            <th>Faculty</th>
-            <th>Subjects</th>
-            <th>Average</th>
-            <th>Created_at</th>
-            <th>Updated_at</th>
-            <th>Action</th>
+            <th>{{ __('Avatar') }}</th>
+            <th>{{ __('Name') }}</th>
+            <th>{{ __('Email') }}</th>
+            <th>{{ __('Phone') }}</th>
+            <th>{{ __('Address') }}</th>
+            <th>{{ __('Gender') }}</th>
+            <th>{{ __('Age') }}</th>
+            <th>{{ __('Faculty') }}</th>
+            <th>{{ __('Subjects') }}</th>
+            <th>{{ __('Average') }}</th>
+            <th>{{ __('Created_at') }}</th>
+            <th>{{ __('Updated_at') }}</th>
+            <th>{{ __('Action') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -126,7 +126,7 @@
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
                     {{ $student->faculty->name }}</td>
                 <td>
-                    <a href="{{ route('edu.points.list_point_students', $student->id)  }}"
+                    <a href="{{ route('edu.points.list_point_student', $student->id)  }}"
                        title="Preview courses and score of student">
                         {{ count($student->subjects->pluck('id')->toArray()) }}
                     </a>
@@ -137,13 +137,13 @@
                 <td title="{{ $student->updated_at }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
                 <td class="table-action">
-                    <form action="{{ route('edu.students.delete', $student->id) }}" method="POST">
+                    <form action="{{ route('edu.students.destroy', $student->id) }}" method="POST">
                         @method('delete')
                         @csrf
                         <a class="btn btn-primary" style="width: 70px;"
-                           href="{{ route('edu.students.edit', $student->id) }}">Edit</a>
+                           href="{{ route('edu.students.edit', $student->id) }}">{{ __('Edit') }}</a>
                         <input class="btn btn-danger" style="width: 70px;" type="submit"
-                               onclick="return window.confirm('Are you sure?');" value="Delete"/>
+                               onclick="return window.confirm('Are you sure?');" value="{{ __('Delete') }}"/>
                     </form>
                     @foreach($faculties as $faculty)
                         @if ($student->faculty_id == $faculty->id)
@@ -153,7 +153,7 @@
                                     @csrf
                                     <input type="hidden" name="email" value="{{ $student->user->email }}">
                                     <input type="hidden" name="user_id" value="{{ $student->user_id }}">
-                                    <input class="btn btn-warning" style="width: 70px;" type="submit" value="Send"/>
+                                    <input class="btn btn-warning" style="width: 70px;" type="submit" value="{{ __('Send') }}"/>
                                 </form>
 
                             @endif
@@ -172,23 +172,23 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Import CSV</h4>
+                    <h4 class="modal-title">{{  __('Import Data') }}</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body form-horizontal">
                     <form action="{{ route('edu.students.import')  }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="example-fileinput">File</label>
+                            <label for="example-fileinput">{{  __('File') }}</label>
                             <input type="file" name="excel_file">
                         </div>
                         <div class="form-group">
-                            <input type="submit" class="btn btn-success" value="Import">
+                            <input type="submit" class="btn btn-success" value="{{  __('Import Data') }}">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
                 </div>
             </div>
 

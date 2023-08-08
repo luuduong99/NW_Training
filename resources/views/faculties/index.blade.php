@@ -27,7 +27,7 @@
             <td>{{ $faculty->created_at }}</td>
             <td>{{ $faculty->updated_at }}</td>
             <td class="table-action">
-                <form action="{{ route('edu.faculties.delete_faculty', $faculty->id) }}" method="POST">
+                <form action="{{ route('edu.faculties.destroy', $faculty->id) }}" method="POST">
                     @method('delete')
                     @csrf
                     <a class="btn btn-primary" style="width:70px;" href="{{ route('edu.faculties.edit', $faculty->id) }}">Edit</a>

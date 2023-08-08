@@ -87,9 +87,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, Request $request)
+    public function destroy($id)
     {
-        return $this->studentService->deleteStudent($id, $request);
+        return $this->studentService->deleteStudent($id);
     }
 
     public function registerMultipleSubject(Request $request)
@@ -99,7 +99,7 @@ class StudentController extends Controller
 
     public function sendNotification($id)
     {
-        return $this->studentService->notification($id);
+        return $this->studentService->sendNoitice($id);
     }
 
     public function import(Request $request)
