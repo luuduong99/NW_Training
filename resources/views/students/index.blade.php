@@ -72,13 +72,9 @@
             </div>
         </div>
         <div class="col-sm-2" style="padding: 0">
-
         </div>
         <div class="col-sm-2" style="padding: 0">
-
         </div>
-
-
     </div>
     <table class="table table-striped table-centered mb-0">
         <thead>
@@ -124,7 +120,7 @@
                 <td>{{ $student->age }}</td>
                 <td title="{{ $student->faculty->name }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
-                    {{ $student->faculty->name }}</td>
+                    {{ __($student->faculty->name) }}</td>
                 <td>
                     <a href="{{ route('edu.points.list_point_student', $student->id)  }}"
                        title="Preview courses and score of student">
@@ -137,28 +133,14 @@
                 <td title="{{ $student->updated_at }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
                 <td class="table-action">
-                    <form action="{{ route('edu.students.destroy', $student->id) }}" method="POST">
-                        @method('delete')
-                        @csrf
-                        <a class="btn btn-primary" style="width: 70px;"
-                           href="{{ route('edu.students.edit', $student->id) }}">{{ __('Edit') }}</a>
-                        <input class="btn btn-danger" style="width: 70px;" type="submit"
-                               onclick="return window.confirm('Are you sure?');" value="{{ __('Delete') }}"/>
-                    </form>
-                    @foreach($faculties as $faculty)
-                        @if ($student->faculty_id == $faculty->id)
-                            @if(count($student->subjects->pluck('id')->toArray())
-                                < count($faculty->subjects->pluck('id')->toArray()))
-                                <form action="{{ route('edu.students.notification', $student->id)  }}" method="post">
-                                    @csrf
-                                    <input type="hidden" name="email" value="{{ $student->user->email }}">
-                                    <input type="hidden" name="user_id" value="{{ $student->user_id }}">
-                                    <input class="btn btn-warning" style="width: 70px;" type="submit" value="{{ __('Send') }}"/>
-                                </form>
-
-                            @endif
-                        @endif
-                    @endforeach
+                    <button href="" class="btn btn-warning send-mail" value="{{ $student->id }}">
+                        <i class="mdi mdi-email-send"></i>
+                    </button>
+                    <a href="{{ route('edu.students.edit', $student->id) }}" class="btn btn-primary">
+                        <i class="mdi mdi-square-edit-outline"></i></a>
+                    <button class="btn btn-danger delete-student" value="{{ $student->id }}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
                 </td>
             </tr>
         @endforeach
@@ -176,16 +158,16 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body form-horizontal">
-                    <form action="{{ route('edu.students.import')  }}" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="example-fileinput">{{  __('File') }}</label>
-                            <input type="file" name="excel_file">
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-success" value="{{  __('Import Data') }}">
-                        </div>
-                    </form>
+                    {{ Form::open(['route' => 'edu.students.import', 'method' => 'post']) }}
+                    <div class="form-group">
+                        {{ Form::label('example-file-input', __('File')) }}
+                        {{ Form::file('excel_file', ['id' => 'example-file-input'])  }}
+                    </div>
+                    <div class="form-group">
+                        {{ Form::submit(__('Import Data'), ['class' => 'btn btn-success']) }}
+                    </div>
+                    {{ Form::close()}}
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
@@ -195,7 +177,43 @@
         </div>
     </div>
 
+    {!! Form::open(['route' => ['edu.students.notification', $student->id], 'method' => 'post', 'id' => 'send-form']) !!}
+    {!! Form::hidden('email', $student->user->email) !!}
+    {!! Form::hidden('user_id', $student->user_id) !!}
+    {!! Form::close() !!}
+
+    {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
+    {!! Form::close() !!}
+
     @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".send-mail").click(function (e) {
+                    e.preventDefault();
+
+                    var studentId = $(this).val();
+                    var newAction = "{{ route('edu.students.notification', ':id')  }}";
+                    var action = newAction.replace(':id', studentId);
+                    $("#send-form").attr("action", action);
+                    $("#send-form").submit();
+                });
+            });
+
+            $(".delete-student").click(function (e) {
+                e.preventDefault();
+
+                var studentId = $(this).val();
+                var newAction = "{{ route('edu.students.destroy', ':id') }}";
+                var action = newAction.replace(':id', studentId);
+                $("#delete-form").attr("action", action);
+                var confirmDelete = confirm('Are you sure?');
+
+                if (confirmDelete) {
+                    $("#delete-form").submit();
+                }
+            });
+        </script>
+
         <script>
             $(document).ready(function () {
                 $sucess = "{{ Session::has('add_student') }}";

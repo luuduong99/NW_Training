@@ -1,18 +1,19 @@
 @extends('layouts.master')
 @section('content')
-<form action="{{ route('edu.faculties.store') }}" method="post" enctype="multipart/form-data" id="ajax-form">
-    @csrf
+    {!! Form::open(['route' => 'edu.faculties.store', 'method' => 'POST',
+        'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
     <div class="form-group">
-        <label for="name" class="col-form-label">Faculty Name</label>
-        <input type="text" value="{{ old('name') ?  old('name') : ''}}" name="name" class="form-control" id="name">
+        {!! Form::label('name', __('Faculty Name'), ['class' => 'col-form-label']) !!}
+        {!! Form::text('name', old('name') ?: '', ['class' => 'form-control', 'id' => 'name']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>
 
     <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" name="description">{{ old('description') ?  old('description') : ''}}</textarea>
+        {{ Form::label('description', __('Description'), ['class' => 'col-form-label']) }}
+        {{ Form::textarea('description', old('description') ? old('description') : '',
+        ['class' => 'form-control', 'id' => 'description']) }}
         <script>
             CKEDITOR.replace('description');
         </script>
@@ -21,7 +22,7 @@
         @enderror
     </div>
 
-    <button class="btn btn-primary" id="btn-submit" type="submit">Add Faculty</button>
-</form>
+    {!! Form::button(__('Add Faculty'), ['class' => 'btn btn-primary', 'id' => 'btn-submit', 'type' => 'submit']) !!}
 
+    {!! Form::close() !!}
 @endsection

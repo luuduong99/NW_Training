@@ -5,10 +5,6 @@ namespace App\Services\Students;
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Imports\PointImport;
-use App\Imports\Test;
-use App\Models\Faculty;
-use App\Models\Role;
-use App\Models\Student;
 use App\Models\Subject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Roles\RoleRepository;
@@ -128,14 +124,12 @@ class StudentService
         return view('students.update', ['student' => $student, 'faculties' => $faculties]);
     }
 
-    public function updateStudent($id, UpdateStudentRequest $request)
+    public function updateStudent(UpdateStudentRequest $request, $id)
     {
         DB::beginTransaction();
         try {
             $data = $request->all();
-
             $student = $this->studentRepository->find($id);
-
             if ($request->hasFile('avatar')) {
                 if (
                     isset($student->avatar) && file_exists('images/students/' . $student->avatar) &&

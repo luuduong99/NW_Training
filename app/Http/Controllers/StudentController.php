@@ -78,7 +78,7 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, $id)
     {
-        return $this->studentService->updateStudent($id, $request);
+        return $this->studentService->updateStudent($request, $id);
     }
 
     /**

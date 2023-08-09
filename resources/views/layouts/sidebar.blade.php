@@ -1,7 +1,7 @@
 <div class="left-side-menu mm-show">
 
     <!-- LOGO -->
-    <a href="index.html" class="logo text-center logo-light">
+    <a href="{{ route('edu.home') }}" class="logo text-center logo-light">
         <span class="logo-lg">
             <img src="{{ asset('images/logo.png') }}" alt="" height="16">
         </span>

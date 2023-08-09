@@ -39,7 +39,7 @@ Route::group([
     Route::resource('faculties', FacultyController::class);
     //-----------------------------------
     //----Route Students-----------------
-    Route::resource('students', StudentController::class)->except(['']);
+    Route::resource('students', StudentController::class);
     Route::group(
         [
             'prefix' => 'students',
