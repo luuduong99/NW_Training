@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Points')
+@section('subTitle', 'List point of student')
 @section('content')
     <div style="width: 100%; display: flex;">
         <div class="col-sm-2" style="padding: 0">
@@ -163,6 +165,31 @@
                 $('.add').removeAttr('disabled');
             });
 
+        });
+
+        $(document).ready(function () {
+            var successPoint = "{{ Session::has('add_point_success') }}";
+            var falsePoint = "{{ Session::has('add_point_false') }}";
+
+            if (successPoint) {
+                $.toast({
+                    heading: 'Add point',
+                    text: '<h6>{{ Session::get("add_point_success") }}</h6>',
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    position: 'top-right',
+                })
+            }
+
+            if (falsePoint) {
+                $.toast({
+                    heading: 'Add point',
+                    text: '<h6>{{ Session::get("add_point_false") }}</h6>',
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    position: 'top-right',
+                })
+            }
         });
     </script>
 @endsection

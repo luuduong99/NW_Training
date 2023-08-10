@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Faculties')
+@section('subTitle', 'Create Faculty')
 @section('content')
     {!! Form::open(['route' => 'edu.faculties.store', 'method' => 'POST',
         'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}

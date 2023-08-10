@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Faculties')
+@section('subTitle', 'Edit Faculty')
 @section('content')
 
     {!! Form::open(['route' => ['edu.faculties.destroy', $faculty->id], 'method' => 'delete',

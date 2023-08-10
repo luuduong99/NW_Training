@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Students')
+@section('subTitle', 'Create Student')
 @section('content')
     {!! Form::open(['route' => 'edu.students.store', 'method' => 'post', 'enctype' => 'multipart/form-data']) !!}
     <div class="form-group">

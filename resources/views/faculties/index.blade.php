@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Faculties')
+@section('subTitle', 'List')
 @section('content')
 
     <div style="width: 100%; display: flex;justify-content: space-between">
@@ -66,11 +68,11 @@
 
         <script>
             $(document).ready(function () {
-                $sucess = "{{ Session::has('add_faculty') }}";
-                $update = "{{ Session::has('update_faculty') }}";
-                $delete = "{{ Session::has('delete_faculty') }}";
+                var successFaculty = "{{ Session::has('add_faculty') }}";
+                var updateFaculty  = "{{ Session::has('update_faculty') }}";
+                var deleteFaculty  = "{{ Session::has('delete_faculty') }}";
 
-                if ($sucess) {
+                if (successFaculty) {
                     $.toast({
                         heading: 'Add faculty',
                         text: '<h6>{{ Session::get("add_faculty") }}</h6>',
@@ -80,7 +82,7 @@
                     })
                 }
 
-                if ($update) {
+                if (updateFaculty) {
                     $.toast({
                         heading: 'Update faculty',
                         text: '<h6>{{ Session::get("update_faculty") }}</h6>',
@@ -90,7 +92,7 @@
                     })
                 }
 
-                if ($delete) {
+                if (deleteFaculty) {
                     $.toast({
                         heading: 'Delete faculty',
                         text: '<h6>{{ Session::get("delete_faculty") }}</h6>',

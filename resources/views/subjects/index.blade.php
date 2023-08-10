@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Subjects')
+@section('subTitle', 'List')
 @section('content')
     <div style="width: 100%; display: flex;justify-content: space-between">
         <div class="col-sm-4" style="padding: 0">
@@ -100,11 +102,11 @@
 
     <script>
         $(document).ready(function () {
-            $success = "{{ Session::has('add_subject') }}";
-            $update = "{{ Session::has('update_subject') }}";
-            $delete = "{{ Session::has('delete_subject') }}";
+            var successSubject = "{{ Session::has('add_subject') }}";
+            var updateSubject = "{{ Session::has('update_subject') }}";
+            var deleteSubject = "{{ Session::has('delete_subject') }}";
 
-            if ($success) {
+            if (successSubject) {
                 $.toast({
                     heading: 'Add subject',
                     text: '<h6>{{ Session::get("add_subject") }}</h6>',
@@ -114,7 +116,7 @@
                 })
             }
 
-            if ($update) {
+            if (updateSubject) {
                 $.toast({
                     heading: 'Update subject',
                     text: '<h6>{{ Session::get("update_subject") }}</h6>',
@@ -124,7 +126,7 @@
                 })
             }
 
-            if ($delete) {
+            if (deleteSubject) {
                 $.toast({
                     heading: 'Delete subject',
                     text: '<h6>{{ Session::get("delete_subject") }}</h6>',

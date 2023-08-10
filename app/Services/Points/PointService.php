@@ -38,10 +38,10 @@ class PointService
             $this->studentSubjectRepository->addSinglePoint($data);
             DB::commit();
 
-            return redirect()->route('edu.points.list');
+            return redirect()->route('edu.points.list')->with('add_point_success', 'More success points');
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
+            return redirect()->back()->with('add_point_false', 'Add failed points');
         }
     }
 
@@ -64,10 +64,10 @@ class PointService
             $this->studentSubjectRepository->addSinglePoint($data);
             DB::commit();
 
-            return redirect()->back();
+            return redirect()->back()->with('add_point_success', 'More success points');
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
+            return redirect()->back()->with('add_point_false', 'Add failed points');
         }
     }
 
@@ -79,10 +79,10 @@ class PointService
             $this->studentSubjectRepository->multipleAddPointOneStudent($id, $data);
             DB::commit();
 
-            return redirect()->back();
+            return redirect()->back()->with('add_point_success', 'More success points');
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
+            return redirect()->back()->with('add_point_false', 'Add failed points');
         }
     }
 }

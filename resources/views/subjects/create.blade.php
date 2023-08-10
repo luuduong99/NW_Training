@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Subjects')
+@section('subTitle', 'Create Subject')
 @section('content')
     {!! Form::open(['route' => 'edu.subjects.store', 'method' => 'POST', 'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
     @csrf

@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Points')
+@section('subTitle', 'List')
 @section('content')
     <table class="table table-striped table-centered mb-0">
         <thead>
@@ -58,4 +60,31 @@
     <div>
         {{ $data->links() }}
     </div>
+
+    <script>
+        $(document).ready(function () {
+            var successPoint = "{{ Session::has('add_point_success') }}";
+            var falsePoint = "{{ Session::has('add_point_false') }}";
+
+            if (successPoint) {
+                $.toast({
+                    heading: 'Add point',
+                    text: '<h6>{{ Session::get("add_point_success") }}</h6>',
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    position: 'top-right',
+                })
+            }
+
+            if (falsePoint) {
+                $.toast({
+                    heading: 'Add point',
+                    text: '<h6>{{ Session::get("add_point_false") }}</h6>',
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    position: 'top-right',
+                })
+            }
+        });
+    </script>
 @endsection

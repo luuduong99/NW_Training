@@ -22,10 +22,10 @@
                 @endif
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="{{ route('edu.change_language', ['en']) }}"><img
+                <a class="dropdown-item" href="{{ route('change_language', ['en']) }}"><img
                         src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;"
                         alt="">English</a>
-                <a class="dropdown-item" href="{{ route('edu.change_language', ['vi']) }}"><img
+                <a class="dropdown-item" href="{{ route('change_language', ['vi']) }}"><img
                         src="{{ asset('images/flags/vn.png') }}" style="width: 20px; margin-right: 5px;" alt="">Việt
                     Nam</a>
             </div>
@@ -44,6 +44,5 @@
             </a>
 
         </li>
-
     </ul>
 </div>

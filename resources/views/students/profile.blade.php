@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Students')
+@section('subTitle', 'Profile Student')
 @section('content')
 <div class="container-fluid">
     <div class="row">
