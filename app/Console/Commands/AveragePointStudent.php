@@ -58,24 +58,25 @@ class AveragePointStudent extends Command
      */
     public function handle()
     {
-        $students = $this->studentRepository->all();
+        $students = $this->studentRepository->getAll();
         foreach ($students as $student) {
-            $subjects = Subject::where('faculty_id', $student->faculty_id)->get();
-            $points = StudentSubject::where('student_id', $student->id)->whereNotNull('point')->get();
+            $subjects = $student->faculty->subjects()->get();
+            $points = $student->subjects()->wherePivot('point', '!=', null)->get();
+
             if (count($points) > 0 && count($student->subjects->pluck('id')) == count($subjects)
                 && count($points) == count($subjects) && count($subjects) > 0) {
                 $total = 0;
                 foreach ($points as $point) {
-                    $total += $point->point;
+                    $total += $point->pivot->point;
                 }
                 $average = $total / count($subjects);
 
-                $this->studentRepository->updateStudent($student->id, [
+                $this->studentRepository->update($student->id, [
                     'average_point' => $average,
                 ]);
 
                 if($student->average_point < 5) {
-                    $this->studentRepository->updateStudent($student->id, [
+                    $this->studentRepository->update($student->id, [
                         'status' => 'disable',
                     ]);
                     Mail::to($student->user->email)->send(new AveragePoint($student));

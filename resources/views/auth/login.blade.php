@@ -15,7 +15,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
+    </script>
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/app-creative.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
     <link href="{{ asset('css/app-creative-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style" />
@@ -26,10 +33,31 @@
 
     <div class="auth-fluid">
         <!--Auth fluid left content -->
+
         <div class="auth-fluid-form-box">
+            <ul class="list-unstyled topbar-right-menu float-right mb-0">
+                <li class="dropdown" style="margin-top: 22px;">
+                    <a class=" dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                        @if (Session::get('website_language') == 'vi')
+                            <span><img src="{{ asset('images/flags/vn.png') }}" style="width: 20px; margin-right: 5px;" alt="">
+                        Việt Nam</span>
+                        @else
+                            <span><img src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;" alt="">
+                        English</span>
+                        @endif
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ route('change_language', ['en']) }}"><img
+                                src="{{ asset('images/flags/us.jpg') }}" style="width: 20px; margin-right: 5px;"
+                                alt="">English</a>
+                        <a class="dropdown-item" href="{{ route('change_language', ['vi']) }}"><img
+                                src="{{ asset('images/flags/vn.png') }}" style="width: 20px; margin-right: 5px;" alt="">Việt
+                            Nam</a>
+                    </div>
+                </li>
+            </ul>
             <div class="align-items-center d-flex h-100">
                 <div class="card-body">
-
                     <!-- Logo -->
                     <div class="auth-brand text-center text-lg-left">
                         <a href="index.html" class="logo-dark">
@@ -40,7 +68,7 @@
                         </a>
                     </div>
                     <!-- title-->
-                    <h4 class="mt-0">Sign In</h4>
+                    <h4 class="mt-0">{{ __('Sign In') }}</h4>
                     <p class="text-muted mb-4">Enter your email address and password to access account.</p>
                     <!-- form -->
                     <form action="{{ route('signIn') }}" method="post">

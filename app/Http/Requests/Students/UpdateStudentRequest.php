@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Students;
 
+use App\Rules\CheckPhoneStudent;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,8 +27,7 @@ class UpdateStudentRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:1', 'max:50'],
-            // 'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
-            'phone' => [Rule::unique('students', 'phone')->ignore($this->id), 'regex:"^[0-9\-\+]{9,15}$"'],
+            'phone' => ['required'],
             'birthday' => ['required']
         ];
     }

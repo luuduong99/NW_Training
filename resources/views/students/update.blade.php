@@ -1,33 +1,36 @@
 @extends('layouts.master')
+@section('title', 'Students')
+@section('subTitle', 'Edit Student')
 @section('content')
-<form action="{{ route('edu.students.destroy', $student->id) }}" method="POST" style="margin-bottom: 10px;">
-    @method('delete')
-    @csrf
-    <input class="btn btn-danger" type="submit" style="float: right;" onclick=" return window.confirm('Are you sure?');" value="Delete Student" />
-</form>
-<form action="{{ route('edu.students.update', $student->id) }}" method="post" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+    {!! Form::open(['route' => ['edu.students.destroy', $student->id],
+        'method' => 'delete', 'style' => 'margin-bottom: 10px;']) !!}
+    {!! Form::submit('Delete Student', ['class' => 'btn btn-danger',
+        'style' => 'float: right;', 'onclick' => 'return window.confirm("Are you sure?");']) !!}
+    {!! Form::close() !!}
+
+    {!! Form::model($student, ['route' => ['edu.students.update', $student->id],
+        'method' => 'put', 'enctype' => 'multipart/form-data']) !!}
     <div class="form-group">
-        <label for="inputName" class="col-form-label">Student Name</label>
-        <input type="text" name="name" value="{{ old('name') ? old('name') : $student->user->name }}" class="form-control" id="inputName">
+        {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
+        {!! Form::text('name', old('name', $student->user->name), ['class' => 'form-control', 'id' => 'inputName']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>
+
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="inputEmail4" class="col-form-label">Email</label>
-            <input type="email" name="email" value="{{ old('email') ? old('email') : $student->user->email }}" class="form-control" id="inputEmail4" readonly>
+            {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
+            {!! Form::email('email', old('email', $student->user->email), ['class' => 'form-control', 'id' => 'inputEmail4', 'readonly']) !!}
             @error('email')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
-
     </div>
+
     <div class="form-group">
-        <label for="inputAddress" class="col-form-label">Address</label>
-        <input type="text" value="{{ old('address') ? old('address') : $student->address }}" class="form-control" name="address" id="inputAddress">
+        {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
+        {!! Form::text('address', old('address', $student->address), ['class' => 'form-control', 'id' => 'inputAddress']) !!}
         @error('address')
         <span class="text-danger">{{ $message }}</span>
         @enderror
@@ -35,56 +38,47 @@
 
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="inputPhone" class="col-form-label">Phone</label>
-            <input type="text" name="phone" value="{{ old('phone') ? old('phone') : $student->phone }}" class="form-control" id="inputPhone">
+            {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
+            {!! Form::text('phone', old('phone', $student->phone), ['class' => 'form-control', 'id' => 'inputPhone']) !!}
             @error('phone')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
         <div class="form-group col-md-4">
-            <label for="inputGender" class="col-form-label">Gender</label>
-            <select id="inputGender" name="gender" class="form-control">
-                <option {{ $student->gender == '0' ? 'selected' : ''  }} value="0">Other</option>
-                <option {{ $student->gender == '1' ? 'selected' : ''  }} value="1">Male</option>
-                <option {{ $student->gender == '2' ? 'selected' : ''  }} value="2">Female</option>
-            </select>
+            {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
+            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')], $student->gender, ['class' => 'form-control', 'id' => 'inputGender']) !!}
             @error('gender')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
         <div class="form-group col-md-4">
-            <label for="inputDate" class="col-form-label">Birthday</label>
-            <input type="date" name="birthday" value="{{ Carbon\Carbon::parse($student->birthday)->format('Y-m-d') }}" class="form-control" id="inputDate">
+            {!! Form::label('birthday', __('Birthday'), ['class' => 'col-form-label']) !!}
+            {!! Form::date('birthday', Carbon\Carbon::parse($student->birthday)->format('Y-m-d'), ['class' => 'form-control', 'id' => 'inputDate']) !!}
             @error('birthday')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
     </div>
+
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="role" class="col-form-label">Role</label>
-            <select id="role" name="role" class="form-control">
-                <option value="student">Student</option>
-                <option value="admin">Admin</option>
-            </select>
+            {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
+            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')], $student->user->role, ['class' => 'form-control', 'id' => 'role']) !!}
         </div>
 
         <div class="form-group col-md-4">
-            <label for="faculty" class="col-form-label">Faculty</label>
-            <select id="faculty" name="faculty_id" class="form-control">
-                @foreach($faculties as $faculty)
-                    <option {{ $student->faculty_id == $faculty->id ? 'selected' : ''  }} value="{{ $faculty->id }}">{{ $faculty->name  }}</option>
-                @endforeach
-            </select>
+            {!! Form::label('faculty', __('Faculty'), ['class' => 'col-form-label']) !!}
+            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), $student->faculty_id, ['class' => 'form-control', 'id' => 'faculty']) !!}
         </div>
     </div>
 
     <div class="form-group">
-        <label for="example-fileinput">Choose Avatar</label>
-        <input type="hidden" name="old_avatar" value="{{ isset($student->avatar) ? $student->avatar : '' }}">
-        <input type="file" name="avatar" accept=".jpg, .png, .jpeg" id=" example-fileinput" class="form-control-file">
+        {!! Form::label('avatar', __('Choose Avatar')) !!}
+        {!! Form::hidden('old_avatar', isset($student->avatar) ? $student->avatar : '') !!}
+        {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg', 'class' => 'form-control-file', 'id' => 'example-fileinput']) !!}
     </div>
 
-    <button class="btn btn-primary" type="submit">Update Student</button>
-</form>
+    <button class="btn btn-primary" type="submit">{{ __('Update Student') }}</button>
+
+    {!! Form::close() !!}
 @endsection

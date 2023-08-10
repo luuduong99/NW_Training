@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Students')
+@section('subTitle', 'Edit Student')
 @section('content')
 
     <div style="width: 100%; display: flex;">
@@ -10,7 +12,7 @@
         </div>
         <div class="col-sm-6">
             <div class="form-row">
-                <div class="form-group row col-sm-6">
+                <div class="form-group row col-sm-5">
                     <label for="fromAge" class="col-sm-4 col-form-label">{{ __('Age From') }}</label>
                     <div class="col-sm-8">
                         <input type="number" name="fromAge" class="form-control" id="fromAge">
@@ -40,12 +42,12 @@
                 </button>
             </div>
         </div>
-
-
     </div>
     <div style="width: 100%; display: flex;">
         <div class="col-sm-2" style="padding: 0">
-
+            <button type="button" class="btn btn-success mb-2" data-toggle="modal" data-target="#modal-student">
+                <i class="mdi mdi-plus-circle mr-2"></i> {{  __('Fast Add Student') }}
+            </button>
         </div>
         <div class="col-sm-6">
             <div class="form-row">
@@ -72,13 +74,9 @@
             </div>
         </div>
         <div class="col-sm-2" style="padding: 0">
-
         </div>
         <div class="col-sm-2" style="padding: 0">
-
         </div>
-
-
     </div>
     <table class="table table-striped table-centered mb-0">
         <thead>
@@ -124,7 +122,7 @@
                 <td>{{ $student->age }}</td>
                 <td title="{{ $student->faculty->name }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
-                    {{ $student->faculty->name }}</td>
+                    {{ __($student->faculty->name) }}</td>
                 <td>
                     <a href="{{ route('edu.points.list_point_student', $student->id)  }}"
                        title="Preview courses and score of student">
@@ -137,28 +135,16 @@
                 <td title="{{ $student->updated_at }}"
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
                 <td class="table-action">
-                    <form action="{{ route('edu.students.destroy', $student->id) }}" method="POST">
-                        @method('delete')
-                        @csrf
-                        <a class="btn btn-primary" style="width: 70px;"
-                           href="{{ route('edu.students.edit', $student->id) }}">{{ __('Edit') }}</a>
-                        <input class="btn btn-danger" style="width: 70px;" type="submit"
-                               onclick="return window.confirm('Are you sure?');" value="{{ __('Delete') }}"/>
-                    </form>
-                    @foreach($faculties as $faculty)
-                        @if ($student->faculty_id == $faculty->id)
-                            @if(count($student->subjects->pluck('id')->toArray())
-                                < count($faculty->subjects->pluck('id')->toArray()))
-                                <form action="{{ route('edu.students.notification', $student->id)  }}" method="post">
-                                    @csrf
-                                    <input type="hidden" name="email" value="{{ $student->user->email }}">
-                                    <input type="hidden" name="user_id" value="{{ $student->user_id }}">
-                                    <input class="btn btn-warning" style="width: 70px;" type="submit" value="{{ __('Send') }}"/>
-                                </form>
-
-                            @endif
-                        @endif
-                    @endforeach
+                    @if (count($student->subjects) < count($student->faculty->subjects))
+                        <button href="" class="btn btn-warning send-mail" value="{{ $student->id }}">
+                            <i class="mdi mdi-email-send"></i>
+                        </button>
+                    @endif
+                    <a href="{{ route('edu.students.edit', $student->id) }}" class="btn btn-primary">
+                        <i class="mdi mdi-square-edit-outline"></i></a>
+                    <button class="btn btn-danger delete-student" value="{{ $student->id }}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
                 </td>
             </tr>
         @endforeach
@@ -168,6 +154,7 @@
         {{ $students->links() }}
     </div>
 
+    {{--    Form import students--}}
     <div id="modalCSV" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -176,16 +163,16 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body form-horizontal">
-                    <form action="{{ route('edu.students.import')  }}" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="example-fileinput">{{  __('File') }}</label>
-                            <input type="file" name="excel_file">
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-success" value="{{  __('Import Data') }}">
-                        </div>
-                    </form>
+                    {{ Form::open(['route' => 'edu.students.import', 'method' => 'post']) }}
+                    <div class="form-group">
+                        {{ Form::label('example-file-input', __('File')) }}
+                        {{ Form::file('excel_file', ['id' => 'example-file-input'])  }}
+                    </div>
+                    <div class="form-group">
+                        {{ Form::submit(__('Import Data'), ['class' => 'btn btn-success']) }}
+                    </div>
+                    {{ Form::close()}}
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
@@ -195,16 +182,208 @@
         </div>
     </div>
 
+    {{--    Popup fast add student--}}
+    <div id="modal-student" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{  __('Add Student') }}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body form-horizontal">
+                    {!! Form::open(['route' => 'edu.students.store', 'method' => 'post',
+                                    'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
+                    <div class="form-group">
+                        {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
+                        {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'inputName']) !!}
+                        <span class="text-danger error-text name_error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
+                        {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'inputEmail4']) !!}
+                        <span class="text-danger error-text email_error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
+                        {!! Form::text('address', null, ['class' => 'form-control', 'id' => 'inputAddress']) !!}
+                        <span class="text-danger error-text address_error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
+                            {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'inputPhone']) !!}
+                            <span class="text-danger error-text phone_error"></span>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
+                            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')],
+                            null, ['class' => 'form-control', 'id' => 'inputGender']) !!}
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            {!! Form::label('birthday', __('BirthDay'), ['class' => 'col-form-label']) !!}
+                            {!! Form::date('birthday', null, ['class' => 'form-control', 'id' => 'inputDate']) !!}
+                            <span class="text-danger error-text birthday_error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
+                            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')],
+                            null, ['class' => 'form-control', 'id' => 'role']) !!}
+                        </div>
+
+                        <div class="form-group col-md-8">
+                            {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
+                            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null,
+                            ['class' => 'form-control', 'id' => 'faculty']) !!}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {!! Form::label('avatar', __('Choose Avatar')) !!}
+                        {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg',
+                        'id' => 'example-file', 'class' => 'form-control-file']) !!}
+                        <span class="text-danger error-text avatar_error"></span>
+                        <div class='btn btn-primary' id='remove' style="display: none">
+                            Clear
+                        </div>
+                    </div>
+
+                    {!! Form::submit(__('Add Student'), ['class' => 'btn btn-primary', 'id' => 'btn-submit']) !!}
+                    {!! Form::close() !!}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {{--    Form send notifiication student--}}
+    {!! Form::open(['route' => ['edu.students.notification', $student->id], 'method' => 'post', 'id' => 'send-form']) !!}
+    {!! Form::hidden('email', $student->user->email) !!}
+    {!! Form::hidden('user_id', $student->user_id) !!}
+    {!! Form::close() !!}
+
+    {{--    Form delete student--}}
+    {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
+    {!! Form::close() !!}
+
     @push('scripts')
         <script>
             $(document).ready(function () {
-                $sucess = "{{ Session::has('add_student') }}";
-                $update = "{{ Session::has('update_student') }}";
-                $delete = "{{ Session::has('delete_student') }}";
-                $sendMailSuccess = "{{ Session::has('send_mail_success') }}";
-                $sendMailFalse = "{{ Session::has('send_mail_false') }}";
+                if (window.File && window.FileList && window.FileReader) {
+                    $('#example-file').change(function (e) {
+                        // e.preventDefault();
+                        var fileInput = this;
+                        if (fileInput.files && fileInput.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                // console.log(e.target.result);
+                                $("<span class=\"pip\">" +
+                                    "<img class=\"imageThumb\" src=\"" + e.target.result +
+                                    "\" style=\"" + "max-width: 150px; margin-top: 10px;" + "\"/>" +
+                                    "</span>").insertAfter("#example-file");
+                                // $('#imagePreview').html('<img src="' + e.target.result +
+                                //     '" alt="Preview Image" class="img-fluid" style="max-width: 280px;" >'
+                                // );
+                            }
+                            reader.readAsDataURL(fileInput.files[0]);
+                        }
+                        $('#remove').css('display', 'inline-block');
+                    });
+                }
+                $("#remove").click(function () {
+                    $(".pip").remove();
+                    $('#example-file').val("");
+                    $("#remove").hide();
+                });
+            });
+        </script>
 
-                if ($sucess) {
+        <script>
+            $(document).ready(function () {
+                $(".send-mail").click(function (e) {
+                    e.preventDefault();
+
+                    var studentId = $(this).val();
+                    var newAction = "{{ route('edu.students.notification', ':id')  }}";
+                    var action = newAction.replace(':id', studentId);
+                    $("#send-form").attr("action", action);
+                    $("#send-form").submit();
+                });
+            });
+
+            $(".delete-student").click(function (e) {
+                e.preventDefault();
+
+                var studentId = $(this).val();
+                var newAction = "{{ route('edu.students.destroy', ':id') }}";
+                var action = newAction.replace(':id', studentId);
+                $("#delete-form").attr("action", action);
+                var confirmDelete = confirm('Are you sure?');
+
+                if (confirmDelete) {
+                    $("#delete-form").submit();
+                }
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                $('#btn-submit').click(function (e) {
+                    e.preventDefault();
+                    let formData = new FormData($('#ajax-form')[0]);
+                    $.ajax({
+                        type: "post",
+                        url: "{{ route('edu.students.store') }}",
+                        data: formData,
+                        processData: false,
+                        cache: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            $(document).find('span.error-text').html('');
+                        },
+                        success: function (data) {
+                            $.toast({
+                                heading: 'Add student',
+                                text: '<h6>data.success</h6>',
+                                showHideTransition: 'slide',
+                                icon: 'success',
+                                position: 'top-right',
+                            })
+                            setTimeout(function () {
+                                window.location.href = "{{ route('edu.students.index') }}";
+                            }, 500);
+                        },
+                        error: function (data) {
+                            console.log(data.responseJSON.errors);
+                            $.each(data.responseJSON.errors, function (prefix, val) {
+                                $('span.' + prefix + '_error').html(val[0]);
+                            });
+                        }
+                    });
+                });
+            });
+
+            $(document).ready(function () {
+                var successStudent = "{{ Session::has('add_student') }}"
+                var updateStudent = "{{ Session::has('update_student') }}"
+                var deleteStudent = "{{ Session::has('delete_student') }}"
+                var sendMailSuccess = "{{ Session::has('send_mail_success') }}"
+                var sendMailFalse = "{{ Session::has('send_mail_false') }}"
+                var importSuccess = "{{ Session::has('import_success') }}"
+                var importFalse = "{{ Session::has('import_false') }}"
+
+                if (successStudent) {
                     $.toast({
                         heading: 'Add student',
                         text: '<h6>{{ Session::get("add_student") }}</h6>',
@@ -214,17 +393,17 @@
                     })
                 }
 
-                if ($update) {
+                if (updateStudent) {
                     $.toast({
                         heading: 'Update student',
-                        text: '<h6>{{ Session::get("update_student") }}</h6>',
+                        text: '<h6>{{ __(Session::get("update_student")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'info',
                         position: 'top-right',
                     })
                 }
 
-                if ($delete) {
+                if (deleteStudent) {
                     $.toast({
                         heading: 'Delete student',
                         text: '<h6>{{ Session::get("delete_student") }}</h6>',
@@ -234,7 +413,7 @@
                     })
                 }
 
-                if ($sendMailSuccess) {
+                if (sendMailSuccess) {
                     $.toast({
                         heading: 'Send success',
                         text: '<h6>{{ Session::get("send_mail_success") }}</h6>',
@@ -244,10 +423,30 @@
                     })
                 }
 
-                if ($sendMailFalse) {
+                if (sendMailFalse) {
                     $.toast({
                         heading: 'Send false',
                         text: '<h6>{{ Session::get("send_mail_false") }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'warring',
+                        position: 'top-right',
+                    })
+                }
+
+                if (importSuccess) {
+                    $.toast({
+                        heading: 'Import success',
+                        text: '<h6>{{ Session::get("import_success") }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        position: 'top-right',
+                    })
+                }
+
+                if (importFalse) {
+                    $.toast({
+                        heading: 'Import false',
+                        text: '<h6>{{ Session::get("import_false") }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'warring',
                         position: 'top-right',

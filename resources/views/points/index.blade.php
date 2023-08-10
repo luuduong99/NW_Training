@@ -1,13 +1,15 @@
 @extends('layouts.master')
+@section('title', 'Points')
+@section('subTitle', 'List')
 @section('content')
     <table class="table table-striped table-centered mb-0">
         <thead>
         <tr>
-            <th>Student Name</th>
-            <th>Subject Name</th>
-            <th>Faculty</th>
-            <th>Point</th>
-            <th>Action</th>
+            <th>{{ __('Student Name') }}</th>
+            <th>{{ __('Subject Name') }}</th>
+            <th>{{ __('Faculty') }}</th>
+            <th>{{ __('Point') }}</th>
+            <th>{{ __('Action') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -16,7 +18,7 @@
                 <td>
                     @foreach ($students as $student)
                         @if($result->student_id == $student->id)
-                            {{ $student->user->name }}
+                            {{ __($student->user->name) }}
                         @endif
                     @endforeach
                 </td>
@@ -24,7 +26,7 @@
                     @foreach ($students as $student)
                         @foreach ( $student->subjects as $subject)
                             @if($result->subject_id == $subject->id && $result->student_id == $student->id)
-                                {{ $subject->name }}
+                                {{ __($subject->name) }}
                             @endif
                         @endforeach
                     @endforeach
@@ -34,33 +36,22 @@
                     @if($result->point)
                         {{ $result->point  }}
                     @else
-                        <span>Chưa có kết quả</span>
+                        <span>{{ __('Chưa Có Điểm') }}</span>
                     @endif
                 </td>
-                <td class="parent">
-{{--                    <button value="{{ $result->id  }}"  type="button" class="btn btn-primary add-point" data-toggle="modal" data-target="#exampleModal">--}}
-{{--                        Launch demo modal--}}
-{{--                    </button>--}}
+                <td>
+                    {!! Form::open(['route' => ['edu.points.add_point'], 'method' => 'post']) !!}
+                    {!! Form::hidden('student_id', $result->student_id) !!}
+                    {!! Form::hidden('subject_id', $result->subject_id) !!}
+                    {!! Form::hidden('faculty_id', $result->faculty_id) !!}
+                    {!! Form::number('point', null, ['step' => '0.01', 'required', 'min' => '0', 'max' => '10']) !!}
 
                     @if(!$result->point && Auth::user()->role->role == 'admin')
-                        <form action="{{ route('edu.points.add_point') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="student_id" value="{{$result->student_id}}">
-                            <input type="hidden" name="subject_id" value="{{$result->subject_id}}">
-                            <input type="hidden" name="faculty_id" value="{{$result->faculty_id}}">
-                            <input type="number" step="0.01" required min="0" max="10" name="point">
-                            <input type="submit" class="btn btn-primary" value="Add Point">
-                        </form>
-                    @elseif($result->point && Auth::user()->role->role == 'admin')
-                        <form action="{{ route('edu.points.add_point') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="student_id" value="{{$result->student_id}}">
-                            <input type="hidden" name="subject_id" value="{{$result->subject_id}}">
-                            <input type="hidden" name="faculty_id" value="{{$result->faculty_id}}">
-                            <input type="number" step="0.01" required min="0" max="10" name="point">
-                            <input type="submit" class="btn btn-primary" value="Update Point">
-                        </form>
+                        {!! Form::submit(__('Add Point'), ['class' => 'btn btn-primary']) !!}
+                    @else
+                        {!! Form::submit(__('Update Point'), ['class' => 'btn btn-primary']) !!}
                     @endif
+                    {!! Form::close() !!}
                 </td>
             </tr>
         @endforeach
@@ -70,41 +61,30 @@
         {{ $data->links() }}
     </div>
 
-    <!-- Modal -->
-{{--    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">--}}
-{{--        <div class="modal-dialog" role="document">--}}
-{{--            <div class="modal-content">--}}
-{{--                <div class="modal-header">--}}
-{{--                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>--}}
-{{--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
-{{--                        <span aria-hidden="true">&times;</span>--}}
-{{--                    </button>--}}
-{{--                </div>--}}
-{{--                <div class="modal-body">--}}
-{{--                    ...--}}
-{{--                </div>--}}
-{{--                <div class="modal-footer">--}}
-{{--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>--}}
-{{--                    <button type="button" class="btn btn-primary">Save changes</button>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-
     <script>
-        $(document).ready(function (e) {
-            $('.add-point').on('click', function () {
+        $(document).ready(function () {
+            var successPoint = "{{ Session::has('add_point_success') }}";
+            var falsePoint = "{{ Session::has('add_point_false') }}";
 
-                // var parentElement = $(this).parent('.parent');
-                // var a = parentElement.find('.add-point').val();
-                console.log($(this).val());
-                // var buttonId = $(this).data('button-id');
-                // console.log('Button clicked with ID: ' + buttonId);
-                //
-                // var parentElement = $(this).closest('.parent');
-                // var parentId = parentElement.data('parent-id');
-                // console.log('Parent element with ID:', parentId);
-            });
+            if (successPoint) {
+                $.toast({
+                    heading: 'Add point',
+                    text: '<h6>{{ Session::get("add_point_success") }}</h6>',
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    position: 'top-right',
+                })
+            }
+
+            if (falsePoint) {
+                $.toast({
+                    heading: 'Add point',
+                    text: '<h6>{{ Session::get("add_point_false") }}</h6>',
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    position: 'top-right',
+                })
+            }
         });
     </script>
 @endsection

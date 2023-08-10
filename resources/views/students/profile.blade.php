@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title', 'Students')
+@section('subTitle', 'Profile Student')
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -7,18 +9,17 @@
                 <div class="page-title-right">
                     <div class="row">
                         <div class="col-6">
-                            <a class="btn btn-primary" href="{{ route('edu.students.edit', $student->id) }}">Edit</a>
+                            <a class="btn btn-primary" href="{{ route('edu.students.edit', $student->id) }}">
+                                {{ __('Edit') }}</a>
                         </div>
                         <div class="col-6">
-                            <form action="{{ route('edu.students.destroy', $student->id) }}" method="POST">
-                                @method('delete')
-                                @csrf
-                                <input class="btn btn-danger" type="submit" style="float: right;" onclick="return window.confirm('Are you sure?');" value="Delete" />
-                            </form>
+                            {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'DELETE', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
+                            {!! Form::button(__('Delete'), ['type' => 'submit', 'class' => 'btn btn-danger', 'style' => 'float: right;']) !!}
+                            {!! Form::close() !!}
                         </div>
                     </div>
                 </div>
-                <h4 class="page-title">Profile</h4>
+                <h4 class="page-title">{{ __('Profile') }}</h4>
             </div>
         </div>
     </div>
@@ -33,24 +34,27 @@
                             <!-- Product image -->
 
                             <a href="javascript: void(0);" class="text-center d-block mb-4" id="imagePreview">
-                                <!-- <img src="{{ asset('images/students/'. $student->avatar) }}" class="img-fluid" style="max-width: 280px;" alt="Product-img" id="oldImage" /> -->
+
                                 @if(isset($student->avatar))
-                                <img src="{{ asset('images/students/'. $student->avatar) }}" alt="{{ $student->user->email }}" class="img-fluid" style="max-width: 280px;" id="oldImage" />
+                                <img src="{{ asset('images/students/'. $student->avatar) }}"
+                                     alt="{{ $student->user->email }}" class="img-fluid" style="max-width: 280px;" id="oldImage" />
                                 @else
-                                <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}" alt="{{ $student->user->email }}" class="img-fluid" style="max-width: 280px;" id="oldImage" />
+                                <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}"
+                                     alt="{{ $student->user->email }}" class="img-fluid" style="max-width: 280px;" id="oldImage" />
                                 @endif
                             </a>
                             <input type="file" id="imageInput" accept="image/*">
                         </div> <!-- end col -->
                         <div class="col-lg-7">
                             <div class="mt-4">
-                                <h6 class="font-20">Name: {{ $student->user->name }}</h6>
-                                <h6 class="font-20">Email: {{ $student->user->email }}</h6>
-                                <h6 class="font-20">Address: {{ $student->address }}</h6>
-                                <h6 class="font-20">Phone: {{ $student->phone }}</h6>
-                                <h6 class="font-20">Gender: {{ $student->gend }}</h6>
+                                <h6 class="font-20">{{ __('Name') }}: {{ $student->user->name }}</h6>
+                                <h6 class="font-20">{{ __('Email') }}: {{ $student->user->email }}</h6>
+                                <h6 class="font-20">{{ __('Address') }}: {{ $student->address }}</h6>
+                                <h6 class="font-20">{{ __('Phone') }}: {{ $student->phone }}</h6>
+                                <h6 class="font-20">{{ __('Gender') }}: {{ $student->gend }}</h6>
                                 <h6 class="font-20">
-                                    Birthdate: {{ Carbon\Carbon::parse($student->birthdate)->format('d-m-Y') }}
+                                    {{ __('BirthDay') }}:
+                                    {{ Carbon\Carbon::parse($student->birthdate)->format('d-m-Y') }}
                                 </h6>
                             </div>
                         </div> <!-- end col -->

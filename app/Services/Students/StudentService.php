@@ -5,10 +5,6 @@ namespace App\Services\Students;
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Imports\PointImport;
-use App\Imports\Test;
-use App\Models\Faculty;
-use App\Models\Role;
-use App\Models\Student;
 use App\Models\Subject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Roles\RoleRepository;
@@ -112,11 +108,17 @@ class StudentService
             }
             DB::commit();
 
-            return redirect()->route('edu.students.index')->with('add_student',
-                'Successfully added student');
+            if($request->ajax()){
+                return response()->json(['success' => 'Successfully added student.']);
+            } else {
+                return redirect()->route('edu.students.index')->with('add_student',
+                    'Successfully added student.');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
+            if($request->ajax()){
+                return response()->json();
+            }
         }
     }
 
@@ -128,14 +130,12 @@ class StudentService
         return view('students.update', ['student' => $student, 'faculties' => $faculties]);
     }
 
-    public function updateStudent($id, UpdateStudentRequest $request)
+    public function updateStudent(UpdateStudentRequest $request, $id)
     {
         DB::beginTransaction();
         try {
             $data = $request->all();
-
             $student = $this->studentRepository->find($id);
-
             if ($request->hasFile('avatar')) {
                 if (
                     isset($student->avatar) && file_exists('images/students/' . $student->avatar) &&
@@ -256,7 +256,7 @@ class StudentService
 
         if ($mail) {
 
-            return redirect()->back()->with('send_mail_success', 'successful notification sent');
+            return redirect()->back()->with('send_mail_success', 'Successful notification sent');
         } else {
 
             return redirect()->back()->with('send_mail_false', 'Send notification failed');
@@ -271,10 +271,10 @@ class StudentService
 
             Excel::import(new PointImport(), $file);
 
-            return redirect()->route('edu.students.index');
+            return redirect()->route('edu.students.index')->with('import_success', 'Successfully import student');
 
         } catch (\Throwable $e) {
-            dd($e);
+            return redirect()->back()->with('import_false', 'Send notification failed');
         }
     }
 }

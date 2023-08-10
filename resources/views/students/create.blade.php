@@ -1,86 +1,81 @@
 @extends('layouts.master')
+@section('title', 'Students')
+@section('subTitle', 'Create Student')
 @section('content')
-    <form action="{{ route('edu.students.store') }}" method="post" enctype="multipart/form-data">
-        @csrf
-        <div class="form-group">
-            <label for="inputName" class="col-form-label">{{ __('Student Name') }}</label>
-            <input type="text" name="name" class="form-control" id="inputName">
-            @error('name')
+    {!! Form::open(['route' => 'edu.students.store', 'method' => 'post', 'enctype' => 'multipart/form-data']) !!}
+    <div class="form-group">
+        {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
+        {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'inputName']) !!}
+        @error('name')
+        <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
+            {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'inputEmail4']) !!}
+            @error('email')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="inputEmail4" class="col-form-label">{{ __('Email') }}</label>
-                <input type="email" name="email" class="form-control" id="inputEmail4">
-                @error('email')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputAddress" class="col-form-label">{{ __('Address') }}</label>
-            <input type="text" class="form-control" name="address" id="inputAddress">
-            @error('address')
-            <span class="text-danger">{{ $message }}</span>
-            @enderror
-        </div>
+    </div>
 
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="inputPhone" class="col-form-label">{{ __('Phone') }}</label>
-                <input type="text" name="phone" class="form-control" id="inputPhone">
-                @error('phone')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="form-group col-md-4">
-                <label for="inputGender" class="col-form-label">{{ __('Gender') }}</label>
-                <select id="inputGender" name="gender" class="form-control">
-                    <option value="0">{{ __('Other') }}</option>
-                    <option value="1">{{ __('Male') }}</option>
-                    <option value="2">{{ __('Female') }}</option>
-                </select>
-                @error('gender')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="form-group col-md-4">
-                <label for="inputDate" class="col-form-label">{{ __('BirthDay') }}</label>
-                <input type="date" name="birthday" class="form-control" id="inputDate">
-                @error('birthday')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="role" class="col-form-label">{{ __('Role') }}</label>
-                <select id="role" name="role" class="form-control">
-                    <option value="student">{{ __('Student') }}</option>
-                    <option value="admin">{{ __('Admin') }}</option>
-                </select>
-            </div>
+    <div class="form-group">
+        {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
+        {!! Form::text('address', null, ['class' => 'form-control', 'id' => 'inputAddress']) !!}
+        @error('address')
+        <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
 
-            <div class="form-group col-md-4">
-                <label for="faculty" class="col-form-label">{{ __('Faculty') }}</label>
-                <select id="faculty" name="faculty_id" class="form-control">
-                    @foreach($faculties as $faculty)
-                        <option value="{{ $faculty->id }}">{{ $faculty->name  }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="example-fileinput">{{ __('Choose Avatar') }}</label>
-            <input type="file" name="avatar" accept=".jpg, .png, .jpeg" id="example-fileinput"
-                   class="form-control-file">
-            @error('avatar')
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
+            {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'inputPhone']) !!}
+            @error('phone')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
 
-        <button class="btn btn-primary" type="submit">{{ __('Add Student') }}</button>
-    </form>
+        <div class="form-group col-md-4">
+            {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
+            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')], null, ['class' => 'form-control', 'id' => 'inputGender']) !!}
+            @error('gender')
+            <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group col-md-4">
+            {!! Form::label('birthday', __('BirthDay'), ['class' => 'col-form-label']) !!}
+            {!! Form::date('birthday', null, ['class' => 'form-control', 'id' => 'inputDate']) !!}
+            @error('birthday')
+            <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
+            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')], null, ['class' => 'form-control', 'id' => 'role']) !!}
+        </div>
+
+        <div class="form-group col-md-4">
+            {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
+            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null, ['class' => 'form-control', 'id' => 'faculty']) !!}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('avatar', __('Choose Avatar')) !!}
+        {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg', 'id' => 'example-fileinput', 'class' => 'form-control-file']) !!}
+        @error('avatar')
+        <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+    {!! Form::submit(__('Add Student'), ['class' => 'btn btn-primary']) !!}
+    {!! Form::close() !!}
 @endsection

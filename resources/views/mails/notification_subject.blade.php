@@ -8,7 +8,7 @@
     <title>Document</title>
 </head>
 <body>
-<h1>Subjects you have not registered yetsubjects you have not registered yet</h1>
+<h1>Subjects you have not registered yet</h1>
 @foreach($data as $subject => $value)
     <p>{{ $value }}</p>
 @endforeach
