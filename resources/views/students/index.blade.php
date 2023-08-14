@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title', 'Students')
-@section('subTitle', 'Edit Student')
+@section('subTitle', 'List')
 @section('content')
 
     <div style="width: 100%; display: flex;">
@@ -375,18 +375,18 @@
             });
 
             $(document).ready(function () {
-                var successStudent = "{{ Session::has('add_student') }}"
-                var updateStudent = "{{ Session::has('update_student') }}"
-                var deleteStudent = "{{ Session::has('delete_student') }}"
-                var sendMailSuccess = "{{ Session::has('send_mail_success') }}"
-                var sendMailFalse = "{{ Session::has('send_mail_false') }}"
-                var importSuccess = "{{ Session::has('import_success') }}"
-                var importFalse = "{{ Session::has('import_false') }}"
+                let successStudent = "{{ Session::has('add_student') }}"
+                let updateStudent = "{{ Session::has('update_student') }}"
+                let deleteStudent = "{{ Session::has('delete_student') }}"
+                let sendMailSuccess = "{{ Session::has('send_mail_success') }}"
+                let sendMailFalse = "{{ Session::has('send_mail_false') }}"
+                let importSuccess = "{{ Session::has('import_success') }}"
+                let importFalse = "{{ Session::has('import_false') }}"
 
                 if (successStudent) {
                     $.toast({
-                        heading: 'Add student',
-                        text: '<h6>{{ Session::get("add_student") }}</h6>',
+                        heading: '{{ __('Add student') }}',
+                        text: '<h6>{{ __(Session::get("add_student")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
@@ -395,7 +395,7 @@
 
                 if (updateStudent) {
                     $.toast({
-                        heading: 'Update student',
+                        heading: '{{ __('Update student') }}',
                         text: '<h6>{{ __(Session::get("update_student")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'info',
@@ -405,8 +405,8 @@
 
                 if (deleteStudent) {
                     $.toast({
-                        heading: 'Delete student',
-                        text: '<h6>{{ Session::get("delete_student") }}</h6>',
+                        heading: '{{ __('Delete student') }}',
+                        text: '<h6>{{ __(Session::get("delete_student")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'error',
                         position: 'top-right',
@@ -415,8 +415,8 @@
 
                 if (sendMailSuccess) {
                     $.toast({
-                        heading: 'Send success',
-                        text: '<h6>{{ Session::get("send_mail_success") }}</h6>',
+                        heading: '{{ __('Send success') }}',
+                        text: '<h6>{{ __(Session::get("send_mail_success")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
@@ -425,18 +425,18 @@
 
                 if (sendMailFalse) {
                     $.toast({
-                        heading: 'Send false',
-                        text: '<h6>{{ Session::get("send_mail_false") }}</h6>',
+                        heading: '{{ __('Send false') }}',
+                        text: '<h6>{{ __(Session::get("send_mail_false")) }}</h6>',
                         showHideTransition: 'slide',
-                        icon: 'warring',
+                        icon: 'warning',
                         position: 'top-right',
                     })
                 }
 
                 if (importSuccess) {
                     $.toast({
-                        heading: 'Import success',
-                        text: '<h6>{{ Session::get("import_success") }}</h6>',
+                        heading: '{{ __('Import success') }}',
+                        text: '<h6>{{ __(Session::get("import_success")) }}}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
@@ -445,10 +445,10 @@
 
                 if (importFalse) {
                     $.toast({
-                        heading: 'Import false',
-                        text: '<h6>{{ Session::get("import_false") }}</h6>',
+                        heading: '{{ __('Import false') }}',
+                        text: '<h6>{{ __(Session::get("import_false")) }}</h6>',
                         showHideTransition: 'slide',
-                        icon: 'warring',
+                        icon: 'warning',
                         position: 'top-right',
                     })
                 }

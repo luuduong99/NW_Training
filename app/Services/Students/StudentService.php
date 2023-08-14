@@ -108,7 +108,7 @@ class StudentService
             }
             DB::commit();
 
-            if($request->ajax()){
+            if ($request->ajax()) {
                 return response()->json(['success' => 'Successfully added student.']);
             } else {
                 return redirect()->route('edu.students.index')->with('add_student',
@@ -116,7 +116,7 @@ class StudentService
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            if($request->ajax()){
+            if ($request->ajax()) {
                 return response()->json();
             }
         }
@@ -158,7 +158,7 @@ class StudentService
             }
 
             if ($this->userRepository->update($student->user_id, ['name' => $data['name']])) {
-                $this->roleRepository->update($student->user_id,[
+                $this->roleRepository->update($student->user_id, [
                     'role' => $data['role']
                 ]);
                 $this->studentRepository->update($id, [
@@ -173,7 +173,7 @@ class StudentService
             DB::commit();
 
             return redirect()->route('edu.students.index')->with('update_student',
-                'Successfully update student');
+                'Successfully update student.');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -201,7 +201,7 @@ class StudentService
             DB::commit();
 
             return redirect()->route('edu.students.index')->with('delete_student',
-                'Successfully delete student');
+                'Successfully delete student.');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -274,7 +274,31 @@ class StudentService
             return redirect()->route('edu.students.index')->with('import_success', 'Successfully import student');
 
         } catch (\Throwable $e) {
-            return redirect()->back()->with('import_false', 'Send notification failed');
+            return redirect()->back()->with('import_false', 'Import student failed');
         }
+    }
+
+    public function listPointOfStudent($id)
+    {
+        $student = $this->studentRepository->find($id);
+        $subjectsWithPoint = $student->subjects()->wherePivot('point', '!=', null)->get();
+        $subjectsNotPoint = $student->subjects()->wherePivot('point', null)->get();
+
+        return view('students.multiple_add_point', ['student' => $student, 'id' => $id,
+            'subjectsNotPoint' => $subjectsNotPoint, 'subjectsWithPoint' => $subjectsWithPoint]);
+
+
+    }
+
+    public function ajaxGetPoint(Request $request)
+    {
+        $student = $this->studentRepository->find($request->student_id);
+        $point = $student->subjects()->where('subject_id', $request->subject_id)->first()->pivot->point;
+        return response()->json($point);
+    }
+
+    public function ajaxAddPoint(Request $request)
+    {
+        return response()->json($request->all());
     }
 }

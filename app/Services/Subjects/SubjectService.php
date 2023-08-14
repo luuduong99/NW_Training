@@ -91,13 +91,20 @@ class SubjectService
     {
         DB::beginTransaction();
         try {
-            $this->subjectRepository->delete($id);
-            DB::commit();
+            $subject = $this->subjectRepository->find($id);
+            if (count($subject->students) != 0) {
+                return redirect()->back()->with('delete_false',
+                    'There are already students registered for this subjects'.
+                    ', cannot be deleted');
+            } else {
+                $this->subjectRepository->delete($id);
+                DB::commit();
 
-            return redirect()->route('edu.subjects.index')->with('delete_subject', 'Successfully delete subject');
+                return redirect()->route('edu.subjects.index')
+                    ->with('delete_subject', 'Successfully delete subject');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
         }
     }
 }

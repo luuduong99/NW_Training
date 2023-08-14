@@ -25,7 +25,7 @@
         </tr>
         </thead>
         <tbody>
-        {!! Form::open(['route' => 'edu.students.register_multiple_subject',
+        {!! Form::open(['route' => 'edu.students.register-multiple-subject',
         'method' => 'post', 'id' => 'multiple_submit']) !!}
         {!! Form::token() !!}
         @if (Auth::user()->role->role == 'student')
@@ -51,7 +51,7 @@
                             <i class="mdi mdi-square-edit-outline"></i>
                         </a>
                         @if (!in_array($subject->id, $array))
-                            <button style="width:70px;" value="{{ $subject->id }}" class="btn btn-danger delete-link">
+                            <button value="{{ $subject->id }}" class="btn btn-danger delete-link">
                                 <i class="mdi mdi-delete"></i>
                             </button>
                         @else
@@ -82,59 +82,72 @@
     {!! Form::open(['route' => ['edu.subjects.destroy', $subject->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
     {!! Form::close() !!}
 
-    <script>
-        $(document).ready(function () {
-            $(".delete-link").click(function (e) {
-                e.preventDefault();
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".delete-link").click(function (e) {
+                    e.preventDefault();
 
-                var subjectId = $(this).val();
-                var newAction = "{{ route('edu.subjects.destroy', ':id') }}";
-                var action = newAction.replace(':id', subjectId);
-                $("#delete-form").attr("action", action);
-                var confirmDelete = confirm('Are you sure?');
+                    var subjectId = $(this).val();
+                    var newAction = "{{ route('edu.subjects.destroy', ':id') }}";
+                    var action = newAction.replace(':id', subjectId);
+                    $("#delete-form").attr("action", action);
+                    var confirmDelete = confirm('Are you sure?');
 
-                if (confirmDelete) {
-                    $("#delete-form").submit();
+                    if (confirmDelete) {
+                        $("#delete-form").submit();
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                var successSubject = "{{ Session::has('add_subject') }}";
+                var updateSubject = "{{ Session::has('update_subject') }}";
+                var deleteSubject = "{{ Session::has('delete_subject') }}";
+                var deleteFalse = "{{ Session::has('delete_false') }}";
+
+                if (successSubject) {
+                    $.toast({
+                        heading: '{{ __('Add subject') }}',
+                        text: '<h6>{{ __(Session::get("add_subject")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        position: 'top-right',
+                    })
+                }
+
+                if (updateSubject) {
+                    $.toast({
+                        heading: '{{ __('Update subject') }}',
+                        text: '<h6>{{ __(Session::get("update_subject")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'info',
+                        position: 'top-right',
+                    })
+                }
+
+                if (deleteSubject) {
+                    $.toast({
+                        heading: '{{ __('Delete subject') }}',
+                        text: '<h6>{{ __(Session::get("delete_subject")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        position: 'top-right',
+                    })
+                }
+
+                if (deleteFalse) {
+                    $.toast({
+                        heading: '{{ __('Delete subject false') }}',
+                        text: '<h6>{{ __(Session::get("delete_false")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'warning',
+                        position: 'top-right',
+                    })
                 }
             });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            var successSubject = "{{ Session::has('add_subject') }}";
-            var updateSubject = "{{ Session::has('update_subject') }}";
-            var deleteSubject = "{{ Session::has('delete_subject') }}";
-
-            if (successSubject) {
-                $.toast({
-                    heading: 'Add subject',
-                    text: '<h6>{{ Session::get("add_subject") }}</h6>',
-                    showHideTransition: 'slide',
-                    icon: 'success',
-                    position: 'top-right',
-                })
-            }
-
-            if (updateSubject) {
-                $.toast({
-                    heading: 'Update subject',
-                    text: '<h6>{{ Session::get("update_subject") }}</h6>',
-                    showHideTransition: 'slide',
-                    icon: 'info',
-                    position: 'top-right',
-                })
-            }
-
-            if (deleteSubject) {
-                $.toast({
-                    heading: 'Delete subject',
-                    text: '<h6>{{ Session::get("delete_subject") }}</h6>',
-                    showHideTransition: 'slide',
-                    icon: 'error',
-                    position: 'top-right',
-                })
-            }
-        });
-    </script>
+        </script>
+    @endpush
 @endsection

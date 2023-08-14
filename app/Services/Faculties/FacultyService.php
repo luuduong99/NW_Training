@@ -73,10 +73,16 @@ class FacultyService
     {
         DB::beginTransaction();
         try {
-            $this->facultyRepository->delete($id);
-            DB::commit();
+            $faculty = $this->facultyRepository->find($id);
+            if (count($faculty->students) != 0 && count($faculty->subjects) != 0) {
+                return redirect()->back()->with('delete_false',
+                    'This faculty already has a subject or student registered' . ', it cannot be deleted');
+            } else {
+                $this->facultyRepository->delete($id);
+                DB::commit();
 
-            return redirect()->route('edu.faculties.index')->with('delete_faculty', 'Successfully delete faculty');
+                return redirect()->route('edu.faculties.index')->with('delete_faculty', 'Successfully delete faculty');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);

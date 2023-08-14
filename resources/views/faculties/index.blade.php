@@ -71,11 +71,12 @@
                 var successFaculty = "{{ Session::has('add_faculty') }}";
                 var updateFaculty  = "{{ Session::has('update_faculty') }}";
                 var deleteFaculty  = "{{ Session::has('delete_faculty') }}";
+                var deleteFalse = "{{ Session::has('delete_false') }}";
 
                 if (successFaculty) {
                     $.toast({
-                        heading: 'Add faculty',
-                        text: '<h6>{{ Session::get("add_faculty") }}</h6>',
+                        heading: '{{ __('Add faculty') }}',
+                        text: '<h6>{{ __(Session::get("add_faculty")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
@@ -84,8 +85,8 @@
 
                 if (updateFaculty) {
                     $.toast({
-                        heading: 'Update faculty',
-                        text: '<h6>{{ Session::get("update_faculty") }}</h6>',
+                        heading: '{{ __('Update faculty') }}',
+                        text: '<h6>{{ __(Session::get("update_faculty")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'info',
                         position: 'top-right',
@@ -94,10 +95,20 @@
 
                 if (deleteFaculty) {
                     $.toast({
-                        heading: 'Delete faculty',
-                        text: '<h6>{{ Session::get("delete_faculty") }}</h6>',
+                        heading: '{{ __('Delete faculty') }}',
+                        text: '<h6>{{ __(Session::get("delete_faculty")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'error',
+                        position: 'top-right',
+                    })
+                }
+
+                if (deleteFalse) {
+                    $.toast({
+                        heading: '{{ __('Delete faculty false') }}',
+                        text: '<h6>{{ __(Session::get("delete_false")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'warning',
                         position: 'top-right',
                     })
                 }
