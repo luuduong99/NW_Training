@@ -46,7 +46,8 @@
         </div>
         <div class="form-group col-md-4">
             {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')], $student->gender, ['class' => 'form-control', 'id' => 'inputGender']) !!}
+            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')],
+            $student->gender, ['class' => 'form-control', 'id' => 'inputGender']) !!}
             @error('gender')
             <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -63,12 +64,14 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')], $student->user->role, ['class' => 'form-control', 'id' => 'role']) !!}
+            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')],
+            $student->user->role, ['class' => 'form-control', 'id' => 'role']) !!}
         </div>
 
         <div class="form-group col-md-4">
             {!! Form::label('faculty', __('Faculty'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), $student->faculty_id, ['class' => 'form-control', 'id' => 'faculty']) !!}
+            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'),
+            $student->faculty_id, ['class' => 'form-control', 'id' => 'faculty']) !!}
         </div>
     </div>
 

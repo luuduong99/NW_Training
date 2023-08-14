@@ -39,7 +39,9 @@ Route::group(['middleware' => 'locale'], function () {
         Route::resource('faculties', FacultyController::class);
         //-----------------------------------
         //----Route Students-----------------
-        Route::resource('students', StudentController::class);
+        Route::resource('students', StudentController::class)->only([
+            'index', 'create', 'store', 'edit', 'update', 'destroy'
+        ]);
         Route::group(
             [
                 'prefix' => 'students',
@@ -48,11 +50,15 @@ Route::group(['middleware' => 'locale'], function () {
             function () {
                 Route::get('profile/{id}', [StudentController::class, 'show'])->name('profile')
                     ->withoutMiddleware('auth.admin');
-                Route::post('register_multiple_subject', [StudentController::class, 'registerMultipleSubject'])
-                    ->name('register_multiple_subject')->withoutMiddleware('auth.admin');
+                Route::post('register-multiple-subject', [StudentController::class, 'registerMultipleSubject'])
+                    ->name('register-multiple-subject')->withoutMiddleware('auth.admin');
                 Route::post('notification/{id}', [StudentController::class, 'sendNotification'])
                     ->name('notification');
                 Route::post('import', [StudentController::class, 'import'])->name('import');
+                Route::get('list-point-of-student/{id}', [StudentController::class, 'pointOfStudent'])
+                    ->name('list-point-of-student');
+                Route::post('get-point', [StudentController::class, 'getPoint'])->name('get-point');
+                Route::post('add-point', [StudentController::class, 'multipleAdd'])->name('add-point');
             }
         );
         //-----------------------------------
@@ -77,13 +83,13 @@ Route::group(['middleware' => 'locale'], function () {
             ],
             function () {
                 Route::get('list', [PointController::class, 'index'])->name('list');
-                Route::get('list_point_student/{id}', [PointController::class, 'studentPoints'])
+                Route::get('list-point-student/{id}', [PointController::class, 'studentPoints'])
                     ->name('list_point_student');
-                Route::post('add_point', [PointController::class, 'point'])->name('add_point');
-                Route::post('add_point_student/{id}', [PointController::class, 'pointStudent'])
-                    ->name('add_point_student');
-                Route::post('multiple_add_point/{id}', [PointController::class, 'multipleAddPoint'])
-                    ->name('multiple_add_point');
+                Route::post('add-point', [PointController::class, 'point'])->name('add-point');
+                Route::post('add-point-student/{id}', [PointController::class, 'pointStudent'])
+                    ->name('add-point-student');
+                Route::post('multiple-add-point/{id}', [PointController::class, 'multipleAddPoint'])
+                    ->name('multiple-add-point');
             }
         );
     });

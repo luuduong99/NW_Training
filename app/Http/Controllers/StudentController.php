@@ -106,4 +106,19 @@ class StudentController extends Controller
     {
         return $this->studentService->importPoints($request);
     }
+
+    public function pointOfStudent($id)
+    {
+        return $this->studentService->listPointOfStudent($id);
+    }
+
+    public function getPoint(Request $request)
+    {
+        return $this->studentService->ajaxGetPoint($request);
+    }
+
+    public function multipleAdd(Request $request)
+    {
+        return $this->studentService->ajaxAddPoint($request);
+    }
 }

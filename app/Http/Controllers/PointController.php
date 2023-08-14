@@ -37,4 +37,9 @@ class PointController extends Controller
     {
         $this->pointService->multipleAddPointStudent($request, $id);
     }
+
+    public function test()
+    {
+        dd(1);
+    }
 }

@@ -31,7 +31,7 @@
                         @endforeach
                     @endforeach
                 </td>
-                <td >{{ $result->faculty_id  }}</td>
+                <td>{{ $result->faculty_id  }}</td>
                 <td>
                     @if($result->point)
                         {{ $result->point  }}
@@ -40,7 +40,7 @@
                     @endif
                 </td>
                 <td>
-                    {!! Form::open(['route' => ['edu.points.add_point'], 'method' => 'post']) !!}
+                    {!! Form::open(['route' => ['edu.points.add-point'], 'method' => 'post']) !!}
                     {!! Form::hidden('student_id', $result->student_id) !!}
                     {!! Form::hidden('subject_id', $result->subject_id) !!}
                     {!! Form::hidden('faculty_id', $result->faculty_id) !!}
@@ -61,30 +61,32 @@
         {{ $data->links() }}
     </div>
 
-    <script>
-        $(document).ready(function () {
-            var successPoint = "{{ Session::has('add_point_success') }}";
-            var falsePoint = "{{ Session::has('add_point_false') }}";
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                var successPoint = "{{ Session::has('add_point_success') }}";
+                var falsePoint = "{{ Session::has('add_point_false') }}";
 
-            if (successPoint) {
-                $.toast({
-                    heading: 'Add point',
-                    text: '<h6>{{ Session::get("add_point_success") }}</h6>',
-                    showHideTransition: 'slide',
-                    icon: 'success',
-                    position: 'top-right',
-                })
-            }
+                if (successPoint) {
+                    $.toast({
+                        heading: '{{ __('Add point') }}',
+                        text: '<h6>{{ __(Session::get("add_point_success")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        position: 'top-right',
+                    })
+                }
 
-            if (falsePoint) {
-                $.toast({
-                    heading: 'Add point',
-                    text: '<h6>{{ Session::get("add_point_false") }}</h6>',
-                    showHideTransition: 'slide',
-                    icon: 'error',
-                    position: 'top-right',
-                })
-            }
-        });
-    </script>
+                if (falsePoint) {
+                    $.toast({
+                        heading: '{{ __('Add point') }}',
+                        text: '<h6>{{ __(Session::get("add_point_false")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        position: 'top-right',
+                    })
+                }
+            });
+        </script>
+    @endpush
 @endsection

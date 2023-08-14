@@ -7,17 +7,17 @@
         <div class="col-12">
             <div class="page-title-box">
                 <div class="page-title-right">
-                    <div class="row">
-                        <div class="col-6">
-                            <a class="btn btn-primary" href="{{ route('edu.students.edit', $student->id) }}">
-                                {{ __('Edit') }}</a>
-                        </div>
-                        <div class="col-6">
-                            {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'DELETE', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
-                            {!! Form::button(__('Delete'), ['type' => 'submit', 'class' => 'btn btn-danger', 'style' => 'float: right;']) !!}
-                            {!! Form::close() !!}
-                        </div>
-                    </div>
+{{--                    <div class="row">--}}
+{{--                        <div class="col-6">--}}
+{{--                            <a class="btn btn-primary" href="{{ route('edu.students.edit', $student->id) }}">--}}
+{{--                                {{ __('Edit') }}</a>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-6">--}}
+{{--                            {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'DELETE', 'onsubmit' => 'return confirm("Are you sure?")']) !!}--}}
+{{--                            {!! Form::button(__('Delete'), ['type' => 'submit', 'class' => 'btn btn-danger', 'style' => 'float: right;']) !!}--}}
+{{--                            {!! Form::close() !!}--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
                 </div>
                 <h4 class="page-title">{{ __('Profile') }}</h4>
             </div>
