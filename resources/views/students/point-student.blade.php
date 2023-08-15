@@ -1,7 +1,15 @@
 @extends('layouts.master')
 @section('title', 'Points')
-@section('subTitle', 'List')
+@section('subTitle', 'List point of student')
 @section('content')
+    <div style="width: 100%; display: flex;">
+        <div class="col-sm-2" style="padding: 0">
+            <a href="{{ route('edu.students.list-point-of-student', $id) }}" class="btn btn-success mb-2">
+                <i class="mdi mdi-plus-circle mr-2"></i>
+                {{ __('Add Multiple Point') }}
+            </a>
+        </div>
+    </div>
     <table class="table table-striped table-centered mb-0">
         <thead>
         <tr>
@@ -16,33 +24,23 @@
         @foreach($data as $result)
             <tr>
                 <td>
-                    @foreach ($students as $student)
-                        @if($result->student_id == $student->id)
-                            {{ __($student->user->name) }}
-                        @endif
-                    @endforeach
+                    {{ $student->user->name }}
                 </td>
                 <td>
-                    @foreach ($students as $student)
-                        @foreach ( $student->subjects as $subject)
-                            @if($result->subject_id == $subject->id && $result->student_id == $student->id)
-                                {{ __($subject->name) }}
-                            @endif
-                        @endforeach
-                    @endforeach
+                    {{ __($result->name) }}
                 </td>
                 <td>{{ $result->faculty_id  }}</td>
                 <td>
-                    @if($result->point)
-                        {{ $result->point  }}
-                    @else
+                    @if(!isset($result->pivot->point))
                         <span>{{ __('Chưa Có Điểm') }}</span>
+                    @else
+                        {{ $result->pivot->point  }}
                     @endif
                 </td>
                 <td>
-                    {!! Form::open(['route' => ['edu.points.add-point'], 'method' => 'post']) !!}
-                    {!! Form::hidden('student_id', $result->student_id) !!}
-                    {!! Form::hidden('subject_id', $result->subject_id) !!}
+                    {!! Form::open(['route' => ['edu.students.add-point-student', $id], 'method' => 'post']) !!}
+                    {!! Form::hidden('student_id', $student->id) !!}
+                    {!! Form::hidden('subject_id', $result->id) !!}
                     {!! Form::hidden('faculty_id', $result->faculty_id) !!}
                     {!! Form::number('point', null, ['step' => '0.01', 'required', 'min' => '0', 'max' => '10']) !!}
 
@@ -57,9 +55,7 @@
         @endforeach
         </tbody>
     </table>
-    <div>
-        {{ $data->links() }}
-    </div>
+    {{ $data->links() }}
 
     @push('scripts')
         <script>

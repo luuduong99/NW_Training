@@ -2,6 +2,7 @@
 
 namespace App\Services\Students;
 
+use App\Http\Requests\Students\AddPointStudentRequest;
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Imports\PointImport;
@@ -109,14 +110,17 @@ class StudentService
             DB::commit();
 
             if ($request->ajax()) {
+
                 return response()->json(['success' => 'Successfully added student.']);
             } else {
+
                 return redirect()->route('edu.students.index')->with('add_student',
                     'Successfully added student.');
             }
         } catch (\Throwable $th) {
             DB::rollBack();
             if ($request->ajax()) {
+
                 return response()->json();
             }
         }
@@ -268,12 +272,12 @@ class StudentService
     {
         try {
             $file = $request->file('excel_file');
-
             Excel::import(new PointImport(), $file);
 
             return redirect()->route('edu.students.index')->with('import_success', 'Successfully import student');
 
         } catch (\Throwable $e) {
+
             return redirect()->back()->with('import_false', 'Import student failed');
         }
     }
@@ -286,19 +290,85 @@ class StudentService
 
         return view('students.multiple_add_point', ['student' => $student, 'id' => $id,
             'subjectsNotPoint' => $subjectsNotPoint, 'subjectsWithPoint' => $subjectsWithPoint]);
-
-
     }
 
     public function ajaxGetPoint(Request $request)
     {
         $student = $this->studentRepository->find($request->student_id);
         $point = $student->subjects()->where('subject_id', $request->subject_id)->first()->pivot->point;
+
         return response()->json($point);
     }
 
-    public function ajaxAddPoint(Request $request)
+    public function ajaxAddPoint(AddPointStudentRequest $request)
     {
-        return response()->json($request->all());
+        DB::beginTransaction();
+        try {
+            $data = [];
+            $student = $this->studentRepository->find($request->student_id);
+
+            foreach ($request->subject as $subject => $value) {
+                $data[$value] = ['point' => $request->point[$subject]];
+            }
+            $student->subjects()->syncWithoutDetaching($data);
+            DB::commit();
+            return response()->json(['success' => 'Successfully added points of student.']);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json();
+        }
+    }
+
+    public function listPointAllStudent()
+    {
+
+        $data = $this->studentSubjectRepository->pagination();
+        $students = $this->studentRepository->getAll();
+
+        return view('students.point_all_student', ['data' => $data, 'students' => $students]);
+    }
+
+    public function addOnePoint(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $this->studentSubjectRepository->addSinglePoint($data);
+            DB::commit();
+
+            return redirect()->route('edu.students.list-point')->with('add_point_success', 'Add success points');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return redirect()->back()->with('add_point_false', 'Add failed points');
+        }
+    }
+
+    public function listPointOneStudent($id)
+    {
+        $student = $this->studentRepository->find($id);
+        $data = $student->subjects()->paginate(5);
+        $subjects = $student->subjects()->wherePivot('point', null)->get();
+
+        return view('students.point-student', ['data' => $data, 'student' => $student, 'id' => $id,
+            'subjects' => $subjects]);
+    }
+
+    public function addPointStudent(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $this->studentSubjectRepository->addSinglePoint($data);
+            DB::commit();
+
+            return redirect()->back()->with('add_point_success', 'Add success points');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return redirect()->back()->with('add_point_false', 'Add failed points');
+        }
     }
 }
