@@ -8,8 +8,11 @@
         {!! Form::button('<i class="mdi mdi-tray-plus"></i>', ['class' => 'btn btn-success add']) !!}
         {!! Form::submit(__('Add Point'), ['class' => 'btn btn-primary ml-2', 'id' => 'btn-addPoint']) !!}
     </div>
+    <span class="btn-errors" style="color: red;">
+
+    </span>
     <div class="select-point">
-        @foreach($subjectsWithPoint as $subjectWithPoint)
+        @foreach($subjectsWithPoint as $index => $subjectWithPoint)
             <div class="form-row input-point">
                 <div class="form-group col-md-6">
                     {!! Form::label('subject', __('Subject'), ['class' => 'col-form-label']) !!}
@@ -20,9 +23,9 @@
                 </div>
                 <div class="form-group col-md-4">
                     {!! Form::label('point', __('Point'), ['class' => 'col-form-label']) !!}
-                    {!! Form::number('point[]', $subjectWithPoint->pivot->point ? $subjectWithPoint->pivot->point : '',
-                    ['step' => '0.01', 'required', 'min' => '0', 'max' => '10',
-                    'class' => 'form-control point']) !!}
+                    {!! Form::number('point[]', isset($subjectWithPoint->pivot->point) ? $subjectWithPoint->pivot->point : '',
+                    ['class' => 'form-control point']) !!}
+                    <span class="text-danger error-text"></span>
                 </div>
                 <div class="form-group col-md-2">
                     {!! Form::button('<i class="mdi mdi-tray-minus"></i>', ['class' => 'btn btn-danger minus',
@@ -45,7 +48,9 @@
                 var limit = "{{ count($student->subjects)  }}";
                 var clickLimit = $('.select-point .subject').length;
                 var optionValue = getOptionSelected();
+                var id = {{ $id }};
 
+                addIdInput();
                 filterSubject(optionValue);
                 disableButton(clickLimit, limit)
 
@@ -82,12 +87,12 @@
                     clickLimit--;
                     optionValue = getOptionSelected()
                     filterSubject(optionValue);
+                    addIdInput();
                 });
 
                 $('.add').on('click', function (e) {
                     ++clickLimit;
                     disableButton(clickLimit, limit);
-
                     var html = `
                         <div class="form-row input-point">
                             <div class="form-group col-md-6">
@@ -98,8 +103,8 @@
                     </div>
                     <div class="form-group col-md-4">
                     {!! Form::label('point', __('Point'), ['class' => 'col-form-label']) !!}
-                    {!! Form::number('point[]', null, ['step' => '0.01', 'required',
-                    'min' => '0', 'max' => '10', 'class' => 'form-control point']) !!}
+                    {!! Form::number('point[]', null, ['class' => 'form-control point']) !!}
+                    <span class="text-danger error-text"></span>
                     </div>
                     <div class="form-group col-md-2">
                     {!! Form::button('<i class="mdi mdi-tray-minus"></i>', ['class' => 'btn btn-danger minus',
@@ -109,7 +114,7 @@
 
                     optionValue = getOptionSelected();
                     filterSubject(optionValue);
-
+                    addIdInput();
                 });
 
                 $('.select-point').on('change', '.subject', function () {
@@ -149,17 +154,38 @@
                         processData: false,
                         cache: false,
                         contentType: false,
-                        success: function (response) {
-                            console.log(response);
+                        beforeSend: function () {
+                            $(document).find('span.error-text').html('');
                         },
-                        error: function (xhr, status, error) {
-                            console.log(xhr, status, error);
+                        success: function (response) {
+                            $.toast({
+                                heading: 'Add Point',
+                                text: '<h6>' + response.success + '</h6>',
+                                showHideTransition: 'slide',
+                                icon: 'success',
+                                position: 'top-right',
+                            });
+                            setTimeout(function () {
+                                window.location.href = `{{ route('edu.students.list-point-student', ':id') }}`
+                                    .replace(':id', id);
+                            }, 500);
+                        },
+                        error: function (response) {
+                            $.each(response.responseJSON.errors, function (key, value) {
+                                var fieldName = key.replace('.', '');
+                                $('span#' + fieldName).html(value[0]);
+                            });
                         }
                     });
                 });
+
+                function addIdInput() {
+                    $('.select-point .error-text').each(function (index) {
+                        var uniqueId = 'point' + index;
+                        $(this).attr('id', uniqueId);
+                    });
+                }
             });
-
-
         </script>
     @endpush
 @endsection

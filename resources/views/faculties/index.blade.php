@@ -69,8 +69,8 @@
         <script>
             $(document).ready(function () {
                 var successFaculty = "{{ Session::has('add_faculty') }}";
-                var updateFaculty  = "{{ Session::has('update_faculty') }}";
-                var deleteFaculty  = "{{ Session::has('delete_faculty') }}";
+                var updateFaculty = "{{ Session::has('update_faculty') }}";
+                var deleteFaculty = "{{ Session::has('delete_faculty') }}";
                 var deleteFalse = "{{ Session::has('delete_false') }}";
 
                 if (successFaculty) {

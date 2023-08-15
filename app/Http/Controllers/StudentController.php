@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Students\AddPointStudentRequest;
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Services\Students\StudentService;
@@ -39,7 +40,7 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateStudentRequest $request)
@@ -50,7 +51,7 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -61,7 +62,7 @@ class StudentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -72,8 +73,8 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateStudentRequest $request, $id)
@@ -84,7 +85,7 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -117,8 +118,28 @@ class StudentController extends Controller
         return $this->studentService->ajaxGetPoint($request);
     }
 
-    public function multipleAdd(Request $request)
+    public function multipleAdd(AddPointStudentRequest $request)
     {
         return $this->studentService->ajaxAddPoint($request);
+    }
+
+    public function listPointAll()
+    {
+        return $this->studentService->listPointAllStudent();
+    }
+
+    public function studentPoints($id)
+    {
+        return $this->studentService->listPointOneStudent($id);
+    }
+
+    public function point(Request $request)
+    {
+        return $this->studentService->addOnePoint($request);
+    }
+
+    public function pointStudent(Request $request)
+    {
+        return $this->studentService->addPointStudent($request);
     }
 }

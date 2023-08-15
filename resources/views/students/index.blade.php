@@ -124,7 +124,7 @@
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
                     {{ __($student->faculty->name) }}</td>
                 <td>
-                    <a href="{{ route('edu.points.list_point_student', $student->id)  }}"
+                    <a href="{{ route('edu.students.list-point-student', $student->id)  }}"
                        title="Preview courses and score of student">
                         {{ count($student->subjects->pluck('id')->toArray()) }}
                     </a>

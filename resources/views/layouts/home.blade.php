@@ -1985,7 +1985,8 @@
                                                                 type="checkbox"
                                                                 class="custom-control-input todo-done"
                                                                 id="4" checked=""><label
-                                                                class="custom-control-label" for="4"><s>Testing??</s></label>
+                                                                class="custom-control-label"
+                                                                for="4"><s>Testing??</s></label>
                                                         </div>
                                                     </li>
                                                     <li class="list-group-item border-0 pl-0">
