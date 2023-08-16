@@ -64,7 +64,7 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')],
+            {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')],
             $student->user->role, ['class' => 'form-control', 'id' => 'role']) !!}
         </div>
 

@@ -27,7 +27,8 @@ class UpdateStudentRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:1', 'max:50'],
-            'phone' => ['required'],
+            'phone' => ['required', Rule::unique('students', 'phone')
+                ->ignore($this->student)->whereNull('deleted_at')],
             'birthday' => ['required']
         ];
     }

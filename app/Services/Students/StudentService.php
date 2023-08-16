@@ -2,10 +2,12 @@
 
 namespace App\Services\Students;
 
+use App\Enums\Page;
 use App\Http\Requests\Students\AddPointStudentRequest;
 use App\Http\Requests\Students\CreateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Imports\PointImport;
+use App\Models\Student;
 use App\Models\Subject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Roles\RoleRepository;
@@ -41,18 +43,20 @@ class StudentService
 
     public function getAllStudent(Request $request)
     {
-        $dateFrom = Carbon::now()->subYears($request->fromAge)->startOfDay();
-        $dateTo = Carbon::now()->subYears($request->toAge)->endOfDay();
         $faculties = $this->facultyRepository->getAll();
-
-        $students = $this->studentRepository->filter([
-            'fromAge' => $request->fromAge,
-            'toAge' => $request->toAge,
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'pointTo' => $request->toPoint,
-            'pointFrom' => $request->fromPoint
-        ]);
+        $students = $this->studentRepository->filter($request->all());
+        foreach ($students as $student) {
+            $subjects = count($student->faculty->subjects);
+            $points = $student->subjects()->wherePivot('point', '!=', null)->get();
+            if (count($points) > 0 && count($student->subjects) == $subjects
+                && count($points) == $subjects && $subjects > 0) {
+                $total = 0;
+                foreach ($points as $point) {
+                    $total += $point->pivot->point;
+                }
+                $student['average'] = $total / $subjects;
+            }
+        }
 
         return view('students.index', ['students' => $students, 'faculties' => $faculties]);
     }
@@ -162,9 +166,8 @@ class StudentService
             }
 
             if ($this->userRepository->update($student->user_id, ['name' => $data['name']])) {
-                $this->roleRepository->update($student->user_id, [
-                    'role' => $data['role']
-                ]);
+                $this->userRepository->find($student->user_id)->role->update(['role' => $data['role']]);
+
                 $this->studentRepository->update($id, [
                     'avatar' => $data['avatar'],
                     'phone' => $data['phone'],
@@ -225,15 +228,8 @@ class StudentService
         try {
             $subjects = $request->subject_id;
             $student_id = Auth::user()->student->id;
-            $faculty_id = Auth::user()->student->faculty_id;
-
-            foreach ($subjects as $subject) {
-                $this->studentSubjectRepository->create([
-                    'student_id' => $student_id,
-                    'faculty_id' => $faculty_id,
-                    'subject_id' => $subject,
-                ]);
-            }
+            $student = $this->studentRepository->find($student_id);
+            $student->subjects()->attach($subjects, ['faculty_id' => $student->faculty->id]);
             DB::commit();
 
             return redirect()->route('edu.subjects.index');
@@ -248,8 +244,7 @@ class StudentService
         $attr = [];
         $student = $this->studentRepository->find($id);
         $data = $student->subjects->pluck('id')->toArray();
-        $subjects = Subject::where('faculty_id', $student->faculty_id)->get();
-
+        $subjects = $student->faculty->subjects;
         foreach ($subjects as $subject) {
             if (!in_array($subject->id, $data)) {
                 array_push($attr, $subject->name);
@@ -321,35 +316,10 @@ class StudentService
         }
     }
 
-    public function listPointAllStudent()
-    {
-
-        $data = $this->studentSubjectRepository->pagination();
-        $students = $this->studentRepository->getAll();
-
-        return view('students.point_all_student', ['data' => $data, 'students' => $students]);
-    }
-
-    public function addOnePoint(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            $data = $request->all();
-            $this->studentSubjectRepository->addSinglePoint($data);
-            DB::commit();
-
-            return redirect()->route('edu.students.list-point')->with('add_point_success', 'Add success points');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-
-            return redirect()->back()->with('add_point_false', 'Add failed points');
-        }
-    }
-
     public function listPointOneStudent($id)
     {
         $student = $this->studentRepository->find($id);
-        $data = $student->subjects()->paginate(5);
+        $data = $student->subjects()->paginate(Page::page);
         $subjects = $student->subjects()->wherePivot('point', null)->get();
 
         return view('students.point-student', ['data' => $data, 'student' => $student, 'id' => $id,
@@ -361,7 +331,10 @@ class StudentService
         DB::beginTransaction();
         try {
             $data = $request->all();
-            $this->studentSubjectRepository->addSinglePoint($data);
+//            dd($data);
+            $student = $this->studentRepository->find($data['student_id']);
+            $student->subjects()->updateExistingPivot($data['subject_id'], ['point' => $data['point']]);
+//            dd($student);
             DB::commit();
 
             return redirect()->back()->with('add_point_success', 'Add success points');

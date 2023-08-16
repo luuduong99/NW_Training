@@ -126,7 +126,7 @@
                     <div class=" dropdown-header noti-title">
                         <h6 class="text-overflow m-0">Welcome !</h6>
                     </div>
-                    @if (Auth::user()->role->role != 'admin')
+                    @if (Auth::user()->role->role != '0')
                         <a href="{{ route('edu.students.profile', Auth::user()->student->id) }}"
                            class="dropdown-item notify-item">
                             <i class="mdi mdi-account-circle mr-1"></i>

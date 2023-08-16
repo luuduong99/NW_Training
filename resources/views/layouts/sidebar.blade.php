@@ -24,9 +24,4 @@
         <span> {{ __('Subjects') }} </span>
     </a>
 </li>
-<li>
-    <a href="{{ route('edu.students.list-point')  }}" class="side-nav-link">
-        <i class="mdi mdi-battery-high mdi-24px"></i>
-        <span> {{ __('Points') }} </span>
-    </a>
-</li>
+

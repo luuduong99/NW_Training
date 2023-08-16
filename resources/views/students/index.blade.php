@@ -78,204 +78,213 @@
         <div class="col-sm-2" style="padding: 0">
         </div>
     </div>
-    <table class="table table-striped table-centered mb-0">
-        <thead>
-        <tr>
-            <th>{{ __('Avatar') }}</th>
-            <th>{{ __('Name') }}</th>
-            <th>{{ __('Email') }}</th>
-            <th>{{ __('Phone') }}</th>
-            <th>{{ __('Address') }}</th>
-            <th>{{ __('Gender') }}</th>
-            <th>{{ __('Age') }}</th>
-            <th>{{ __('Faculty') }}</th>
-            <th>{{ __('Subjects') }}</th>
-            <th>{{ __('Average') }}</th>
-            <th>{{ __('Created_at') }}</th>
-            <th>{{ __('Updated_at') }}</th>
-            <th>{{ __('Action') }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach ($students as $student)
+    @if(!isset($students))
+        <h1 style="text-align: center;"> NOT DATA </h1>
+    @else
+        <table class="table table-striped table-centered mb-0">
+            <thead>
             <tr>
-                <td class="table-user">
-                    @if(isset($student->avatar))
-                        <img src="{{ asset('images/students/'. $student->avatar) }}" alt="{{ $student->user->email }}"
-                             class="mr-2 rounded-circle"/>
-                    @else
-                        <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}"
-                             alt="{{ $student->user->email }}" class="mr-2 rounded-circle"/>
-                    @endif
-                </td>
-                <td><a title="{{ $student->user->name }}"
-                       style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;"
-                       href="{{ route('edu.students.profile', $student->id) }}">{{ $student->user->name }}</a>
-                </td>
-                <td title="{{ $student->user->email }}"
-                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
-                    {{ $student->user->email }}
-                </td>
-                <td>{{ $student->phone }}</td>
-                <td>{{ $student->address }}</td>
-                <td>{{ $student->gend }}</td>
-                <td>{{ $student->age }}</td>
-                <td title="{{ $student->faculty->name }}"
-                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
-                    {{ __($student->faculty->name) }}</td>
-                <td>
-                    <a href="{{ route('edu.students.list-point-student', $student->id)  }}"
-                       title="Preview courses and score of student">
-                        {{ count($student->subjects->pluck('id')->toArray()) }}
-                    </a>
-                </td>
-                <td>{{ $student->average_point  }}</td>
-                <td title="{{ $student->created_at }}"
-                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->created_at }}</td>
-                <td title="{{ $student->updated_at }}"
-                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
-                <td class="table-action">
-                    @if (count($student->subjects) < count($student->faculty->subjects))
-                        <button href="" class="btn btn-warning send-mail" value="{{ $student->id }}">
-                            <i class="mdi mdi-email-send"></i>
-                        </button>
-                    @endif
-                    <a href="{{ route('edu.students.edit', $student->id) }}" class="btn btn-primary">
-                        <i class="mdi mdi-square-edit-outline"></i></a>
-                    <button class="btn btn-danger delete-student" value="{{ $student->id }}">
-                        <i class="mdi mdi-delete"></i>
-                    </button>
-                </td>
+                <th>{{ __('Avatar') }}</th>
+                <th>{{ __('Name') }}</th>
+                <th>{{ __('Email') }}</th>
+                <th>{{ __('Phone') }}</th>
+                <th>{{ __('Address') }}</th>
+                <th>{{ __('Gender') }}</th>
+                <th>{{ __('Age') }}</th>
+                <th>{{ __('Faculty') }}</th>
+                <th>{{ __('Subjects') }}</th>
+                <th>{{ __('Average') }}</th>
+                <th>{{ __('Created_at') }}</th>
+                <th>{{ __('Updated_at') }}</th>
+                <th>{{ __('Action') }}</th>
             </tr>
-        @endforeach
-        </tbody>
-    </table>
-    <div>
-        {{ $students->links() }}
-    </div>
+            </thead>
+            <tbody>
+            @foreach ($students as $student)
+                <tr>
+                    <td class="table-user">
+                        @if(isset($student->avatar))
+                            <img src="{{ asset('images/students/'. $student->avatar) }}"
+                                 alt="{{ $student->user->email }}"
+                                 class="mr-2 rounded-circle"/>
+                        @else
+                            <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}"
+                                 alt="{{ $student->user->email }}" class="mr-2 rounded-circle"/>
+                        @endif
+                    </td>
+                    <td><a title="{{ $student->user->name }}"
+                           style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;"
+                           href="{{ route('edu.students.profile', $student->id) }}">{{ $student->user->name }}</a>
+                    </td>
+                    <td title="{{ $student->user->email }}"
+                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
+                        {{ $student->user->email }}
+                    </td>
+                    <td>{{ $student->phone }}</td>
+                    <td>{{ $student->address }}</td>
+                    <td>{{ $student->gend }}</td>
+                    <td>{{ $student->age }}</td>
+                    <td title="{{ $student->faculty->name }}"
+                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
+                        {{ __($student->faculty->name) }}</td>
+                    <td>
+                        <a href="{{ route('edu.students.list-point-student', $student->id)  }}"
+                           title="Preview courses and score of student">
+                            {{ count($student->subjects->pluck('id')->toArray()) }}
+                        </a>
+                    </td>
+                    <td>{{ $student->average ? $student->average : __('Not point yet') }}</td>
+                    <td title="{{ $student->created_at }}"
+                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->created_at }}</td>
+                    <td title="{{ $student->updated_at }}"
+                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->updated_at }}</td>
+                    <td class="table-action">
+                        @if (count($student->subjects) < count($student->faculty->subjects))
+                            <button href="" class="btn btn-warning send-mail" value="{{ $student->id }}">
+                                <i class="mdi mdi-email-send"></i>
+                            </button>
+                        @endif
+                        <a href="{{ route('edu.students.edit', $student->id) }}" class="btn btn-primary">
+                            <i class="mdi mdi-square-edit-outline"></i></a>
+                        <button class="btn btn-danger delete-student" value="{{ $student->id }}">
+                            <i class="mdi mdi-delete"></i>
+                        </button>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
 
-    {{--    Form import students--}}
-    <div id="modalCSV" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{  __('Import Data') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body form-horizontal">
-                    {{ Form::open(['route' => 'edu.students.import', 'method' => 'post']) }}
-                    <div class="form-group">
-                        {{ Form::label('example-file-input', __('File')) }}
-                        {{ Form::file('excel_file', ['id' => 'example-file-input'])  }}
-                    </div>
-                    <div class="form-group">
-                        {{ Form::submit(__('Import Data'), ['class' => 'btn btn-success']) }}
-                    </div>
-                    {{ Form::close()}}
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
-                </div>
-            </div>
-
+        <div>
+            {{ $students->links() }}
         </div>
-    </div>
 
-    {{--    Popup fast add student--}}
-    <div id="modal-student" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{  __('Add Student') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+        {{--    Form import students--}}
+        <div id="modalCSV" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{  __('Import Data') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body form-horizontal">
+                        {{ Form::open(['route' => 'edu.students.import', 'method' => 'post']) }}
+                        <div class="form-group">
+                            {{ Form::label('example-file-input', __('File')) }}
+                            {{ Form::file('excel_file', ['id' => 'example-file-input'])  }}
+                        </div>
+                        <div class="form-group">
+                            {{ Form::submit(__('Import Data'), ['class' => 'btn btn-success']) }}
+                        </div>
+                        {{ Form::close()}}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
+                    </div>
                 </div>
-                <div class="modal-body form-horizontal">
-                    {!! Form::open(['route' => 'edu.students.store', 'method' => 'post',
-                                    'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
-                    <div class="form-group">
-                        {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
-                        {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'inputName']) !!}
-                        <span class="text-danger error-text name_error"></span>
-                    </div>
 
-                    <div class="form-group">
-                        {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
-                        {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'inputEmail4']) !!}
-                        <span class="text-danger error-text email_error"></span>
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
-                        {!! Form::text('address', null, ['class' => 'form-control', 'id' => 'inputAddress']) !!}
-                        <span class="text-danger error-text address_error"></span>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
-                            {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'inputPhone']) !!}
-                            <span class="text-danger error-text phone_error"></span>
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
-                            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')],
-                            null, ['class' => 'form-control', 'id' => 'inputGender']) !!}
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            {!! Form::label('birthday', __('BirthDay'), ['class' => 'col-form-label']) !!}
-                            {!! Form::date('birthday', null, ['class' => 'form-control', 'id' => 'inputDate']) !!}
-                            <span class="text-danger error-text birthday_error"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
-                            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')],
-                            null, ['class' => 'form-control', 'id' => 'role']) !!}
-                        </div>
-
-                        <div class="form-group col-md-8">
-                            {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
-                            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null,
-                            ['class' => 'form-control', 'id' => 'faculty']) !!}
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('avatar', __('Choose Avatar')) !!}
-                        {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg',
-                        'id' => 'example-file', 'class' => 'form-control-file']) !!}
-                        <span class="text-danger error-text avatar_error"></span>
-                        <div class='btn btn-primary' id='remove' style="display: none">
-                            Clear
-                        </div>
-                    </div>
-
-                    {!! Form::submit(__('Add Student'), ['class' => 'btn btn-primary', 'id' => 'btn-submit']) !!}
-                    {!! Form::close() !!}
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
-                </div>
             </div>
-
         </div>
-    </div>
 
-    {{--    Form send notifiication student--}}
-    {!! Form::open(['route' => ['edu.students.notification', $student->id], 'method' => 'post', 'id' => 'send-form']) !!}
-    {!! Form::hidden('email', $student->user->email) !!}
-    {!! Form::hidden('user_id', $student->user_id) !!}
-    {!! Form::close() !!}
+        {{--    Popup fast add student--}}
+        <div id="modal-student" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{  __('Add Student') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body form-horizontal">
+                        {!! Form::open(['route' => 'edu.students.store', 'method' => 'post',
+                                        'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
+                        <div class="form-group">
+                            {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
+                            {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'inputName']) !!}
+                            <span class="text-danger error-text name_error"></span>
+                        </div>
 
-    {{--    Form delete student--}}
-    {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
-    {!! Form::close() !!}
+                        <div class="form-group">
+                            {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
+                            {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'inputEmail4']) !!}
+                            <span class="text-danger error-text email_error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
+                            {!! Form::text('address', null, ['class' => 'form-control', 'id' => 'inputAddress']) !!}
+                            <span class="text-danger error-text address_error"></span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
+                                {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'inputPhone']) !!}
+                                <span class="text-danger error-text phone_error"></span>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
+                                {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')],
+                                null, ['class' => 'form-control', 'id' => 'inputGender']) !!}
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                {!! Form::label('birthday', __('BirthDay'), ['class' => 'col-form-label']) !!}
+                                {!! Form::date('birthday', null, ['class' => 'form-control', 'id' => 'inputDate']) !!}
+                                <span class="text-danger error-text birthday_error"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
+                                {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')],
+                                null, ['class' => 'form-control', 'id' => 'role']) !!}
+                            </div>
+
+                            <div class="form-group col-md-8">
+                                {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
+                                {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null,
+                                ['class' => 'form-control', 'id' => 'faculty']) !!}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {!! Form::label('avatar', __('Choose Avatar')) !!}
+                            {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg',
+                            'id' => 'example-file', 'class' => 'form-control-file']) !!}
+                            <span class="text-danger error-text avatar_error"></span>
+                            <div class='btn btn-primary' id='remove' style="display: none">
+                                Clear
+                            </div>
+                        </div>
+
+                        {!! Form::submit(__('Add Student'), ['class' => 'btn btn-primary', 'id' => 'btn-submit']) !!}
+                        {!! Form::close() !!}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        @if(isset($student))
+            {{--    Form send notifiication student--}}
+            {!! Form::open(['route' => ['edu.students.notification', $student->id], 'method' => 'post', 'id' => 'send-form']) !!}
+            {!! Form::hidden('email', $student->user->email) !!}
+            {!! Form::hidden('user_id', $student->user_id) !!}
+            {!! Form::close() !!}
+
+            {{--    Form delete student--}}
+            {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
+            {!! Form::close() !!}
+        @endif
+    @endif
+
 
     @push('scripts')
         <script>
@@ -287,14 +296,10 @@
                         if (fileInput.files && fileInput.files[0]) {
                             var reader = new FileReader();
                             reader.onload = function (e) {
-                                // console.log(e.target.result);
                                 $("<span class=\"pip\">" +
                                     "<img class=\"imageThumb\" src=\"" + e.target.result +
                                     "\" style=\"" + "max-width: 150px; margin-top: 10px;" + "\"/>" +
                                     "</span>").insertAfter("#example-file");
-                                // $('#imagePreview').html('<img src="' + e.target.result +
-                                //     '" alt="Preview Image" class="img-fluid" style="max-width: 280px;" >'
-                                // );
                             }
                             reader.readAsDataURL(fileInput.files[0]);
                         }

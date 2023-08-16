@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\Page;
 use Illuminate\Support\Facades\App;
 
 abstract class BaseRepository implements RepositoryInterface
@@ -29,12 +30,12 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function pagination()
     {
-        return $this->model->orderBy('id', 'desc')->paginate(5);
+        return $this->model->orderBy('id', 'desc')->paginate(Page::page);
     }
 
     public function find($id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->find($id);
     }
 
     public function create($attributes = [])
@@ -44,7 +45,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function update($id, $attributes = [])
     {
-        $result = $this->model->findOrFail($id);
+        $result = $this->model->find($id);
         if ($result) {
             $result->update($attributes);
             return $result;
@@ -54,7 +55,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function delete($id)
     {
-        $result = $this->model->findOrFail($id);
+        $result = $this->model->find($id);
         if ($result) {
             $result->delete();
             return $result;

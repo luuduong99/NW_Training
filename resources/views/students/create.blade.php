@@ -59,7 +59,7 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('role', ['student' => __('Student'), 'admin' => __('Admin')], null, ['class' => 'form-control', 'id' => 'role']) !!}
+            {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')], null, ['class' => 'form-control', 'id' => 'role']) !!}
         </div>
 
         <div class="form-group col-md-4">

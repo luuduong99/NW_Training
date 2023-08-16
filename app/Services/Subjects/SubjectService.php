@@ -2,7 +2,8 @@
 
 namespace App\Services\Subjects;
 
-use App\Http\Requests\subjects\CreateSubjectRequest;
+use App\Enums\Page;
+use App\Http\Requests\Subjects\CreateSubjectRequest;
 use App\Http\Requests\Subjects\UpdateSubjectRequest;
 use App\Models\StudentSubject;
 use App\Repositories\Faculties\FacultyRepository;
@@ -26,8 +27,8 @@ class SubjectService
 
     public function listSubjects()
     {
-        if (Auth::user()->role->role == 'student') {
-            $subjects = Auth::user()->student->faculty->subjects()->paginate(5);
+        if (Auth::user()->role->role == '1') {
+            $subjects = Auth::user()->student->faculty->subjects()->paginate(Page::page);
             $results = Auth::user()->student->subjects->pluck('id')->toArray();
 
             return view('subjects.index', ['subjects' => $subjects, 'results' => $results]);

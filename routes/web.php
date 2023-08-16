@@ -19,10 +19,9 @@ use App\Http\Controllers\PointController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('change_language/{language}', [HomeController::class, 'language'])
+    ->name('change_language');
 Route::group(['middleware' => 'locale'], function () {
-    Route::get('change_language/{language}', [HomeController::class, 'language'])
-        ->name('change_language');
     Auth::routes();
     Route::post('signIn', [LoginController::class, 'signIn'])->name('signIn');
 
@@ -39,7 +38,7 @@ Route::group(['middleware' => 'locale'], function () {
         Route::resource('faculties', FacultyController::class);
         //-----------------------------------
         //----Route Students-----------------
-        Route::resource('students', StudentController::class);
+        Route::resource('students', StudentController::class)->except(['show']);
         Route::group(
             [
                 'prefix' => 'students',
@@ -56,18 +55,17 @@ Route::group(['middleware' => 'locale'], function () {
 
                 Route::get('list-point-of-student/{id}', [StudentController::class, 'pointOfStudent'])
                     ->name('list-point-of-student');
-
                 Route::post('get-point', [StudentController::class, 'getPoint'])->name('get-point');
                 Route::post('add-point', [StudentController::class, 'multipleAdd'])->name('add-point');
 
-                Route::get('list-point', [StudentController::class, 'listPointAll'])->name('list-point');
-
                 Route::get('list-point-student/{id}', [StudentController::class, 'studentPoints'])
                     ->name('list-point-student');
-
-                Route::post('add-one-point', [StudentController::class, 'point'])->name('add-one-point');
                 Route::post('add-point-student/{id}', [StudentController::class, 'pointStudent'])
                     ->name('add-point-student');
+
+//                Route::post('add-one-point', [StudentController::class, 'point'])->name('add-one-point');
+//                Route::post('add-point-student/{id}', [StudentController::class, 'pointStudent'])
+//                    ->name('add-point-student');
             }
         );
         //-----------------------------------

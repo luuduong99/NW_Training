@@ -44,7 +44,7 @@
                     {!! Form::hidden('faculty_id', $result->faculty_id) !!}
                     {!! Form::number('point', null, ['step' => '0.01', 'required', 'min' => '0', 'max' => '10']) !!}
 
-                    @if(!$result->point && Auth::user()->role->role == 'admin')
+                    @if(!$result->point && Auth::user()->role->role == '0')
                         {!! Form::submit(__('Add Point'), ['class' => 'btn btn-primary']) !!}
                     @else
                         {!! Form::submit(__('Update Point'), ['class' => 'btn btn-primary']) !!}
