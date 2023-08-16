@@ -21,6 +21,9 @@ class CreateStudentsTable extends Migration
             $table->string('address')->nullable();
             $table->enum('gender', [0, 1, 2])->comment('0 is other, 1 is male, 2 is female');
             $table->dateTime('birthday')->nullable();
+            $table->unsignedBigInteger('faculty_id')->nullable();
+            $table->float('average_point', 4, 2)->nullable();
+            $table->enum('status', ['enable', 'disable'])->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

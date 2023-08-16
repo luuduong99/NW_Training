@@ -123,21 +123,16 @@ class StudentController extends Controller
         return $this->studentService->ajaxAddPoint($request);
     }
 
-    public function listPointAll()
-    {
-        return $this->studentService->listPointAllStudent();
-    }
-
     public function studentPoints($id)
     {
         return $this->studentService->listPointOneStudent($id);
     }
 
-    public function point(Request $request)
-    {
-        return $this->studentService->addOnePoint($request);
-    }
-
+//    public function point(Request $request)
+//    {
+//        return $this->studentService->addOnePoint($request);
+//    }
+//
     public function pointStudent(Request $request)
     {
         return $this->studentService->addPointStudent($request);

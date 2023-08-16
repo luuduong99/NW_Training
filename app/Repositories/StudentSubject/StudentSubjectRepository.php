@@ -12,16 +12,16 @@ class StudentSubjectRepository extends BaseRepository
         return StudentSubject::class;
     }
 
-    public function addSinglePoint($attribute = [])
-    {
-        $data = $this->getAll()->where('student_id', $attribute['student_id'])
-            ->where('subject_id', $attribute['subject_id'])
-            ->where('faculty_id', $attribute['faculty_id'])
-            ->first();
-        if($data) {
-            $data->update($attribute);
-        }
-    }
+//    public function addSinglePoint($attribute = [])
+//    {
+//        $data = $this->getAll()->where('student_id', $attribute['student_id'])
+//            ->where('subject_id', $attribute['subject_id'])
+//            ->where('faculty_id', $attribute['faculty_id'])
+//            ->first();
+//        if($data) {
+//            $data->update($attribute);
+//        }
+//    }
 
     public function multipleAddPointOneStudent($id, $attribute = [])
     {

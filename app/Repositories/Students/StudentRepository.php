@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Students;
 
+use App\Enums\Page;
 use App\Models\Student;
 use App\Repositories\BaseRepository;
+use Carbon\Carbon;
 
 class StudentRepository extends BaseRepository
 {
@@ -14,19 +16,27 @@ class StudentRepository extends BaseRepository
 
     public function filter($attribute = [])
     {
-        return Student::when($attribute['toAge'], function ($query) use ($attribute) {
-            return $query->where('birthday', '>', $attribute['dateTo']);
+        $fromAge = isset($attribute['fromAge']) ? $attribute['fromAge'] : null;
+        $toAge = isset($attribute['toAge']) ? $attribute['toAge'] : null;
+        $pointTo = isset($attribute['toPoint']) ? $attribute['toPoint'] : null;
+        $pointFrom = isset($attribute['fromPoint']) ? $attribute['fromPoint'] : null;
+
+        $dateFrom = Carbon::now()->subYears($fromAge)->startOfDay();
+        $dateTo = Carbon::now()->subYears($toAge + 1)->endOfDay();
+
+        return Student::with('faculty.subjects', 'subjects', 'user')->when($toAge, function ($query) use ($dateTo) {
+            return $query->where('birthday', '>', $dateTo);
         })
-            ->when($attribute['fromAge'], function ($query) use ($attribute) {
-                return $query->where('birthday', '<', $attribute['dateFrom']);
+            ->when($fromAge, function ($query) use ($dateFrom) {
+                return $query->where('birthday', '<', $dateFrom);
             })
-            ->when($attribute['pointTo'], function ($query) use ($attribute) {
-                return $query->where('average_point', '<', $attribute['pointTo']);
+            ->when($pointTo, function ($query) use ($pointTo) {
+                return $query->where('average_point', '<', $pointTo);
             })
-            ->when($attribute['pointFrom'], function ($query) use ($attribute) {
-                return $query->where('average_point', '>', $attribute['pointFrom']);
+            ->when($pointFrom, function ($query) use ($pointFrom) {
+                return $query->where('average_point', '>', $pointFrom);
             })
             ->orderBy('id', 'desc')
-            ->paginate(5)->withQueryString();
+            ->paginate(Page::page)->withQueryString();
     }
 }

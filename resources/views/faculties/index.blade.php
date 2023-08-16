@@ -11,41 +11,46 @@
             </a>
         </div>
     </div>
-    <table class="table table-striped table-centered mb-0">
-        <thead>
-        <tr>
-            <th>{{ __('Name') }}</th>
-            <th>{{ __('Description') }}</th>
-            <th>{{ __('Created_at') }}</th>
-            <th>{{ __('Updated_at') }}</th>
-            <th>{{ __('Action') }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach ($faculties as $faculty)
+    @if(!isset($faculties))
+        <h1 style="text-align: center;">Not Data</h1>
+    @else
+        <table class="table table-striped table-centered mb-0">
+            <thead>
             <tr>
-                <td><a href="">{{ __($faculty->name) }}</a>
-                </td>
-                <td>{{ $faculty->description }}</td>
-                <td>{{ $faculty->created_at }}</td>
-                <td>{{ $faculty->updated_at }}</td>
-                <td class="table-action">
-                    <a href="{{ route('edu.faculties.edit', $faculty->id) }}" class="btn btn-primary">
-                        <i class="mdi mdi-square-edit-outline"></i></a>
-                    <button class="btn btn-danger delete-faculty" value="{{ $faculty->id }}">
-                        <i class="mdi mdi-delete"></i>
-                    </button>
-                </td>
+                <th>{{ __('Name') }}</th>
+                <th>{{ __('Description') }}</th>
+                <th>{{ __('Created_at') }}</th>
+                <th>{{ __('Updated_at') }}</th>
+                <th>{{ __('Action') }}</th>
             </tr>
-        @endforeach
-        </tbody>
-    </table>
-    <div style="padding-top: 10px;">
-        {{ $faculties->links() }}
-    </div>
+            </thead>
+            <tbody>
+            @foreach ($faculties as $faculty)
+                <tr>
+                    <td><a href="">{{ __($faculty->name) }}</a>
+                    </td>
+                    <td>{{ $faculty->description }}</td>
+                    <td>{{ $faculty->created_at }}</td>
+                    <td>{{ $faculty->updated_at }}</td>
+                    <td class="table-action">
+                        <a href="{{ route('edu.faculties.edit', $faculty->id) }}" class="btn btn-primary">
+                            <i class="mdi mdi-square-edit-outline"></i></a>
+                        <button class="btn btn-danger delete-faculty" value="{{ $faculty->id }}">
+                            <i class="mdi mdi-delete"></i>
+                        </button>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+        <div style="padding-top: 10px;">
+            {{ $faculties->links() }}
+        </div>
 
-    {!! Form::open(['route' => ['edu.faculties.destroy', $faculty->id], 'method' => 'DELETE', 'id' => 'delete-form']) !!}
-    {!! Form::close() !!}
+        {!! Form::open(['route' => ['edu.faculties.destroy', $faculty->id], 'method' => 'DELETE', 'id' => 'delete-form']) !!}
+        {!! Form::close() !!}
+    @endif
+
 
     @push('scripts')
         <script>
