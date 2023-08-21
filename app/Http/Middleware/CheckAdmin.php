@@ -18,8 +18,9 @@ class CheckAdmin
     public function handle(Request $request, Closure $next)
     {
         if (auth()->user()->role->role == '1') {
-            Session::flash('check_admin', 'You are not Admin.');
-            return redirect()->back();
+            abort(401);
+//            Session::flash('check_admin', 'You are not Admin.');
+//            return redirect()->back();
         }
 
         return $next($request);

@@ -18,14 +18,17 @@
                     {!! Form::label('subject', __('Subject'), ['class' => 'col-form-label']) !!}
                     {{-- null is value default--}}
                     {!! Form::select('subject[]', ['' => __('Choose Subject')]
-                    + $student->subjects->pluck('name', 'id')->toArray(), $subjectWithPoint->id,
+                    + collect($student->subjects)->mapWithKeys(function ($subject) {
+                        return [$subject->id => __($subject->name)];
+                        })->toArray(), $subjectWithPoint->id,
                     ['class' => 'form-control subject']) !!}
+                    <span class="text-danger error-text error-subject"></span>
                 </div>
                 <div class="form-group col-md-4">
                     {!! Form::label('point', __('Point'), ['class' => 'col-form-label']) !!}
                     {!! Form::number('point[]', isset($subjectWithPoint->pivot->point) ? $subjectWithPoint->pivot->point : '',
                     ['class' => 'form-control point']) !!}
-                    <span class="text-danger error-text"></span>
+                    <span class="text-danger error-text error-point"></span>
                 </div>
                 <div class="form-group col-md-2">
                     {!! Form::button('<i class="mdi mdi-tray-minus"></i>', ['class' => 'btn btn-danger minus',
@@ -51,6 +54,7 @@
                 var id = {{ $id }};
 
                 addIdInput();
+                addIdSelect();
                 filterSubject(optionValue);
                 disableButton(clickLimit, limit)
 
@@ -88,6 +92,7 @@
                     optionValue = getOptionSelected()
                     filterSubject(optionValue);
                     addIdInput();
+                    addIdSelect()
                 });
 
                 $('.add').on('click', function (e) {
@@ -98,23 +103,27 @@
                             <div class="form-group col-md-6">
                                 {!! Form::label('subject', __('Subject'), ['class' => 'col-form-label']) !!}
                     {!! Form::select('subject[]', ['' => __('Choose Subject')] +
-                    $student->subjects->pluck('name', 'id')->toArray(), null,
+                    collect($student->subjects)->mapWithKeys(function ($subject) {
+                        return [$subject->id => __($subject->name)];
+                        })->toArray(), null,
                     ['class' => 'form-control subject']) !!}
+                    <span class="text-danger error-text error-subject"></span>
                     </div>
                     <div class="form-group col-md-4">
                     {!! Form::label('point', __('Point'), ['class' => 'col-form-label']) !!}
                     {!! Form::number('point[]', null, ['class' => 'form-control point']) !!}
-                    <span class="text-danger error-text"></span>
+                    <span class="text-danger error-text error-point"></span>
                     </div>
                     <div class="form-group col-md-2">
                     {!! Form::button('<i class="mdi mdi-tray-minus"></i>', ['class' => 'btn btn-danger minus',
-                                'style' => 'margin-top: 37px;']) !!}
+                                            'style' => 'margin-top: 37px;']) !!}
                     </div>`;
                     $('.select-point').append(html);
 
                     optionValue = getOptionSelected();
                     filterSubject(optionValue);
                     addIdInput();
+                    addIdSelect()
                 });
 
                 $('.select-point').on('change', '.subject', function () {
@@ -180,8 +189,15 @@
                 });
 
                 function addIdInput() {
-                    $('.select-point .error-text').each(function (index) {
+                    $('.select-point .error-point').each(function (index) {
                         var uniqueId = 'point' + index;
+                        $(this).attr('id', uniqueId);
+                    });
+                }
+
+                function addIdSelect() {
+                    $('.select-point .error-subject').each(function (index) {
+                        var uniqueId = 'subject' + index;
                         $(this).attr('id', uniqueId);
                     });
                 }

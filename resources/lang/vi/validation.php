@@ -133,10 +133,13 @@ return [
             'rule-name' => 'custom-message',
         ],
         'point.*' => [
-            'required' => 'Trường điểm này là bắt buộc.',
+            'required' => 'Trường điểm này không được để trống.',
             'min' => 'Trường điểm này không được nhỏ hơn 0.',
             'max' => 'Trường điểm này không được lớn hơn 10.',
             'regex' => 'Trường điểm này là kiểu phân số với 2 chữ số sau dấu phẩy.',
+        ],
+        'subject.*' => [
+            'required' => 'Trường môn này không được để trống.',
         ],
     ],
 

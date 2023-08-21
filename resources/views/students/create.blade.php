@@ -5,7 +5,7 @@
     {!! Form::open(['route' => 'edu.students.store', 'method' => 'post', 'enctype' => 'multipart/form-data']) !!}
     <div class="form-group">
         {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
-        {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'inputName']) !!}
+        {!! Form::text('name', null, ['class' => 'form-control']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>
         @enderror
@@ -14,7 +14,7 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
-            {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'inputEmail4']) !!}
+            {!! Form::email('email', null, ['class' => 'form-control']) !!}
             @error('email')
             <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -23,7 +23,7 @@
 
     <div class="form-group">
         {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
-        {!! Form::text('address', null, ['class' => 'form-control', 'id' => 'inputAddress']) !!}
+        {!! Form::text('address', null, ['class' => 'form-control']) !!}
         @error('address')
         <span class="text-danger">{{ $message }}</span>
         @enderror
@@ -32,7 +32,7 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
-            {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'inputPhone']) !!}
+            {!! Form::text('phone', null, ['class' => 'form-control']) !!}
             @error('phone')
             <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -40,7 +40,7 @@
 
         <div class="form-group col-md-4">
             {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')], null, ['class' => 'form-control', 'id' => 'inputGender']) !!}
+            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')], null, ['class' => 'form-control']) !!}
             @error('gender')
             <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -48,7 +48,7 @@
 
         <div class="form-group col-md-4">
             {!! Form::label('birthday', __('BirthDay'), ['class' => 'col-form-label']) !!}
-            {!! Form::date('birthday', null, ['class' => 'form-control', 'id' => 'inputDate']) !!}
+            {!! Form::date('birthday', null, ['class' => 'form-control']) !!}
             @error('birthday')
             <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -59,12 +59,12 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')], null, ['class' => 'form-control', 'id' => 'role']) !!}
+            {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')], null, ['class' => 'form-control']) !!}
         </div>
 
         <div class="form-group col-md-4">
             {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
-            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null, ['class' => 'form-control', 'id' => 'faculty']) !!}
+            {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null, ['class' => 'form-control']) !!}
         </div>
     </div>
 

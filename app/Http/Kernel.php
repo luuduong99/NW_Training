@@ -57,6 +57,8 @@ class Kernel extends HttpKernel
         'auth.login' => \App\Http\Middleware\CheckLogin::class,
         'auth.admin' => \App\Http\Middleware\CheckAdmin::class,
         'locale' => \App\Http\Middleware\Locale::class,
+        'route' => \App\Http\Middleware\CheckRouteExistence::class,
+        'method' => \App\Http\Middleware\CheckSupportedMethods::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,

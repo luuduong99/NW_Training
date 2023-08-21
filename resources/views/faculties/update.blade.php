@@ -13,6 +13,7 @@
     'method' => 'PUT', 'enctype' => 'multipart/form-data']) !!}
     <div class="form-group">
         <label for="inputName" class="col-form-label">{{ __('Faculty Name') }}</label>
+        <span>:<span class="text-danger">(*)</span></span>
         {!! Form::text('name', old('name', $faculty->name), ['class' => 'form-control', 'id' => 'inputName']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>

@@ -3,11 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Mail\AveragePoint;
-use App\Models\StudentSubject;
-use App\Models\Subject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Students\StudentRepository;
-use App\Repositories\StudentSubject\StudentSubjectRepository;
 use App\Repositories\Subjects\SubjectRepository;
 use App\Repositories\Users\UserRepository;
 use Illuminate\Console\Command;
@@ -16,7 +13,7 @@ use Illuminate\Support\Facades\Mail;
 class AveragePointStudent extends Command
 {
 
-    protected $studentRepository, $userRepository, $facultyRepository, $studentSubjectRepository, $subjectRepository;
+    protected $studentRepository, $userRepository, $facultyRepository, $subjectRepository;
 
 
     /**
@@ -40,13 +37,11 @@ class AveragePointStudent extends Command
      */
     public function __construct(StudentRepository        $studentRepository, UserRepository $userRepository,
                                 FacultyRepository        $facultyRepository,
-                                StudentSubjectRepository $studentSubjectRepository,
                                 SubjectRepository        $subjectRepository)
     {
         $this->studentRepository = $studentRepository;
         $this->userRepository = $userRepository;
         $this->facultyRepository = $facultyRepository;
-        $this->studentSubjectRepository = $studentSubjectRepository;
         $this->subjectRepository = $subjectRepository;
         parent::__construct();
     }

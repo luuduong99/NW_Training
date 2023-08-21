@@ -73,7 +73,7 @@
                 <h4 class="mt-0">{{ __('Sign In') }}</h4>
                 <p class="text-muted mb-4">Enter your email address and password to access account.</p>
                 <!-- form -->
-                <form action="{{ route('signIn') }}" method="post">
+                <form action="{{ route('login') }}" method="post">
                     @csrf
                     <div class="form-group">
                         <label for="emailaddress">Email address</label>

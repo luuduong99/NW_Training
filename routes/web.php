@@ -7,7 +7,6 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PointController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,25 +18,18 @@ use App\Http\Controllers\PointController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('change_language/{language}', [HomeController::class, 'language'])
-    ->name('change_language');
-Route::group(['middleware' => 'locale'], function () {
+Route::group(['middleware' => ['locale', 'route', 'method']], function () {
+    Route::get('change_language/{language}', [HomeController::class, 'language'])
+        ->name('change_language');
     Auth::routes();
-    Route::post('signIn', [LoginController::class, 'signIn'])->name('signIn');
 
     Route::group([
         'prefix' => 'edu',
         'as' => 'edu.',
         'middleware' => ['auth.login', 'auth.admin']
     ], function () {
-        //-----------------------------------
-        //----Home----------------
         Route::get('home', [HomeController::class, 'index'])->name('home');
-        //-----------------------------------
-        //----Route Faculties----------------
         Route::resource('faculties', FacultyController::class);
-        //-----------------------------------
-        //----Route Students-----------------
         Route::resource('students', StudentController::class)->except(['show']);
         Route::group(
             [
@@ -62,14 +54,8 @@ Route::group(['middleware' => 'locale'], function () {
                     ->name('list-point-student');
                 Route::post('add-point-student/{id}', [StudentController::class, 'pointStudent'])
                     ->name('add-point-student');
-
-//                Route::post('add-one-point', [StudentController::class, 'point'])->name('add-one-point');
-//                Route::post('add-point-student/{id}', [StudentController::class, 'pointStudent'])
-//                    ->name('add-point-student');
             }
         );
-        //-----------------------------------
-        //----Route Subjects-----------------
         Route::resource('subjects', SubjectController::class)->except(['index']);
         Route::group(
             [

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Subjects\CreateSubjectRequest;
+use App\Http\Requests\Subjects\CreateOrUpdateSubjectRequest;
 use App\Http\Requests\Subjects\UpdateSubjectRequest;
 use App\Services\Subjects\SubjectService;
 
@@ -41,7 +41,7 @@ class SubjectController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateSubjectRequest $request)
+    public function store(CreateOrUpdateSubjectRequest $request)
     {
         return $this->subjectService->storeSubject($request);
     }
@@ -75,7 +75,7 @@ class SubjectController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSubjectRequest $request, $id)
+    public function update(CreateOrUpdateSubjectRequest $request, $id)
     {
         return $this->subjectService->updateSubject($id, $request);
     }

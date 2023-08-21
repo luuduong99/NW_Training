@@ -2,7 +2,7 @@
 
 namespace App\Services\Faculties;
 
-use App\Http\Requests\Faculties\CreateFacultyRequest;
+use App\Http\Requests\Faculties\CreatOrUpdateFacultyRequest;
 use App\Http\Requests\Faculties\UpdateFacultyRequest;
 use App\Models\Faculty;
 use App\Repositories\Faculties\FacultyRepository;
@@ -31,14 +31,12 @@ class FacultyService
         return view('faculties/create');
     }
 
-    public function storeFaculty(CreateFacultyRequest $request)
+    public function storeFaculty(CreatOrUpdateFacultyRequest $request)
     {
         DB::beginTransaction();
         try {
             $data = $request->all();
-
             $this->facultyRepository->create($data);
-
             DB::commit();
 
             return redirect()->route('edu.faculties.index')->with('add_faculty', 'Successfully add faculty');
@@ -51,10 +49,16 @@ class FacultyService
     public function editFaculty($id)
     {
         $faculty = $this->facultyRepository->find($id);
+
+        if(!$faculty)
+        {
+            abort(404);
+        }
+
         return view('faculties/update', ['faculty' => $faculty]);
     }
 
-    public function updateFaculty($id, UpdateFacultyRequest $request)
+    public function updateFaculty($id, CreatOrUpdateFacultyRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -74,6 +78,12 @@ class FacultyService
         DB::beginTransaction();
         try {
             $faculty = $this->facultyRepository->find($id);
+
+            if(!$faculty)
+            {
+                abort(404);
+            }
+
             if (count($faculty->students) != 0 && count($faculty->subjects) != 0) {
                 return redirect()->back()->with('delete_false',
                     'This faculty already has a subject or student registered' . ', it cannot be deleted');

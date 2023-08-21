@@ -12,6 +12,7 @@
         'method' => 'put', 'enctype' => 'multipart/form-data']) !!}
     <div class="form-group">
         {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
+        <span>:<span class="text-danger">(*)</span></span>
         {!! Form::text('name', old('name', $student->user->name), ['class' => 'form-control', 'id' => 'inputName']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>
@@ -21,6 +22,7 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
+            <span>:<span class="text-danger">(*)</span></span>
             {!! Form::email('email', old('email', $student->user->email), ['class' => 'form-control', 'id' => 'inputEmail4', 'readonly']) !!}
             @error('email')
             <span class="text-danger">{{ $message }}</span>
@@ -30,6 +32,7 @@
 
     <div class="form-group">
         {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
+        <span>:<span class="text-danger">(*)</span></span>
         {!! Form::text('address', old('address', $student->address), ['class' => 'form-control', 'id' => 'inputAddress']) !!}
         @error('address')
         <span class="text-danger">{{ $message }}</span>
@@ -39,6 +42,7 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
+            <span>:<span class="text-danger">(*)</span></span>
             {!! Form::text('phone', old('phone', $student->phone), ['class' => 'form-control', 'id' => 'inputPhone']) !!}
             @error('phone')
             <span class="text-danger">{{ $message }}</span>
@@ -46,6 +50,7 @@
         </div>
         <div class="form-group col-md-4">
             {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
+            <span>:<span class="text-danger">(*)</span></span>
             {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')],
             $student->gender, ['class' => 'form-control', 'id' => 'inputGender']) !!}
             @error('gender')
@@ -54,6 +59,7 @@
         </div>
         <div class="form-group col-md-4">
             {!! Form::label('birthday', __('Birthday'), ['class' => 'col-form-label']) !!}
+            <span>:<span class="text-danger">(*)</span></span>
             {!! Form::date('birthday', Carbon\Carbon::parse($student->birthday)->format('Y-m-d'), ['class' => 'form-control', 'id' => 'inputDate']) !!}
             @error('birthday')
             <span class="text-danger">{{ $message }}</span>
@@ -64,12 +70,14 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
+            <span>:<span class="text-danger">(*)</span></span>
             {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')],
             $student->user->role, ['class' => 'form-control', 'id' => 'role']) !!}
         </div>
 
         <div class="form-group col-md-4">
             {!! Form::label('faculty', __('Faculty'), ['class' => 'col-form-label']) !!}
+            <span>:<span class="text-danger">(*)</span></span>
             {!! Form::select('faculty_id', $faculties->pluck('name', 'id'),
             $student->faculty_id, ['class' => 'form-control', 'id' => 'faculty']) !!}
         </div>

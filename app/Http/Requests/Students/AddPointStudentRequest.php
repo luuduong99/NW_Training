@@ -24,6 +24,7 @@ class AddPointStudentRequest extends FormRequest
     public function rules()
     {
         return [
+            'subject.*' => ['required'],
             'point.*' => ['required', 'numeric', 'min:0', 'max:10', 'regex:/^\d+(\.\d{1,2})?$/'],
         ];
     }

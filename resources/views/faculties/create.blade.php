@@ -6,6 +6,7 @@
         'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
     <div class="form-group">
         {!! Form::label('name', __('Faculty Name'), ['class' => 'col-form-label']) !!}
+        <span>:<span class="text-danger">(*)</span></span>
         {!! Form::text('name', old('name') ?: '', ['class' => 'form-control', 'id' => 'name']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>

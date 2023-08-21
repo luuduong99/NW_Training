@@ -28,9 +28,16 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->get();
     }
 
-    public function pagination()
+    public function pagination($relationships = [])
     {
-        return $this->model->orderBy('id', 'desc')->paginate(Page::page);
+        $query = $this->model->orderBy('id', 'desc');
+
+        foreach ($relationships as $relationship) {
+            $query->with($relationship);
+        }
+
+        return $query->paginate(Page::page);
+//        return $this->model->orderBy('id', 'desc')->paginate(Page::page);
     }
 
     public function find($id)
