@@ -6,6 +6,7 @@
     @csrf
     <div class="form-group">
         <label for="name" class="col-form-label">{{ __('Subject Name') }}</label>
+        <span>:<span class="text-danger">(*)</span></span>
         {!! Form::text('name', old('name'), ['class' => 'form-control', 'id' => 'name']) !!}
         @error('name')
         <span class="text-danger">{{ $message }}</span>

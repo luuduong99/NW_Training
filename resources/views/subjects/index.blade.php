@@ -34,7 +34,7 @@
             {!! Form::open(['route' => 'edu.students.register-multiple-subject',
             'method' => 'post', 'id' => 'multiple_submit']) !!}
             {!! Form::token() !!}
-            @if (Auth::user()->role->role == '1' && count($results) < count(Auth::user()->student->faculty->subjects))
+            @if (Auth::user()->role->role == '1' && count($results) < count(Auth::user()->student->subjects))
                 {!! Form::submit(__('Register Multiple Subject'),
                 ['class' => 'btn btn-primary', 'style' => 'float: right']) !!}
             @endif
@@ -51,7 +51,9 @@
                     <td><a href="">{{ __($subject->name) }}</a></td>
                     <td>{{ __($subject->description) }}</td>
                     <td>{{ __($subject->faculty->name) }}</td>
-                    <td>{{ $subject->students->pluck('pivot.point')->first() }}</td>
+                    @if (Auth::user()->role->role == '1')
+                        <td>{{ $subject->students->pluck('pivot.point')->first() }}</td>
+                    @endif
                     <td>{{ $subject->created_at }}</td>
                     <td>{{ $subject->updated_at }}</td>
                     <td class="table-action">
@@ -59,7 +61,7 @@
                             <a href="{{ route('edu.subjects.edit', $subject->id) }}" class="btn btn-primary">
                                 <i class="mdi mdi-square-edit-outline"></i>
                             </a>
-                            @if (!in_array($subject->id, $array))
+                            @if (count($subject->students) == 0)
                                 <button value="{{ $subject->id }}" class="btn btn-danger delete-link">
                                     <i class="mdi mdi-delete"></i>
                                 </button>

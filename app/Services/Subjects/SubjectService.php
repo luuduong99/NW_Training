@@ -3,44 +3,33 @@
 namespace App\Services\Subjects;
 
 use App\Enums\Page;
-use App\Http\Requests\Subjects\CreateSubjectRequest;
+use App\Http\Requests\Subjects\CreateOrUpdateSubjectRequest;
 use App\Http\Requests\Subjects\UpdateSubjectRequest;
-use App\Models\StudentSubject;
 use App\Repositories\Faculties\FacultyRepository;
-use App\Repositories\StudentSubject\StudentSubjectRepository;
 use App\Repositories\Subjects\SubjectRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SubjectService
 {
-    protected $subjectRepository, $facultyRepository, $studentSubjectRepository;
+    protected $subjectRepository, $facultyRepository;
 
-    public function __construct(SubjectRepository        $subjectRepository, FacultyRepository $facultyRepository,
-                                StudentSubjectRepository $studentSubjectRepository)
+    public function __construct(SubjectRepository $subjectRepository, FacultyRepository $facultyRepository,)
     {
         $this->subjectRepository = $subjectRepository;
         $this->facultyRepository = $facultyRepository;
-        $this->studentSubjectRepository = $studentSubjectRepository;
     }
 
     public function listSubjects()
     {
-        if (Auth::user()->role->role == '1') {
-            $subjects = Auth::user()->student->faculty->subjects()->paginate(Page::page);
+        if (Auth::user()->role->role == '1' && Auth::user()->student != null) {
+            $subjects = Auth::user()->student->subjects()->with('faculty')->paginate(Page::page);
             $results = Auth::user()->student->subjects->pluck('id')->toArray();
-
             return view('subjects.index', ['subjects' => $subjects, 'results' => $results]);
         } else {
-            $subjects = $this->subjectRepository->pagination();
-            $data = $this->studentSubjectRepository->getAll();
-            $array = [];
-            foreach ($data as $result) {
-                array_push($array, $result->subject_id);
-            }
+            $subjects = $this->subjectRepository->pagination(['students', 'faculty']);
 
-            return view('subjects.index', ['subjects' => $subjects, 'array' => $array]);
+            return view('subjects.index', ['subjects' => $subjects]);
         }
     }
 
@@ -50,7 +39,7 @@ class SubjectService
         return view('subjects.create', ['faculties' => $faculties]);
     }
 
-    public function storeSubject(CreateSubjectRequest $request)
+    public function storeSubject(CreateOrUpdateSubjectRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -68,12 +57,16 @@ class SubjectService
     public function editSubject($id)
     {
         $subject = $this->subjectRepository->find($id);
+        if(!$subject)
+        {
+            abort(404);
+        }
         $faculties = $this->facultyRepository->getAll();
 
         return view('subjects.update', ['subject' => $subject, 'faculties' => $faculties]);
     }
 
-    public function updateSubject($id, UpdateSubjectRequest $request)
+    public function updateSubject($id, CreateOrUpdateSubjectRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -93,6 +86,10 @@ class SubjectService
         DB::beginTransaction();
         try {
             $subject = $this->subjectRepository->find($id);
+            if(!$subject)
+            {
+                abort(404);
+            }
             if (count($subject->students) != 0) {
                 return redirect()->back()->with('delete_false',
                     'There are already students registered for this subjects'.

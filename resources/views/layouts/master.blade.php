@@ -39,7 +39,6 @@
 </head>
 <body class="loading" data-layout="detached"
       data-layout-config='{"layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
-
 <!-- Topbar Start -->
 <div class="navbar-custom topnav-navbar topnav-navbar-dark">
     <div class="container-fluid">

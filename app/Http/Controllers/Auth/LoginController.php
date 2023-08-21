@@ -39,23 +39,4 @@ class LoginController extends Controller
     {
         $this->middleware('web')->except('logout');
     }
-
-    public function signIn(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            if(isset(Auth::user()->student->id))
-            {
-                return redirect()->route('edu.students.profile', Auth::user()->student->id);
-            }
-            return redirect()->route('edu.home');
-        }
-
-        return redirect()->route('login')->with('login_failed', 'Incorrect email or password');
-    }
 }

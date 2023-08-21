@@ -12,8 +12,20 @@
     @csrf
     <div class="form-group">
         <label for="name" class="col-form-label">{{ __('Subject Name') }}</label>
+        <span>:<span class="text-danger">(*)</span></span>
         {!! Form::text('name', old('name') ? old('name') : $subject->name, ['class' => 'form-control']) !!}
         @error('name')
+        <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <div class="form-group">
+        <label for="description">{{ __('Description') }}</label>
+        {!! Form::textarea('description', old('description', $subject->description), ['id' => 'description']) !!}
+        <script>
+            CKEDITOR.replace('description');
+        </script>
+        @error('description')
         <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Students\AddPointStudentRequest;
-use App\Http\Requests\Students\CreateStudentRequest;
+use App\Http\Requests\Students\CreateOrUpdateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
 use App\Services\Students\StudentService;
 use Illuminate\Http\Request;
@@ -43,7 +43,7 @@ class StudentController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateStudentRequest $request)
+    public function store(CreateOrUpdateStudentRequest $request)
     {
         return $this->studentService->storeStudent($request);
     }
@@ -77,7 +77,7 @@ class StudentController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateStudentRequest $request, $id)
+    public function update(CreateOrUpdateStudentRequest $request, $id)
     {
         return $this->studentService->updateStudent($request, $id);
     }

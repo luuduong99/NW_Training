@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Faculties\CreateFacultyRequest;
+use App\Http\Requests\Faculties\CreatOrUpdateFacultyRequest;
 use App\Http\Requests\Faculties\UpdateFacultyRequest;
 use App\Services\Faculties\FacultyService;
 use Illuminate\Http\Request;
@@ -43,7 +43,7 @@ class FacultyController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateFacultyRequest $request)
+    public function store(CreatOrUpdateFacultyRequest $request)
     {
         return $this->facultyService->storeFaculty($request);
 
@@ -79,7 +79,7 @@ class FacultyController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id, UpdateFacultyRequest $request)
+    public function update($id, CreatOrUpdateFacultyRequest $request)
     {
         return $this->facultyService->updateFaculty($id, $request);
     }

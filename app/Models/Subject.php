@@ -16,6 +16,7 @@ class Subject extends Model
         'name', 'description', 'faculty_id',
     ];
 
+
     public function faculty()
     {
         return $this->belongsTo(Faculty::class);

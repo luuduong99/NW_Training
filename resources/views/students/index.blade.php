@@ -133,7 +133,7 @@
                             {{ count($student->subjects->pluck('id')->toArray()) }}
                         </a>
                     </td>
-                    <td>{{ $student->average ? $student->average : __('Not point yet') }}</td>
+                    <td>{{ isset($student->average) ? $student->average : __('Not point yet') }}</td>
                     <td title="{{ $student->created_at }}"
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">{{ $student->created_at }}</td>
                     <td title="{{ $student->updated_at }}"
@@ -200,18 +200,21 @@
                                         'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
                         <div class="form-group">
                             {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
+                            <span>:<span class="text-danger">(*)</span></span>
                             {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'inputName']) !!}
                             <span class="text-danger error-text name_error"></span>
                         </div>
 
                         <div class="form-group">
                             {!! Form::label('email', __('Email'), ['class' => 'col-form-label']) !!}
+                            <span>:<span class="text-danger">(*)</span></span>
                             {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'inputEmail4']) !!}
                             <span class="text-danger error-text email_error"></span>
                         </div>
 
                         <div class="form-group">
                             {!! Form::label('address', __('Address'), ['class' => 'col-form-label']) !!}
+                            <span>:<span class="text-danger">(*)</span></span>
                             {!! Form::text('address', null, ['class' => 'form-control', 'id' => 'inputAddress']) !!}
                             <span class="text-danger error-text address_error"></span>
                         </div>
@@ -219,18 +222,21 @@
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 {!! Form::label('phone', __('Phone'), ['class' => 'col-form-label']) !!}
+                                <span>:<span class="text-danger">(*)</span></span>
                                 {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'inputPhone']) !!}
                                 <span class="text-danger error-text phone_error"></span>
                             </div>
 
                             <div class="form-group col-md-4">
                                 {!! Form::label('gender', __('Gender'), ['class' => 'col-form-label']) !!}
+                                <span>:<span class="text-danger">(*)</span></span>
                                 {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'), '2' => __('Female')],
                                 null, ['class' => 'form-control', 'id' => 'inputGender']) !!}
                             </div>
 
                             <div class="form-group col-md-4">
                                 {!! Form::label('birthday', __('BirthDay'), ['class' => 'col-form-label']) !!}
+                                <span>:<span class="text-danger">(*)</span></span>
                                 {!! Form::date('birthday', null, ['class' => 'form-control', 'id' => 'inputDate']) !!}
                                 <span class="text-danger error-text birthday_error"></span>
                             </div>
@@ -239,12 +245,14 @@
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 {!! Form::label('role', __('Role'), ['class' => 'col-form-label']) !!}
+                                <span>:<span class="text-danger">(*)</span></span>
                                 {!! Form::select('role', ['1' => __('Student'), '0' => __('Admin')],
                                 null, ['class' => 'form-control', 'id' => 'role']) !!}
                             </div>
 
                             <div class="form-group col-md-8">
                                 {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
+                                <span>:<span class="text-danger">(*)</span></span>
                                 {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null,
                                 ['class' => 'form-control', 'id' => 'faculty']) !!}
                             </div>
@@ -255,6 +263,7 @@
                             {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg',
                             'id' => 'example-file', 'class' => 'form-control-file']) !!}
                             <span class="text-danger error-text avatar_error"></span>
+                            <span class="pip"></span>
                             <div class='btn btn-primary' id='remove' style="display: none">
                                 Clear
                             </div>
@@ -262,13 +271,12 @@
 
                         {!! Form::submit(__('Add Student'), ['class' => 'btn btn-primary', 'id' => 'btn-submit']) !!}
                         {!! Form::close() !!}
-
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">{{  __('Close') }}</button>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -296,10 +304,14 @@
                         if (fileInput.files && fileInput.files[0]) {
                             var reader = new FileReader();
                             reader.onload = function (e) {
-                                $("<span class=\"pip\">" +
-                                    "<img class=\"imageThumb\" src=\"" + e.target.result +
-                                    "\" style=\"" + "max-width: 150px; margin-top: 10px;" + "\"/>" +
-                                    "</span>").insertAfter("#example-file");
+                                $('.pip').html('<img src="' + e.target.result +
+                                    '" alt="Preview Image" class="imageThumb" ' +
+                                    'style="max-width: 150px; margin-top: 10px;" >'
+                                );
+                                // $("<span class=\"pip\">" +
+                                //     "<img class=\"imageThumb\" src=\"" + e.target.result +
+                                //     "\" style=\"" + "max-width: 150px; margin-top: 10px;" + "\"/>" +
+                                //     "</span>").insertAfter("#example-file");
                             }
                             reader.readAsDataURL(fileInput.files[0]);
                         }

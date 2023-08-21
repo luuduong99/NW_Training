@@ -4,18 +4,13 @@ namespace App\Services\Students;
 
 use App\Enums\Page;
 use App\Http\Requests\Students\AddPointStudentRequest;
-use App\Http\Requests\Students\CreateStudentRequest;
-use App\Http\Requests\Students\UpdateStudentRequest;
+use App\Http\Requests\Students\CreateOrUpdateStudentRequest;
 use App\Imports\PointImport;
-use App\Models\Student;
-use App\Models\Subject;
 use App\Repositories\Faculties\FacultyRepository;
 use App\Repositories\Roles\RoleRepository;
 use App\Repositories\Students\StudentRepository;
-use App\Repositories\StudentSubject\StudentSubjectRepository;
 use App\Repositories\Subjects\SubjectRepository;
 use App\Repositories\Users\UserRepository;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,18 +20,16 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentService
 {
-    protected $studentRepository, $userRepository, $facultyRepository, $studentSubjectRepository, $subjectRepository,
+    protected $studentRepository, $userRepository, $facultyRepository, $subjectRepository,
         $roleRepository;
 
     public function __construct(StudentRepository        $studentRepository, UserRepository $userRepository,
                                 FacultyRepository        $facultyRepository,
-                                StudentSubjectRepository $studentSubjectRepository,
                                 SubjectRepository        $subjectRepository, RoleRepository $roleRepository)
     {
         $this->studentRepository = $studentRepository;
         $this->userRepository = $userRepository;
         $this->facultyRepository = $facultyRepository;
-        $this->studentSubjectRepository = $studentSubjectRepository;
         $this->subjectRepository = $subjectRepository;
         $this->roleRepository = $roleRepository;
     }
@@ -45,18 +38,6 @@ class StudentService
     {
         $faculties = $this->facultyRepository->getAll();
         $students = $this->studentRepository->filter($request->all());
-        foreach ($students as $student) {
-            $subjects = count($student->faculty->subjects);
-            $points = $student->subjects()->wherePivot('point', '!=', null)->get();
-            if (count($points) > 0 && count($student->subjects) == $subjects
-                && count($points) == $subjects && $subjects > 0) {
-                $total = 0;
-                foreach ($points as $point) {
-                    $total += $point->pivot->point;
-                }
-                $student['average'] = $total / $subjects;
-            }
-        }
 
         return view('students.index', ['students' => $students, 'faculties' => $faculties]);
     }
@@ -69,7 +50,7 @@ class StudentService
     }
 
 
-    public function storeStudent(CreateStudentRequest $request)
+    public function storeStudent($request)
     {
         DB::beginTransaction();
         try {
@@ -78,53 +59,30 @@ class StudentService
             if ($request->hasFile('avatar')) {
                 $file = $request->file('avatar');
                 $ext = strtolower($file->getClientOriginalExtension());
-                $fileName = rand() . '.' . $ext;
-                $file->move('images/students', $fileName);
-                $image = $fileName;
+                $avatar = rand() . '.' . $ext;
+                $file->move('images/students', $avatar);
+                $data['avatar'] = $avatar;
             }
 
-            if ($request->hasFile('avatar')) {
-                $data['avatar'] = $image;
-            } else {
-                $data['avatar'] = null;
-            }
-
-            if ($result = $this->userRepository->create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make('123456'),
-            ])) {
-                $this->roleRepository->create([
-                    'user_id' => $result->id,
-                    'role' => $data['role'],
-                ]);
-
-                $this->studentRepository->create([
-                    'user_id' => $result->id,
-                    'avatar' => $data['avatar'],
-                    'phone' => $data['phone'],
-                    'address' => $data['address'],
-                    'gender' => $data['gender'],
-                    'birthday' => $data['birthday'],
-                    'faculty_id' => $data['faculty_id']
-                ]);
+            $data['password'] = Hash::make('123456');
+            if ($user = $this->userRepository->create($data)) {
+                $request['user_id'] = $user->id;
+                $this->roleRepository->create($data);
+                $this->studentRepository->create($data);
 
                 dispatch(new \App\Jobs\SendMailRegister($data));
             }
             DB::commit();
 
             if ($request->ajax()) {
-
                 return response()->json(['success' => 'Successfully added student.']);
-            } else {
-
-                return redirect()->route('edu.students.index')->with('add_student',
-                    'Successfully added student.');
             }
+
+            return redirect()->route('edu.students.index')->with('add_student',
+                'Successfully added student.');
         } catch (\Throwable $th) {
             DB::rollBack();
             if ($request->ajax()) {
-
                 return response()->json();
             }
         }
@@ -133,12 +91,14 @@ class StudentService
     public function editStudent($id)
     {
         $student = $this->studentRepository->find($id);
+        if (!$student) {
+            abort(404);
+        }
         $faculties = $this->facultyRepository->getAll();
-
         return view('students.update', ['student' => $student, 'faculties' => $faculties]);
     }
 
-    public function updateStudent(UpdateStudentRequest $request, $id)
+    public function updateStudent($request, $id)
     {
         DB::beginTransaction();
         try {
@@ -154,28 +114,13 @@ class StudentService
 
                 $file = $request->file('avatar');
                 $ext = strtolower($file->getClientOriginalExtension());
-                $fileName = rand() . '.' . $ext;
-                $file->move('images/students', $fileName);
-                $image = $fileName;
+                $avatar = rand() . '.' . $ext;
+                $file->move('images/students', $avatar);
+                $data['avatar'] = $avatar;
             }
-
-            if ($request->hasFile('avatar')) {
-                $data['avatar'] = $image;
-            } else {
-                $data['avatar'] = $student->avatar;
-            }
-
-            if ($this->userRepository->update($student->user_id, ['name' => $data['name']])) {
-                $this->userRepository->find($student->user_id)->role->update(['role' => $data['role']]);
-
-                $this->studentRepository->update($id, [
-                    'avatar' => $data['avatar'],
-                    'phone' => $data['phone'],
-                    'address' => $data['address'],
-                    'gender' => $data['gender'],
-                    'birthday' => $data['birthday'],
-                    'faculty_id' => $data['faculty_id']
-                ]);
+            if ($user = $this->userRepository->update($student->user_id, $data)) {
+                $user->role->update($data);
+                $this->studentRepository->update($id,$data);
             }
             DB::commit();
 
@@ -193,22 +138,27 @@ class StudentService
         try {
             $student = $this->studentRepository->find($id);
 
-            if (
-                isset($student->avatar) && file_exists('images/students/' . $student->avatar)
-                && $student->avatar != ""
-            ) {
-                unlink('images/students/' . $student->avatar);
+            if (!$student) {
+                abort(404);
+            } else {
+                if (
+                    isset($student->avatar) && file_exists('images/students/' . $student->avatar)
+                    && $student->avatar != ""
+                ) {
+                    unlink('images/students/' . $student->avatar);
+                }
+
+                if ($student->user) {
+                    $student->user->delete();
+                    $student->user->role->delete();
+                    $student->delete();
+                }
+                DB::commit();
+
+                return redirect()->route('edu.students.index')->with('delete_student',
+                    'Successfully delete student.');
             }
 
-            if ($student->user) {
-                $student->user->delete();
-                $student->user->role->delete();
-                $student->delete();
-            }
-            DB::commit();
-
-            return redirect()->route('edu.students.index')->with('delete_student',
-                'Successfully delete student.');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -218,6 +168,9 @@ class StudentService
     public function profile($id)
     {
         $student = $this->studentRepository->find($id);
+        if (!$student) {
+            abort(404);
+        }
 
         return view('students.profile', ['student' => $student]);
     }
@@ -243,6 +196,9 @@ class StudentService
     {
         $attr = [];
         $student = $this->studentRepository->find($id);
+        if (!$student) {
+            abort(404);
+        }
         $data = $student->subjects->pluck('id')->toArray();
         $subjects = $student->faculty->subjects;
         foreach ($subjects as $subject) {
@@ -280,6 +236,9 @@ class StudentService
     public function listPointOfStudent($id)
     {
         $student = $this->studentRepository->find($id);
+        if (!$student) {
+            abort(404);
+        }
         $subjectsWithPoint = $student->subjects()->wherePivot('point', '!=', null)->get();
         $subjectsNotPoint = $student->subjects()->wherePivot('point', null)->get();
 
@@ -301,12 +260,12 @@ class StudentService
         try {
             $data = [];
             $student = $this->studentRepository->find($request->student_id);
-
             foreach ($request->subject as $subject => $value) {
                 $data[$value] = ['point' => $request->point[$subject]];
             }
             $student->subjects()->syncWithoutDetaching($data);
             DB::commit();
+
             return response()->json(['success' => 'Successfully added points of student.']);
 
         } catch (\Throwable $e) {
@@ -319,6 +278,9 @@ class StudentService
     public function listPointOneStudent($id)
     {
         $student = $this->studentRepository->find($id);
+        if (!$student) {
+            abort(404);
+        }
         $data = $student->subjects()->paginate(Page::page);
         $subjects = $student->subjects()->wherePivot('point', null)->get();
 
@@ -331,10 +293,9 @@ class StudentService
         DB::beginTransaction();
         try {
             $data = $request->all();
-//            dd($data);
             $student = $this->studentRepository->find($data['student_id']);
+
             $student->subjects()->updateExistingPivot($data['subject_id'], ['point' => $data['point']]);
-//            dd($student);
             DB::commit();
 
             return redirect()->back()->with('add_point_success', 'Add success points');
