@@ -14,7 +14,7 @@ class SubjectService
 {
     protected $subjectRepository, $facultyRepository;
 
-    public function __construct(SubjectRepository $subjectRepository, FacultyRepository $facultyRepository,)
+    public function __construct(SubjectRepository $subjectRepository, FacultyRepository $facultyRepository)
     {
         $this->subjectRepository = $subjectRepository;
         $this->facultyRepository = $facultyRepository;
@@ -23,9 +23,11 @@ class SubjectService
     public function listSubjects()
     {
         if (Auth::user()->role->role == '1' && Auth::user()->student != null) {
-            $subjects = Auth::user()->student->subjects()->with('faculty')->paginate(Page::page);
+//            dd(count(Auth::user()->student->faculty->subjects));
+            $subjects = Auth::user()->student->faculty->subjects()->paginate(Page::page);
             $results = Auth::user()->student->subjects->pluck('id')->toArray();
-            return view('subjects.index', ['subjects' => $subjects, 'results' => $results]);
+//            dd($results);
+            return view('subjects.index', compact('subjects', 'results'));
         } else {
             $subjects = $this->subjectRepository->pagination(['students', 'faculty']);
 
@@ -36,7 +38,7 @@ class SubjectService
     public function createSubject()
     {
         $faculties = $this->facultyRepository->getAll();
-        return view('subjects.create', ['faculties' => $faculties]);
+        return view('subjects.create_update', ['faculties' => $faculties]);
     }
 
     public function storeSubject(CreateOrUpdateSubjectRequest $request)
@@ -47,7 +49,7 @@ class SubjectService
             $this->subjectRepository->create($subject);
             DB::commit();
 
-            return redirect()->route('edu.subjects.index')->with('add_subject', 'Successfully add subject');
+            return redirect()->route('subjects.index')->with('success', 'Successfully add subject');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -57,13 +59,14 @@ class SubjectService
     public function editSubject($id)
     {
         $subject = $this->subjectRepository->find($id);
+        $faculties = $this->facultyRepository->getAll();
+
         if(!$subject)
         {
             abort(404);
         }
-        $faculties = $this->facultyRepository->getAll();
 
-        return view('subjects.update', ['subject' => $subject, 'faculties' => $faculties]);
+        return view('subjects.create_update', ['subject' => $subject, 'faculties' => $faculties, 'id' => $id]);
     }
 
     public function updateSubject($id, CreateOrUpdateSubjectRequest $request)
@@ -74,7 +77,7 @@ class SubjectService
             $this->subjectRepository->update($id, $subject);
             DB::commit();
 
-            return redirect()->route('edu.subjects.index')->with('update_subject', 'Successfully update subject');
+            return redirect()->route('subjects.index')->with('success', 'Successfully update subject');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -91,15 +94,15 @@ class SubjectService
                 abort(404);
             }
             if (count($subject->students) != 0) {
-                return redirect()->back()->with('delete_false',
+                return redirect()->back()->with('errors',
                     'There are already students registered for this subjects'.
                     ', cannot be deleted');
             } else {
                 $this->subjectRepository->delete($id);
                 DB::commit();
 
-                return redirect()->route('edu.subjects.index')
-                    ->with('delete_subject', 'Successfully delete subject');
+                return redirect()->route('subjects.index')
+                    ->with('success', 'Successfully delete subject');
             }
         } catch (\Throwable $th) {
             DB::rollBack();

@@ -3,25 +3,29 @@
 namespace App\Imports;
 
 use App\Models\StudentSubject;
+use App\Repositories\Students\StudentRepository;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class PointImport implements ToModel, WithHeadingRow
 {
+    protected $studentRepository;
+
+    public function __construct(StudentRepository $studentRepository)
+    {
+        $this->studentRepository = $studentRepository;
+    }
+
     public function model(array $array)
     {
-        $studentId = $array['student_id'];
-        $subjectId = $array['subject_id'];
-        $facultyId = $array['faculty_id'];
-        $point = $array['point'];
+        try {
+            $student = $this->studentRepository->find($array['student_id']);
 
-        $studentPoint = StudentSubject::updateOrCreate([
-            'student_id' => $studentId,
-            'subject_id' =>  $subjectId,
-            'faculty_id' => $facultyId,
-        ],
-        [
-            'point' =>  $point
-        ]);
+            $student->subjects()->syncWithoutDetaching([
+                $array['subject_id'] => ['point' => $array['point']]
+            ]);
+        } catch (\Throwable $e) {
+            dd($array, $e);
+        }
     }
 }

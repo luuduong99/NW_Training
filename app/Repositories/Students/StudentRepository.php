@@ -24,36 +24,34 @@ class StudentRepository extends BaseRepository
         $dateFrom = now()->subYears($toAge + 1)->toDateString();
         $dateTo = now()->subYears($fromAge)->toDateString();
 
-        $students = $this->model
+        return $this->model
             ->with(['faculty.subjects', 'subjects', 'user'])
+            ->select('students.*')
+            ->when($pointTo != null || $pointFrom != null, function ($query) use ($pointTo, $pointFrom) {
+                $query->selectRaw('AVG(student_subject.point) as average')
+                    ->leftJoin('student_subject', 'students.id', '=', 'student_subject.student_id')
+                    ->groupBy('students.id')
+                    ->whereHas('subjects', function ($subQuery) {
+                        $subQuery->whereNotNull('point');
+                    })
+                    ->withCount('subjects as student_subject_count')
+                    ->havingRaw('student_subject_count = (SELECT COUNT(*) FROM subjects
+                    WHERE faculty_id = students.faculty_id AND deleted_at IS NULL)')
+                    ->when($pointTo != null, function ($avgQuery) use ($pointTo) {
+                        $avgQuery->having('average', '<', $pointTo);
+                    })
+                    ->when($pointFrom != null, function ($avgQuery) use ($pointFrom) {
+                        $avgQuery->having('average', '>', $pointFrom);
+                    });
+            })
             ->when($toAge != null, function ($query) use ($dateFrom) {
-                return $query->where('birthday', '>', $dateFrom);
+                $query->where('birthday', '>', $dateFrom);
             })
             ->when($fromAge != null, function ($query) use ($dateTo) {
-                return $query->where('birthday', '<', $dateTo);
-            })->orderBy('id', 'desc')->paginate(Page::page)->withQueryString();
-
-        if ($pointTo != null || $pointFrom != null) {
-                $students = $this->model
-                ->with(['faculty.subjects', 'subjects', 'user'])
-                ->select('students.*')
-                ->selectRaw('AVG(student_subject.point) as average')
-                ->leftJoin('student_subject', 'students.id', '=', 'student_subject.student_id')
-                ->groupBy('students.id')
-                ->whereHas('subjects', function ($query) {
-                    $query->whereNotNull('point');
-                })
-                ->withCount('subjects as student_subject_count')
-                ->havingRaw('student_subject_count = (SELECT COUNT(*) FROM subjects
-                WHERE faculty_id = students.faculty_id AND deleted_at IS NULL)')
-                ->when($pointTo, function ($query) use ($pointTo) {
-                    $query->having('average', '<', $pointTo);
-                })
-                ->when($pointFrom, function ($query) use ($pointFrom) {
-                    $query->having('average', '>', $pointFrom);
-                })->orderBy('id', 'desc')->paginate(Page::page)->withQueryString();
-        }
-
-        return $students;
+                $query->where('birthday', '<', $dateTo);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(Page::page)
+            ->withQueryString();
     }
 }

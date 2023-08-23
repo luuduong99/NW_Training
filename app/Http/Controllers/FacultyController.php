@@ -46,8 +46,6 @@ class FacultyController extends Controller
     public function store(CreatOrUpdateFacultyRequest $request)
     {
         return $this->facultyService->storeFaculty($request);
-
-        // return redirect()->route('edu.home');
     }
 
     /**

@@ -18,4 +18,12 @@ class Role extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getPositionAttribute(){
+        if ($this->role == 0) {
+            return 'Admin';
+        } else {
+            return 'Student';
+        }
+    }
 }

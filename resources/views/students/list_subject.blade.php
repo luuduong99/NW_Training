@@ -4,12 +4,19 @@
 @section('content')
     <div style="width: 100%; display: flex;">
         <div class="col-sm-2" style="padding: 0">
-            <a href="{{ route('edu.students.list-point-of-student', $id) }}" class="btn btn-success mb-2">
+            <a href="{{ route('students.point', $id) }}" class="btn btn-success mb-2">
                 <i class="mdi mdi-plus-circle mr-2"></i>
                 {{ __('Add Multiple Point') }}
             </a>
         </div>
     </div>
+    @if($errors->any())
+        <span class="btn-errors" style="color: red;">
+        @foreach($errors->all() as $error)
+                <div class="alert alert-danger">{{ $error }}</div>
+            @endforeach
+    </span>
+    @endif
     <table class="table table-striped table-centered mb-0">
         <thead>
         <tr>
@@ -38,11 +45,11 @@
                     @endif
                 </td>
                 <td>
-                    {!! Form::open(['route' => ['edu.students.add-point-student', $id], 'method' => 'post']) !!}
+                    {!! Form::open(['route' => ['students.add_point', $id], 'method' => 'post']) !!}
                     {!! Form::hidden('student_id', $student->id) !!}
                     {!! Form::hidden('subject_id', $result->id) !!}
                     {!! Form::hidden('faculty_id', $result->faculty_id) !!}
-                    {!! Form::number('point', null, ['step' => '0.01', 'required', 'min' => '0', 'max' => '10']) !!}
+                    {!! Form::number('point', null) !!}
 
                     @if(!$result->point && Auth::user()->role->role == '0')
                         {!! Form::submit(__('Add Point'), ['class' => 'btn btn-primary']) !!}
@@ -60,13 +67,13 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
-                var successPoint = "{{ Session::has('add_point_success') }}";
-                var falsePoint = "{{ Session::has('add_point_false') }}";
+                var successPoint = "{{ Session::has('success') }}";
+                var falsePoint = "{{ Session::has('errors') }}";
 
                 if (successPoint) {
                     $.toast({
                         heading: '{{ __('Add point') }}',
-                        text: '<h6>{{ __(Session::get("add_point_success")) }}</h6>',
+                        text: '<h6>{{ __(Session::get("success")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
@@ -76,7 +83,7 @@
                 if (falsePoint) {
                     $.toast({
                         heading: '{{ __('Add point') }}',
-                        text: '<h6>{{ __(Session::get("add_point_false")) }}</h6>',
+                        text: '<h6>{{ __(Session::get("errors")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'error',
                         position: 'top-right',

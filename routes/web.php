@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StudentController;
@@ -22,10 +21,7 @@ Route::group(['middleware' => ['locale', 'route', 'method']], function () {
     Route::get('change_language/{language}', [HomeController::class, 'language'])
         ->name('change_language');
     Auth::routes();
-
     Route::group([
-        'prefix' => 'edu',
-        'as' => 'edu.',
         'middleware' => ['auth.login', 'auth.admin']
     ], function () {
         Route::get('home', [HomeController::class, 'index'])->name('home');
@@ -45,27 +41,20 @@ Route::group(['middleware' => ['locale', 'route', 'method']], function () {
                     ->name('notification');
                 Route::post('import', [StudentController::class, 'import'])->name('import');
 
-                Route::get('list-point-of-student/{id}', [StudentController::class, 'pointOfStudent'])
-                    ->name('list-point-of-student');
-                Route::post('get-point', [StudentController::class, 'getPoint'])->name('get-point');
-                Route::post('add-point', [StudentController::class, 'multipleAdd'])->name('add-point');
+                Route::get('list-subject-of-student/{id}', [StudentController::class, 'subjectOfStudent'])
+                    ->name('subject');
+                Route::post('add-point/{id}', [StudentController::class, 'addPoint'])
+                    ->name('add_point');
 
-                Route::get('list-point-student/{id}', [StudentController::class, 'studentPoints'])
-                    ->name('list-point-student');
-                Route::post('add-point-student/{id}', [StudentController::class, 'pointStudent'])
-                    ->name('add-point-student');
+                Route::get('list-point-of-student/{id}', [StudentController::class, 'listPoint'])
+                    ->name('point');
+                Route::post('get-point', [StudentController::class, 'getPoint'])->name('get_point');
+                Route::post('add-point-multiple/{id}', [StudentController::class, 'addPointMultiple'])
+                    ->name('add_point_multiple');
             }
         );
         Route::resource('subjects', SubjectController::class)->except(['index']);
-        Route::group(
-            [
-                'prefix' => 'subjects',
-                'as' => 'subjects.',
-            ],
-            function () {
-                Route::get('', [SubjectController::class, 'index'])->name('index')
-                    ->withoutMiddleware('auth.admin');
-            }
-        );
+        Route::get('', [SubjectController::class, 'index'])->name('subjects.index')
+            ->withoutMiddleware('auth.admin');
     });
 });

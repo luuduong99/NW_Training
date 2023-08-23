@@ -5,7 +5,7 @@
 
     <div style="width: 100%; display: flex;justify-content: space-between">
         <div class="col-sm-4" style="padding: 0">
-            <a href="{{ route('edu.faculties.create') }}" class="btn btn-success mb-2"><i
+            <a href="{{ route('faculties.create') }}" class="btn btn-success mb-2"><i
                     class="mdi mdi-plus-circle mr-2"></i>
                 {{ __('Add Faculty') }}
             </a>
@@ -33,7 +33,7 @@
                     <td>{{ $faculty->created_at }}</td>
                     <td>{{ $faculty->updated_at }}</td>
                     <td class="table-action">
-                        <a href="{{ route('edu.faculties.edit', $faculty->id) }}" class="btn btn-primary">
+                        <a href="{{ route('faculties.edit', $faculty->id) }}" class="btn btn-primary">
                             <i class="mdi mdi-square-edit-outline"></i></a>
                         <button class="btn btn-danger delete-faculty" value="{{ $faculty->id }}">
                             <i class="mdi mdi-delete"></i>
@@ -47,7 +47,7 @@
             {{ $faculties->links() }}
         </div>
 
-        {!! Form::open(['route' => ['edu.faculties.destroy', $faculty->id], 'method' => 'DELETE', 'id' => 'delete-form']) !!}
+        {!! Form::open(['route' => ['faculties.destroy', $faculty->id], 'method' => 'DELETE', 'id' => 'delete-form']) !!}
         {!! Form::close() !!}
     @endif
 
@@ -59,7 +59,7 @@
                     e.preventDefault();
 
                     var facultyId = $(this).val();
-                    var newAction = "{{ route('edu.faculties.destroy', ':id') }}";
+                    var newAction = "{{ route('faculties.destroy', ':id') }}";
                     var action = newAction.replace(':id', facultyId);
                     $("#delete-form").attr("action", action);
                     var confirmDelete = confirm('Are you sure?');
@@ -73,45 +73,23 @@
 
         <script>
             $(document).ready(function () {
-                var successFaculty = "{{ Session::has('add_faculty') }}";
-                var updateFaculty = "{{ Session::has('update_faculty') }}";
-                var deleteFaculty = "{{ Session::has('delete_faculty') }}";
-                var deleteFalse = "{{ Session::has('delete_false') }}";
+                var success = "{{ Session::has('success') }}";
+                var errors = "{{ Session::has('errors') }}";
 
-                if (successFaculty) {
+                if (success) {
                     $.toast({
-                        heading: '{{ __('Add faculty') }}',
-                        text: '<h6>{{ __(Session::get("add_faculty")) }}</h6>',
+                        heading: '{{ __('Faculty') }}',
+                        text: '<h6>{{ __(Session::get("success")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
                     })
                 }
 
-                if (updateFaculty) {
-                    $.toast({
-                        heading: '{{ __('Update faculty') }}',
-                        text: '<h6>{{ __(Session::get("update_faculty")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'info',
-                        position: 'top-right',
-                    })
-                }
-
-                if (deleteFaculty) {
-                    $.toast({
-                        heading: '{{ __('Delete faculty') }}',
-                        text: '<h6>{{ __(Session::get("delete_faculty")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'error',
-                        position: 'top-right',
-                    })
-                }
-
-                if (deleteFalse) {
+                if (errors) {
                     $.toast({
                         heading: '{{ __('Delete faculty false') }}',
-                        text: '<h6>{{ __(Session::get("delete_false")) }}</h6>',
+                        text: '<h6>{{ __(Session::get("errors")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'warning',
                         position: 'top-right',

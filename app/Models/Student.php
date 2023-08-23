@@ -13,7 +13,7 @@ class Student extends Model
     protected $table = 'students';
 
     protected $fillable = [
-        'user_id','avatar', 'phone', 'address', 'gender', 'birthday', 'faculty_id', 'status', 'average_point'
+        'user_id', 'avatar', 'phone', 'address', 'gender', 'birthday', 'faculty_id', 'status', 'average_point'
     ];
 
     public function getAgeAttribute()

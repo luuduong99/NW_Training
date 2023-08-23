@@ -28,7 +28,7 @@ class CreateOrUpdateStudentRequest extends FormRequest
         if ($method == 'POST') {
             return [
                 'name' => ['required', 'min:1', 'max:125'],
-                'email' => ['required', 'email', 'unique:users'],
+                'email' => ['required', 'email', 'unique:users,deleted_at,NULL'],
                 'phone' => ['required', Rule::unique('students', 'phone')->whereNull('deleted_at'),
                     'regex:/^(0[0-9]{9,10})$/'],
                 'gender' => ['required'],
