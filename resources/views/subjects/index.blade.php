@@ -2,13 +2,15 @@
 @section('title', 'Subjects')
 @section('subTitle', 'List')
 @section('content')
-    <div style="width: 100%; display: flex;justify-content: space-between">
-        <div class="col-sm-4" style="padding: 0">
-            <a href="{{ route('edu.subjects.create') }}" class="btn btn-success mb-2"><i
-                    class="mdi mdi-plus-circle mr-2"></i>
-                {{ __('Add Subject') }}
-            </a>
-        </div>
+    <div style="width: 100%; display: flex; justify-content: space-between">
+        @if (Auth::user()->role->role == '0')
+            <div class="col-sm-4" style="padding: 0">
+                <a href="{{ route('subjects.create') }}" class="btn btn-success mb-2"><i
+                        class="mdi mdi-plus-circle mr-2"></i>
+                    {{ __('Add Subject') }}
+                </a>
+            </div>
+        @endif
     </div>
     @if(!isset($subjects))
         <h1 style="text-align: center;">Not data</h1>
@@ -31,10 +33,10 @@
             </tr>
             </thead>
             <tbody>
-            {!! Form::open(['route' => 'edu.students.register-multiple-subject',
+            {!! Form::open(['route' => 'students.register-multiple-subject',
             'method' => 'post', 'id' => 'multiple_submit']) !!}
-            {!! Form::token() !!}
-            @if (Auth::user()->role->role == '1' && count($results) < count(Auth::user()->student->subjects))
+            @if (Auth::user()->role->role == '1' &&
+            count(Auth::user()->student->faculty->subjects) > count(Auth::user()->student->subjects))
                 {!! Form::submit(__('Register Multiple Subject'),
                 ['class' => 'btn btn-primary', 'style' => 'float: right']) !!}
             @endif
@@ -52,13 +54,19 @@
                     <td>{{ __($subject->description) }}</td>
                     <td>{{ __($subject->faculty->name) }}</td>
                     @if (Auth::user()->role->role == '1')
-                        <td>{{ $subject->students->pluck('pivot.point')->first() }}</td>
+                        <td>
+                            @if (Auth::user()->student->subjects->pluck('pivot.point')->first() != [])
+                            {{Auth::user()->student->subjects->pluck('pivot.point')->first() }}
+                            @else
+                                <span>{{ __('Chưa Có Điểm') }}</span>
+                            @endif
+                        </td>
                     @endif
                     <td>{{ $subject->created_at }}</td>
                     <td>{{ $subject->updated_at }}</td>
                     <td class="table-action">
                         @if (Auth::user()->role->role == '0')
-                            <a href="{{ route('edu.subjects.edit', $subject->id) }}" class="btn btn-primary">
+                            <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-primary">
                                 <i class="mdi mdi-square-edit-outline"></i>
                             </a>
                             @if (count($subject->students) == 0)
@@ -68,9 +76,9 @@
                             @else
                                 <span class="btn btn-danger"
                                       onclick="return window.alert('It is not possible ' +
-                                   'to delete a subject that has already been registered');">
-                            <i class="mdi mdi-delete"></i>
-                        </span>
+                               'to delete a subject that has already been registered');">
+                        <i class="mdi mdi-delete"></i>
+                    </span>
                             @endif
                         @else
                             @if (isset($results) && in_array($subject->id, $results ))
@@ -90,7 +98,7 @@
             {{ $subjects->links() }}
         </div>
 
-        {!! Form::open(['route' => ['edu.subjects.destroy', $subject->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
+        {!! Form::open(['route' => ['subjects.destroy', $subject->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
         {!! Form::close() !!}
     @endif
 
@@ -101,7 +109,7 @@
                     e.preventDefault();
 
                     var subjectId = $(this).val();
-                    var newAction = "{{ route('edu.subjects.destroy', ':id') }}";
+                    var newAction = "{{ route('subjects.destroy', ':id') }}";
                     var action = newAction.replace(':id', subjectId);
                     $("#delete-form").attr("action", action);
                     var confirmDelete = confirm('Are you sure?');
@@ -115,45 +123,23 @@
 
         <script>
             $(document).ready(function () {
-                var successSubject = "{{ Session::has('add_subject') }}";
-                var updateSubject = "{{ Session::has('update_subject') }}";
-                var deleteSubject = "{{ Session::has('delete_subject') }}";
-                var deleteFalse = "{{ Session::has('delete_false') }}";
+                var success = "{{ Session::has('success') }}";
+                var errors = "{{ Session::has('errors') }}";
 
-                if (successSubject) {
+                if (success) {
                     $.toast({
-                        heading: '{{ __('Add subject') }}',
-                        text: '<h6>{{ __(Session::get("add_subject")) }}</h6>',
+                        heading: '{{ __('Subject') }}',
+                        text: '<h6>{{ __(Session::get("success")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
                     })
                 }
 
-                if (updateSubject) {
-                    $.toast({
-                        heading: '{{ __('Update subject') }}',
-                        text: '<h6>{{ __(Session::get("update_subject")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'info',
-                        position: 'top-right',
-                    })
-                }
-
-                if (deleteSubject) {
-                    $.toast({
-                        heading: '{{ __('Delete subject') }}',
-                        text: '<h6>{{ __(Session::get("delete_subject")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'error',
-                        position: 'top-right',
-                    })
-                }
-
-                if (deleteFalse) {
+                if (errors) {
                     $.toast({
                         heading: '{{ __('Delete subject false') }}',
-                        text: '<h6>{{ __(Session::get("delete_false")) }}</h6>',
+                        text: '<h6>{{ __(Session::get("errors")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'warning',
                         position: 'top-right',

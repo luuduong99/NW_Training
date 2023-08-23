@@ -3,7 +3,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         var studentId = $(this).val();
-        var newAction = "{{ route('edu.students.notification', ':id')  }}";
+        var newAction = "{{ route('students.notification', ':id')  }}";
         var action = newAction.replace(':id', studentId);
         $("#send-form").attr("action", action);
         $("#send-form").submit();
@@ -14,7 +14,7 @@ $(".delete-student").click(function (e) {
     e.preventDefault();
 
     var studentId = $(this).val();
-    var newAction = "{{ route('edu.students.destroy', ':id') }}";
+    var newAction = "{{ route('students.destroy', ':id') }}";
     var action = newAction.replace(':id', studentId);
     $("#delete-form").attr("action", action);
     var confirmDelete = confirm('Are you sure?');
@@ -30,7 +30,7 @@ $(document).ready(function () {
         let formData = new FormData($('#ajax-form')[0]);
         $.ajax({
             type: "post",
-            url: "{{ route('edu.students.store') }}",
+            url: "{{ route('students.store') }}",
             data: formData,
             processData: false,
             cache: false,
@@ -47,7 +47,7 @@ $(document).ready(function () {
                     position: 'top-right',
                 })
                 setTimeout(function () {
-                    window.location.href = "{{ route('edu.students.index') }}";
+                    window.location.href = "{{ route('students.index') }}";
                 }, 500);
             },
             error: function (data) {

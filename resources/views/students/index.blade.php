@@ -5,7 +5,7 @@
 
     <div style="width: 100%; display: flex;">
         <div class="col-sm-2" style="padding: 0">
-            <a href="{{ route('edu.students.create') }}" class="btn btn-success mb-2"><i
+            <a href="{{ route('students.create') }}" class="btn btn-success mb-2"><i
                     class="mdi mdi-plus-circle mr-2"></i>
                 {{  __('Add Student') }}
             </a>
@@ -52,14 +52,14 @@
         <div class="col-sm-6">
             <div class="form-row">
                 <div class="form-group row col-sm-6">
-                    <label for="fromOld" class="col-sm-4 col-form-label">{{ __('Point From') }}</label>
+                    <label for="fromPoint" class="col-sm-4 col-form-label">{{ __('Point From') }}</label>
                     <div class="col-sm-8">
                         <input type="number" step="0.01" min="0" max="10" name="fromPoint"
                                class="form-control" id="fromPoint">
                     </div>
                 </div>
                 <div class="form-group row col-sm-5">
-                    <label for="toOld" class="col-sm-4 col-form-label">{{ __('Point To') }}</label>
+                    <label for="toPoint" class="col-sm-4 col-form-label">{{ __('Point To') }}</label>
                     <div class="col-sm-8">
                         <input type="number" step="0.01" min="0" max="10" name="toPoint"
                                class="form-control" id="toPoint">
@@ -104,8 +104,8 @@
                 <tr>
                     <td class="table-user">
                         @if(isset($student->avatar))
-                            <img src="{{ asset('images/students/'. $student->avatar) }}"
-                                 alt="{{ $student->user->email }}"
+                            <img src="{{ asset('storage/students/'. $student->avatar) }}"
+                                 alt=""
                                  class="mr-2 rounded-circle"/>
                         @else
                             <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}"
@@ -114,7 +114,7 @@
                     </td>
                     <td><a title="{{ $student->user->name }}"
                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;"
-                           href="{{ route('edu.students.profile', $student->id) }}">{{ $student->user->name }}</a>
+                           href="{{ route('students.profile', $student->id) }}">{{ $student->user->name }}</a>
                     </td>
                     <td title="{{ $student->user->email }}"
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
@@ -128,7 +128,7 @@
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13ch;">
                         {{ __($student->faculty->name) }}</td>
                     <td>
-                        <a href="{{ route('edu.students.list-point-student', $student->id)  }}"
+                        <a href="{{ route('students.subject', $student->id)  }}"
                            title="Preview courses and score of student">
                             {{ count($student->subjects->pluck('id')->toArray()) }}
                         </a>
@@ -144,7 +144,7 @@
                                 <i class="mdi mdi-email-send"></i>
                             </button>
                         @endif
-                        <a href="{{ route('edu.students.edit', $student->id) }}" class="btn btn-primary">
+                        <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary">
                             <i class="mdi mdi-square-edit-outline"></i></a>
                         <button class="btn btn-danger delete-student" value="{{ $student->id }}">
                             <i class="mdi mdi-delete"></i>
@@ -168,10 +168,12 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body form-horizontal">
-                        {{ Form::open(['route' => 'edu.students.import', 'method' => 'post']) }}
+                        {{ Form::open(['route' => 'students.import', 'method' => 'post',
+                        'enctype' => 'multipart/form-data']) }}
                         <div class="form-group">
                             {{ Form::label('example-file-input', __('File')) }}
-                            {{ Form::file('excel_file', ['id' => 'example-file-input'])  }}
+                            {{ Form::file('excel_file', ['id' => 'example-file-input',
+                            'accept' => '.csv, .xlsx, .xls'])  }}
                         </div>
                         <div class="form-group">
                             {{ Form::submit(__('Import Data'), ['class' => 'btn btn-success']) }}
@@ -196,7 +198,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body form-horizontal">
-                        {!! Form::open(['route' => 'edu.students.store', 'method' => 'post',
+                        {!! Form::open(['route' => 'students.store', 'method' => 'post',
                                         'enctype' => 'multipart/form-data', 'id' => 'ajax-form']) !!}
                         <div class="form-group">
                             {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
@@ -253,7 +255,9 @@
                             <div class="form-group col-md-8">
                                 {!! Form::label('faculty_id', __('Faculty'), ['class' => 'col-form-label']) !!}
                                 <span>:<span class="text-danger">(*)</span></span>
-                                {!! Form::select('faculty_id', $faculties->pluck('name', 'id'), null,
+                                {!! Form::select('faculty_id', $faculties->mapWithKeys(function ($faculty) {
+                                    return [$faculty->id => __($faculty->name)];
+                                }), null,
                                 ['class' => 'form-control', 'id' => 'faculty']) !!}
                             </div>
                         </div>
@@ -282,13 +286,13 @@
 
         @if(isset($student))
             {{--    Form send notifiication student--}}
-            {!! Form::open(['route' => ['edu.students.notification', $student->id], 'method' => 'post', 'id' => 'send-form']) !!}
+            {!! Form::open(['route' => ['students.notification', $student->id], 'method' => 'post', 'id' => 'send-form']) !!}
             {!! Form::hidden('email', $student->user->email) !!}
             {!! Form::hidden('user_id', $student->user_id) !!}
             {!! Form::close() !!}
 
             {{--    Form delete student--}}
-            {!! Form::open(['route' => ['edu.students.destroy', $student->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
+            {!! Form::open(['route' => ['students.destroy', $student->id], 'method' => 'delete', 'id' => 'delete-form']) !!}
             {!! Form::close() !!}
         @endif
     @endif
@@ -299,19 +303,15 @@
             $(document).ready(function () {
                 if (window.File && window.FileList && window.FileReader) {
                     $('#example-file').change(function (e) {
-                        // e.preventDefault();
-                        var fileInput = this;
+                        e.preventDefault();
+                        let fileInput = this;
                         if (fileInput.files && fileInput.files[0]) {
-                            var reader = new FileReader();
+                            let reader = new FileReader();
                             reader.onload = function (e) {
                                 $('.pip').html('<img src="' + e.target.result +
                                     '" alt="Preview Image" class="imageThumb" ' +
                                     'style="max-width: 150px; margin-top: 10px;" >'
                                 );
-                                // $("<span class=\"pip\">" +
-                                //     "<img class=\"imageThumb\" src=\"" + e.target.result +
-                                //     "\" style=\"" + "max-width: 150px; margin-top: 10px;" + "\"/>" +
-                                //     "</span>").insertAfter("#example-file");
                             }
                             reader.readAsDataURL(fileInput.files[0]);
                         }
@@ -331,25 +331,23 @@
                 $(".send-mail").click(function (e) {
                     e.preventDefault();
 
-                    var studentId = $(this).val();
-                    var newAction = "{{ route('edu.students.notification', ':id')  }}";
-                    var action = newAction.replace(':id', studentId);
-                    $("#send-form").attr("action", action);
-                    $("#send-form").submit();
+                    let studentId = $(this).val();
+                    let newAction = "{{ route('students.notification', ':id')  }}";
+                    let action = newAction.replace(':id', studentId);
+                    $("#send-form").attr("action", action).submit();
                 });
             });
 
             $(".delete-student").click(function (e) {
                 e.preventDefault();
 
-                var studentId = $(this).val();
-                var newAction = "{{ route('edu.students.destroy', ':id') }}";
-                var action = newAction.replace(':id', studentId);
-                $("#delete-form").attr("action", action);
-                var confirmDelete = confirm('Are you sure?');
+                let studentId = $(this).val();
+                let newAction = "{{ route('students.destroy', ':id') }}";
+                let action = newAction.replace(':id', studentId);
+                let confirmDelete = confirm('Are you sure?');
 
                 if (confirmDelete) {
-                    $("#delete-form").submit();
+                    $("#delete-form").attr("action", action).submit();
                 }
             });
         </script>
@@ -360,8 +358,8 @@
                     e.preventDefault();
                     let formData = new FormData($('#ajax-form')[0]);
                     $.ajax({
-                        type: "post",
-                        url: "{{ route('edu.students.store') }}",
+                        type: "POST",
+                        url: "{{ route('students.store') }}",
                         data: formData,
                         processData: false,
                         cache: false,
@@ -370,15 +368,16 @@
                             $(document).find('span.error-text').html('');
                         },
                         success: function (data) {
+                            console.log(data)
                             $.toast({
-                                heading: 'Add student',
+                                heading: 'Student',
                                 text: '<h6>data.success</h6>',
                                 showHideTransition: 'slide',
                                 icon: 'success',
                                 position: 'top-right',
                             })
                             setTimeout(function () {
-                                window.location.href = "{{ route('edu.students.index') }}";
+                                window.location.href = "{{ route('students.index') }}";
                             }, 500);
                         },
                         error: function (data) {
@@ -392,78 +391,23 @@
             });
 
             $(document).ready(function () {
-                let successStudent = "{{ Session::has('add_student') }}"
-                let updateStudent = "{{ Session::has('update_student') }}"
-                let deleteStudent = "{{ Session::has('delete_student') }}"
-                let sendMailSuccess = "{{ Session::has('send_mail_success') }}"
-                let sendMailFalse = "{{ Session::has('send_mail_false') }}"
-                let importSuccess = "{{ Session::has('import_success') }}"
-                let importFalse = "{{ Session::has('import_false') }}"
+                let studentSuccess = "{{ Session::has('success') }}"
+                let studentErrors = "{{ Session::has('errors') }}"
 
-                if (successStudent) {
+                if (studentSuccess) {
                     $.toast({
-                        heading: '{{ __('Add student') }}',
-                        text: '<h6>{{ __(Session::get("add_student")) }}</h6>',
+                        heading: '{{ __('Student') }}',
+                        text: '<h6>{{ __(Session::get("success")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'success',
                         position: 'top-right',
                     })
                 }
 
-                if (updateStudent) {
+                if (studentErrors) {
                     $.toast({
-                        heading: '{{ __('Update student') }}',
-                        text: '<h6>{{ __(Session::get("update_student")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'info',
-                        position: 'top-right',
-                    })
-                }
-
-                if (deleteStudent) {
-                    $.toast({
-                        heading: '{{ __('Delete student') }}',
-                        text: '<h6>{{ __(Session::get("delete_student")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'error',
-                        position: 'top-right',
-                    })
-                }
-
-                if (sendMailSuccess) {
-                    $.toast({
-                        heading: '{{ __('Send success') }}',
-                        text: '<h6>{{ __(Session::get("send_mail_success")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'success',
-                        position: 'top-right',
-                    })
-                }
-
-                if (sendMailFalse) {
-                    $.toast({
-                        heading: '{{ __('Send false') }}',
-                        text: '<h6>{{ __(Session::get("send_mail_false")) }}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'warning',
-                        position: 'top-right',
-                    })
-                }
-
-                if (importSuccess) {
-                    $.toast({
-                        heading: '{{ __('Import success') }}',
-                        text: '<h6>{{ __(Session::get("import_success")) }}}</h6>',
-                        showHideTransition: 'slide',
-                        icon: 'success',
-                        position: 'top-right',
-                    })
-                }
-
-                if (importFalse) {
-                    $.toast({
-                        heading: '{{ __('Import false') }}',
-                        text: '<h6>{{ __(Session::get("import_false")) }}</h6>',
+                        heading: '{{ __('Student') }}',
+                        text: '<h6>{{ __(Session::get("errors")) }}</h6>',
                         showHideTransition: 'slide',
                         icon: 'warning',
                         position: 'top-right',

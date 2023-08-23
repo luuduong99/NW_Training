@@ -32,9 +32,9 @@
         </li>
         <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle nav-user arrow-none mr-0"
-               href="{{ route('edu.students.profile', Auth::user()->id) }}">
+               href="{{ route('students.profile', Auth::user()->id) }}">
                 <span class="account-user-avatar">
-                    <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}" alt="user-image"
+                    <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}" alt=""
                          class="rounded-circle">
                 </span>
                 <span>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Students\AddOnePointRequest;
 use App\Http\Requests\Students\AddPointStudentRequest;
 use App\Http\Requests\Students\CreateOrUpdateStudentRequest;
 use App\Http\Requests\Students\UpdateStudentRequest;
@@ -108,33 +109,28 @@ class StudentController extends Controller
         return $this->studentService->importPoints($request);
     }
 
-    public function pointOfStudent($id)
+    public function subjectOfStudent($id)
+    {
+        return $this->studentService->getAllSubject($id);
+    }
+
+    public function addPoint(AddOnePointRequest $request)
+    {
+        return $this->studentService->addPointSingle($request);
+    }
+
+    public function listPoint($id)
     {
         return $this->studentService->listPointOfStudent($id);
     }
 
     public function getPoint(Request $request)
     {
-        return $this->studentService->ajaxGetPoint($request);
+        return $this->studentService->getPointAjax($request);
     }
 
-    public function multipleAdd(AddPointStudentRequest $request)
+    public function addPointMultiple(AddPointStudentRequest $request, $id)
     {
-        return $this->studentService->ajaxAddPoint($request);
-    }
-
-    public function studentPoints($id)
-    {
-        return $this->studentService->listPointOneStudent($id);
-    }
-
-//    public function point(Request $request)
-//    {
-//        return $this->studentService->addOnePoint($request);
-//    }
-//
-    public function pointStudent(Request $request)
-    {
-        return $this->studentService->addPointStudent($request);
+        return $this->studentService->addPointAjax($request, $id);
     }
 }

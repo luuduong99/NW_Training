@@ -28,7 +28,7 @@ class FacultyService
 
     public function createFaculty()
     {
-        return view('faculties/create');
+        return view('faculties/create_update');
     }
 
     public function storeFaculty(CreatOrUpdateFacultyRequest $request)
@@ -39,7 +39,7 @@ class FacultyService
             $this->facultyRepository->create($data);
             DB::commit();
 
-            return redirect()->route('edu.faculties.index')->with('add_faculty', 'Successfully add faculty');
+            return redirect()->route('faculties.index')->with('success', 'Successfully add faculty');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -55,7 +55,8 @@ class FacultyService
             abort(404);
         }
 
-        return view('faculties/update', ['faculty' => $faculty]);
+        return view('faculties/create_update', compact('faculty', 'id'));
+
     }
 
     public function updateFaculty($id, CreatOrUpdateFacultyRequest $request)
@@ -66,7 +67,7 @@ class FacultyService
             $this->facultyRepository->update($id, $data);
             DB::commit();
 
-            return redirect()->route('edu.faculties.index')->with('update_faculty', 'Successfully update faculty');
+            return redirect()->route('faculties.index')->with('success', 'Successfully update faculty');
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
@@ -85,13 +86,13 @@ class FacultyService
             }
 
             if (count($faculty->students) != 0 && count($faculty->subjects) != 0) {
-                return redirect()->back()->with('delete_false',
+                return redirect()->back()->with('errors',
                     'This faculty already has a subject or student registered' . ', it cannot be deleted');
             } else {
                 $this->facultyRepository->delete($id);
                 DB::commit();
 
-                return redirect()->route('edu.faculties.index')->with('delete_faculty', 'Successfully delete faculty');
+                return redirect()->route('faculties.index')->with('success', 'Successfully delete faculty');
             }
         } catch (\Throwable $th) {
             DB::rollBack();

@@ -44,7 +44,7 @@
     <div class="container-fluid">
 
         <!-- LOGO -->
-        <a href="{{ route('edu.home') }}" class="topnav-logo">
+        <a href="{{ route('home') }}" class="topnav-logo">
                     <span class="topnav-logo-lg">
                         <img src="{{ asset('images/logo-light.png') }}" alt="" height="16">
                     </span>
@@ -106,7 +106,7 @@
                    href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span class="account-user-avatar">
                                 @if (isset(Auth::user()->student->avatar))
-                                    <img src="{{ asset('images/students/' . Auth::user()->student->avatar) }}"
+                                    <img src="{{ asset('storage/students/' . Auth::user()->student->avatar) }}"
                                          alt="user-image" class="rounded-circle">
                                 @else
                                     <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}"
@@ -115,7 +115,7 @@
                             </span>
                     <span>
                                 <span class="account-user-name">{{ Auth::user()->name }}</span>
-                                <span class="account-position">{{ __('Role') }}: {{ Auth::user()->role->role }}</span>
+                                <span class="account-position">{{ __('Role') }}: {{ Auth::user()->role->position }}</span>
                             </span>
                 </a>
                 <div
@@ -126,7 +126,7 @@
                         <h6 class="text-overflow m-0">Welcome !</h6>
                     </div>
                     @if (Auth::user()->role->role != '0')
-                        <a href="{{ route('edu.students.profile', Auth::user()->student->id) }}"
+                        <a href="{{ route('students.profile', Auth::user()->student->id) }}"
                            class="dropdown-item notify-item">
                             <i class="mdi mdi-account-circle mr-1"></i>
                             <span>My Account</span>
@@ -236,7 +236,7 @@
             <div class="leftbar-user">
                 <a href="javascript: void(0);">
                     @if (isset(Auth::user()->student->avatar))
-                        <img src="{{ asset('images/students/' . Auth::user()->student->avatar) }}"
+                        <img src="{{ asset('storage/students/' . Auth::user()->student->avatar) }}"
                              alt="user-image" height="42" class="rounded-circle shadow-sm">
                     @else
                         <img src="{{ asset('images/default/meme-meo-like-trong-dau-kho.jpg') }}"
@@ -285,7 +285,7 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('edu.home') }}">{{ __('Home') }}</a>
+                                    <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Home') }}</a>
                                     </li>
                                     <li class="breadcrumb-item"><a href="@yield('action')">@yield('title')</a></li>
                                     <li class="breadcrumb-item active">@yield('subTitle')</li>
