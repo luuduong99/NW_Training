@@ -16,6 +16,7 @@ class CheckSupportedMethods
      */
     public function handle(Request $request, Closure $next)
     {
+//        dd($request->method());
         if (!in_array($request->method(),
             ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'])) {
             abort(405);
