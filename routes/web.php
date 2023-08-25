@@ -22,7 +22,7 @@ Route::group(['middleware' => ['locale', 'route', 'method']], function () {
         ->name('change_language');
     Auth::routes();
     Route::group([
-        'middleware' => ['auth.login', 'auth.admin']
+        'middleware' => ['auth', 'auth.admin']
     ], function () {
         Route::get('home', [HomeController::class, 'index'])->name('home');
         Route::resource('faculties', FacultyController::class);
@@ -35,6 +35,8 @@ Route::group(['middleware' => ['locale', 'route', 'method']], function () {
             function () {
                 Route::get('profile/{id}', [StudentController::class, 'show'])->name('profile')
                     ->withoutMiddleware('auth.admin');
+                Route::put('profile-update/{id}', [StudentController::class, 'updateProfile'])
+                    ->name('profile_update')->withoutMiddleware('auth.admin');
                 Route::post('register-multiple-subject', [StudentController::class, 'registerMultipleSubject'])
                     ->name('register-multiple-subject')->withoutMiddleware('auth.admin');
                 Route::post('notification/{id}', [StudentController::class, 'sendNotification'])

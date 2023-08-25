@@ -16,6 +16,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
+                        {!! Form::model($student,
+                        ['route' => ['students.profile_update', $student->id],
+                        'method' => 'PUT', 'enctype' => 'multipart/form-data']) !!}
                         <div class="row">
                             <div class="col-lg-4">
                                 <!-- Product image -->
@@ -31,7 +34,8 @@
                                              style="max-width: 280px;" id="oldImage"/>
                                     @endif
                                 </a>
-                                <input type="file" id="imageInput" accept="image/*">
+                                {!! Form::file('avatar', ['accept' => 'image/*',
+                                'id' => 'imageInput', 'class' => 'form-control-file']) !!}
                             </div> <!-- end col -->
                             <div class="col-lg-7">
                                 <div class="mt-4">
@@ -83,18 +87,25 @@
                                                 : old('gender'),
                                                 ['class' => 'form-control-plaintext font-20', 'id' => 'gender',
                                                  'style' => 'outline:none', 'disabled']) !!}
+
+                                            {!! Form::select('gender', ['0' => __('Other'), '1' => __('Male'),
+                                            '2' => __('Female')], isset($student) ? __($student->gender) : null,
+                                             ['class' => 'form-control-plaintext font-20', 'id' => 'gender-select',
+                                             'style' => 'outline:none']) !!}
                                         </div>
                                     </div>
                                     <div class="row">
                                         {!! Form::label('birthDay', __('BirthDay'),
                                            ['class' => 'col-sm-3 col-form-label font-20']) !!}
                                         <div class="col-sm-9">
-                                            {!! Form::text('birthday', isset($student) ?
-                                                old('birthday',Carbon\Carbon::parse($student->birthdate)->format('d-m-Y'))
-                                                : old('birthday'),
-                                                ['class' => 'form-control-plaintext font-20', 'id' => 'birthday',
-                                                 'style' => 'outline:none', 'disabled']) !!}
+                                            {!! Form::date('birthday',isset($student) ?
+                                            Carbon\Carbon::parse($student->birthday)->format('Y-m-d') : '',
+                                            ['class' => 'form-control-plaintext font-20',
+                                            'id' => 'birthday', 'style' => 'outline:none', 'disabled']) !!}
                                         </div>
+                                    </div>
+                                    <div class="row">
+                                        {!! Form::submit(__('Update'), ['class' => 'btn btn-primary update']) !!}
                                     </div>
                                 </div>
                             </div> <!-- end col -->
@@ -103,7 +114,8 @@
                                     <i class="mdi mdi-account-edit font-20"></i>
                                 </button>
                             </div>
-                        </div> <!-- end row-->
+                        </div>
+                        {!! Form::close() !!}
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
             </div> <!-- end col-->
@@ -116,13 +128,24 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
-                $('#imageInput').hide();
+                let imageInput = $('#imageInput');
+                let updateInput = $('.update');
+                let address = $('#address');
+                let phone = $('#phone');
+                let gender = $('#gender');
+                let selectGender = $('#gender-select');
+                let birthday = $('#birthday');
+                let success = "{{ Session::has('success') }}";
+                let errors = "{{ Session::has('errors') }}"
 
-                $('#imageInput').change(function (e) {
+                imageInput.hide();
+                updateInput.hide();
+                selectGender.hide();
+                imageInput.on('change', function (e) {
                     // e.preventDefault();
-                    var fileInput = this;
+                    let fileInput = this;
                     if (fileInput.files && fileInput.files[0]) {
-                        var reader = new FileReader();
+                        let reader = new FileReader();
                         reader.onload = function (e) {
                             // console.log(e.target.result);
                             $('#oldImage').hide();
@@ -134,19 +157,52 @@
                     }
                 });
 
+                let isEditMode = false;
                 $('.edit').on('click', function (e) {
                     e.preventDefault();
-                    $('input').each(function() {
-                        if ($(this).prop('disabled')) {
-                            $(this).prop('disabled', false);
-                            $('#imageInput').hide();
-                        } else {
-                            $(this).prop('disabled', true);
-                            $('#imageInput').show();
-                            $('#imageInput').prop('disabled', false);
-                        }
-                    });
+                    if (isEditMode === false) {
+                        address.prop('disabled', false);
+                        phone.prop('disabled', false);
+                        gender.hide();
+                        selectGender.show();
+                        birthday.prop('disabled', false);
+                        imageInput.show();
+                        updateInput.show();
+                        updateInput.prop('disabled', false);
+                        imageInput.prop('disabled', false);
+                        isEditMode = true;
+                    } else {
+                        address.prop('disabled', true);
+                        phone.prop('disabled', true);
+                        gender.prop('disabled', true);
+                        birthday.prop('disabled', true);
+                        gender.show();
+                        selectGender.hide();
+                        imageInput.hide();
+                        updateInput.hide();
+                        isEditMode = false;
+                    }
                 });
+
+                if (success) {
+                    $.toast({
+                        heading: '{{ __('Student') }}',
+                        text: '<h6>{{ __(Session::get("success")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        position: 'top-right',
+                    })
+                }
+
+                if (errors) {
+                    $.toast({
+                        heading: '{{ __('Student') }}',
+                        text: '<h6>{{ __(Session::get("errors")) }}</h6>',
+                        showHideTransition: 'slide',
+                        icon: 'warning',
+                        position: 'top-right',
+                    })
+                }
             });
         </script>
     @endpush

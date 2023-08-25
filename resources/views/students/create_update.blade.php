@@ -3,7 +3,7 @@
 @section('subTitle', 'Create Student')
 @section('content')
     {!! Form::model(isset($student) ?: '' ,
-        ['route' => isset($student) ? ['students.update', $student->id] :'students.store',
+        ['route' => isset($student) ? ['students.update', $student->id] : 'students.store',
         'method' => isset($student) ? 'PUT' : 'POST', 'enctype' => 'multipart/form-data']) !!}
     <div class="form-group">
         {!! Form::label('name', __('Student Name'), ['class' => 'col-form-label']) !!}
@@ -83,7 +83,8 @@
 
     <div class="form-group">
         {!! Form::label('avatar', __('Choose Avatar')) !!}
-        {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg', 'id' => 'example-fileinput', 'class' => 'form-control-file']) !!}
+        {!! Form::file('avatar', ['accept' => '.jpg, .png, .jpeg',
+        'id' => 'example-fileinput', 'class' => 'form-control-file']) !!}
         @error('avatar')
         <span class="text-danger">{{ $message }}</span>
         @enderror

@@ -12,7 +12,6 @@ use App\Repositories\Users\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -153,6 +152,29 @@ class StudentService
         return view('students.profile', ['student' => $student]);
     }
 
+    public function updateProfile($request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $student = $this->studentRepository->find($id);
+
+            if ($request->hasFile('avatar')) {
+                UploadImageHelper::deleteImage($student,'students');
+                $data['avatar'] = UploadImageHelper::uploadImage($request, 'avatar', 'students');
+            }
+
+            $this->studentRepository->update($id, $data);
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Successfully update student');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return redirect()->back()->with('errors', 'Update student failed');
+        }
+    }
+
     public function registerMultipleSubject(Request $request)
     {
         DB::beginTransaction();
@@ -181,7 +203,7 @@ class StudentService
         $subjects = $student->faculty->subjects;
         foreach ($subjects as $subject) {
             if (!in_array($subject->id, $data)) {
-                array_push($attr, $subject->name);
+                $attr[] = $subject->name;
             }
         }
 

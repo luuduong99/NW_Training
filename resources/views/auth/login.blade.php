@@ -70,7 +70,7 @@
                     </a>
                 </div>
                 <!-- title-->
-                <h4 class="mt-0">{{ __('Sign In') }}</h4>
+                <h4 class="mt-0">{{ __('Sign In') }}</h4> <p>{{ Auth::user() ?: ''}}</p>
                 <p class="text-muted mb-4">Enter your email address and password to access account.</p>
                 <!-- form -->
                 <form action="{{ route('login') }}" method="post">

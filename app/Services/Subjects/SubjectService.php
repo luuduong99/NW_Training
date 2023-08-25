@@ -23,10 +23,9 @@ class SubjectService
     public function listSubjects()
     {
         if (Auth::user()->role->role == '1' && Auth::user()->student != null) {
-//            dd(count(Auth::user()->student->faculty->subjects));
-            $subjects = Auth::user()->student->faculty->subjects()->paginate(Page::page);
+            $subjects = Auth::user()->student->faculty->subjects()->with('faculty')->paginate(Page::page);
             $results = Auth::user()->student->subjects->pluck('id')->toArray();
-//            dd($results);
+
             return view('subjects.index', compact('subjects', 'results'));
         } else {
             $subjects = $this->subjectRepository->pagination(['students', 'faculty']);
@@ -106,6 +105,7 @@ class SubjectService
             }
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th);
         }
     }
 }

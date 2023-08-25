@@ -94,6 +94,11 @@ class StudentController extends Controller
         return $this->studentService->deleteStudent($id);
     }
 
+    public function updateProfile(Request $request, $id)
+    {
+    return $this->studentService->updateProfile($request, $id);
+    }
+
     public function registerMultipleSubject(Request $request)
     {
         return $this->studentService->registerMultipleSubject($request);

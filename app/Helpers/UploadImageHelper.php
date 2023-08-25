@@ -11,17 +11,18 @@ class UploadImageHelper
         $file = $request->file($name);
         $ext = strtolower($file->getClientOriginalExtension());
         $image = rand() . '.' . $ext;
-        Storage::putFileAs('public/'. $folder , $file, $image);
+        Storage::disk('public')->putFileAs($folder, $file, $image);
 
         return $image;
     }
+
     public static function deleteImage($attribute, $folder)
     {
         if (
-            isset($attribute->avatar) && file_exists('storage/' . $folder . '/' . $attribute->avatar) &&
+            isset($attribute->avatar) && Storage::disk('public')->exists($folder . '/' . $attribute->avatar) &&
             $attribute->avatar != ""
         ) {
-            unlink('storage/' . $folder . '/' . $attribute->avatar);
+            Storage::disk('public')->delete($folder . '/' . $attribute->avatar);
         }
     }
 }

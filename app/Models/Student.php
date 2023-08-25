@@ -34,11 +34,11 @@ class Student extends Model
     public function getGendAttribute()
     {
         if ($this->gender == 0) {
-            return 'other';
+            return 'Other';
         } elseif ($this->gender == 1) {
-            return 'male';
+            return 'Male';
         } else {
-            return 'female';
+            return 'Female';
         }
     }
     public function subjects()
